@@ -1,6 +1,6 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
-import android.R.attr.data
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -18,9 +18,16 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBindi
 private lateinit var binding:ActivityLoginStartBinding
 
 class LoginStartActivity : AppCompatActivity() {
-    // google용 Intent 결과, 무조건 전역으로 생성(아니면 에러)
-    private val getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+    // 회원가입 Intent 결과, 무조건 전역으로 생성(아니면 에러)
+    private val getSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         // 액티비티 반환 결과
+        if(it.resultCode == Activity.RESULT_OK){
+            TODO("회원가입 성공, 계정 정보를 통해 앱 메인 접속")
+            finish()
+        }
+    }
+    // google용 Intent 결과
+    private val getgoogleResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(it.data)
         handleSignInResult(task)
     }
@@ -30,7 +37,10 @@ class LoginStartActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnLogin.setOnClickListener {  }
-        binding.btnSign.setOnClickListener {  }
+        binding.btnSign.setOnClickListener {
+            val signInIntent = Intent(this, SignInActivity::class.java)
+            getSignInResult.launch(signInIntent)
+        }
         binding.btnGoogleSign.setOnClickListener { signIn() }
     }
 
@@ -52,7 +62,7 @@ class LoginStartActivity : AppCompatActivity() {
         val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
         val googleSignIntent:Intent = mGoogleSignInClient.signInIntent
-        getResult.launch(googleSignIntent)
+        getgoogleResult.launch(googleSignIntent)
     }
     private fun handleSignInResult(completedTask:Task<GoogleSignInAccount>){
         try {

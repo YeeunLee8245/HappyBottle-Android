@@ -25,7 +25,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="40dp"
         android:background = "@drawable/button_radius"
-        android:textSize="20sp"
+        android:textSize="30dp"
         android:text="로그인"/>
     <Button
         android:id="@+id/btnSign"
@@ -33,7 +33,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="40dp"
         android:background = "@drawable/button_radius"
-        android:textSize="20sp"
+        android:textSize="30dp"
         android:text="회원가입" />
     <com.google.android.gms.common.SignInButton
         android:id="@+id/btnGoogleSign"
