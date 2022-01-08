@@ -12,12 +12,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
 
 
-private lateinit var binding:ActivityLoginStartBinding
-
 class LoginStartActivity : AppCompatActivity() {
+    private lateinit var binding:ActivityLoginStartBinding
+    private lateinit var mAuth:FirebaseAuth
     // 회원가입 Intent 결과, 무조건 전역으로 생성(아니면 에러)
     private val getSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         // 액티비티 반환 결과
@@ -28,14 +31,24 @@ class LoginStartActivity : AppCompatActivity() {
     }
     // google용 Intent 결과
     private val getgoogleResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-        handleSignInResult(task)
+        val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+        try {
+            val account = task.getResult(ApiException::class.java)!!
+            Log.e("구글 계정 정보1","${account.email}")
+            firebaseAuthWithGoogle(account.idToken!!)
+            //updateUI(account)
+        } catch (e:ApiException){
+            Log.e("구글 계정 정보2","signInResult:failed code=" + e.getStatusCode())
+            //updateUI(account)
+        }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginStartBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        mAuth = FirebaseAuth.getInstance()
         binding.btnLogin.setOnClickListener {  }
         binding.btnSign.setOnClickListener {
             val signInIntent = Intent(this, SignInActivity::class.java)
@@ -47,16 +60,22 @@ class LoginStartActivity : AppCompatActivity() {
     override fun onStart() {    // 자동 로그인
         super.onStart()
         val account = GoogleSignIn.getLastSignedInAccount(this)
+        //var user:FirebaseUser? = mAuth.currentUser
         account?.run {
-            Toast.makeText(this@LoginStartActivity, "구글 계정 로그인 성공", Toast.LENGTH_SHORT).show()
-            // 인텐트 추가}
-            Toast.makeText(this@LoginStartActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()
-            //updateUI(account)
+            Toast.makeText(this@LoginStartActivity, "구글 계정 로그인 성공${account.email}", Toast.LENGTH_SHORT).show()
+            // 인텐트 추가
+            val mainIntent = Intent(this@LoginStartActivity,MainActivity::class.java)
+            startActivity(mainIntent)
+            finish()
+            return
         }
+        Toast.makeText(this@LoginStartActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()
+        //updateUI(account)
     }
 
     private fun signIn(){
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("702537519034-81ob9l15coeebj4kgu1cakoub43555aa.apps.googleusercontent.com")
             .requestEmail()
             .build()
         val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -72,5 +91,25 @@ class LoginStartActivity : AppCompatActivity() {
             Log.e("구글 계정 정보","signInResult:failed code=" + e.getStatusCode())
             //updateUI(account)
         }
+    }
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        mAuth.signInWithCredential(credential)
+            .addOnCompleteListener(this) {task ->
+                Log.d("task:","${task.exception}")
+                Log.d("task:","${task.result}")
+                Log.d("task:","${task.isSuccessful}")
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    val user: FirebaseUser? = mAuth.currentUser
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(this, "Sorry auth failed.", Toast.LENGTH_SHORT)
+                        .show()
+                    Log.e("아이디","${mAuth.currentUser}")
+                }
+
+            }
     }
 }
