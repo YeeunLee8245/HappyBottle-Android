@@ -10,14 +10,7 @@
     android:gravity="center"
     tools:context=".LoginStartActivity">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="200dp"
-        android:src="@drawable/app_title"
-        android:adjustViewBounds="true"
-        android:scaleType="center"/>
+
 
     <Button
         android:id="@+id/btnLogin"
