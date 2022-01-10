@@ -15,8 +15,6 @@ class UserViewModel(application: Application): AndroidViewModel(application) {
         const val SERVER_URL = "https://mfp1-dc22e.firebaseapp.com/__/auth/handler"
     }
 
-    //차후에 추가
-    data class User(var gso: GoogleSignInOptions, var name:String?, var email:String?, var image:String?)
     val liveUser = MutableLiveData<User>()
 
     private var queue:RequestQueue
@@ -27,3 +25,6 @@ class UserViewModel(application: Application): AndroidViewModel(application) {
 
     // 데이터베이스에서 값을 받아와서 liveUser에 저장하자.
 }
+
+//차후에 추가
+data class User(var gso: GoogleSignInOptions, var name:String?, var email:String?, var image:String?)
