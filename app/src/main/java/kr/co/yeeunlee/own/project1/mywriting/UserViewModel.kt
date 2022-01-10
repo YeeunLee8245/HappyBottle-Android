@@ -1,12 +1,15 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
 import android.app.Application
+import android.os.Parcelable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
 // week14-2 참고
 class UserViewModel(application: Application): AndroidViewModel(application) {
@@ -27,4 +30,5 @@ class UserViewModel(application: Application): AndroidViewModel(application) {
 }
 
 //차후에 추가
-data class User(var gso: GoogleSignInOptions, var name:String?, var email:String?, var image:String?)
+@Parcelize
+data class User(var name:String?, var email:String?, var vaildPassWord:Boolean, var password:String?) : Parcelable
