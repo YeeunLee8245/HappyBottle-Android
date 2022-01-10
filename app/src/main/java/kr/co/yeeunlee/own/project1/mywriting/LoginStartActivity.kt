@@ -8,17 +8,15 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
-
-object Environment
 
 class LoginStartActivity : AppCompatActivity() {
     companion object {
@@ -27,9 +25,11 @@ class LoginStartActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         val mAuth:FirebaseAuth = Firebase.auth
+        val db = Firebase.firestore
     }
     private lateinit var binding:ActivityLoginStartBinding
     private lateinit var intentMain:Intent
+    private lateinit var user: User
 
     // 회원가입 Intent 결과, 무조건 전역으로 생성(아니면 에러)
     private val getSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -98,20 +98,38 @@ class LoginStartActivity : AppCompatActivity() {
                     // 닉네임 생성 다이얼로그 띄우기, 닉네임 생성 성공시에만 계정 등록
                     val dialog = NameLayoutDialog(this)
                     dialog.showDialog()
+                    dialog.setOnClickListener(object : NameLayoutDialog.OnDialogClickListener{
+                        override fun onClicked(name: String) {
+                            Log.d("name",name+"${mAuth.currentUser?.email}")
+                            user = User(name,mAuth.currentUser!!.email,false,null)
+                            db.collection("user").document(user.email!!)
+                                .set(user)
+                                .addOnCompleteListener {
+                                    Log.d("db성공",user.name.toString())
+                                    startActivity(intentMain)
+                                    finish()
+                                }
+                                .addOnFailureListener { e -> Log.e("db실패","${e}") }
+                        }
+
+                    })
+                    // 계정 인증 삭제 & Google 로그아웃
+//                    mAuth.currentUser?.delete()
+//                    mAuth.signOut()
+//                    GoogleSignIn.getClient(this, LoginStartActivity.gso).signOut()
 //                    dialog.setOnClickListener()
                     return@addOnCompleteListener
                     // 데이터베이스 추가(+ 닉네임 생성창
 
                 }
-                else    // false
+                else    // false, 기존 계정 데이터 데베에서 받아오기
                     Log.d("기존 계정","${newUser}")
                 Log.d("task:","${task.exception}")
                 Log.d("task:","${task.result}")
                 Log.d("task:","${task.isSuccessful}")
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    val user: FirebaseUser? = mAuth.currentUser
-                    intentMain.putExtra("user",user)
+                    //intentMain.putExtra("user",user)
                     startActivity(intentMain)
                     finish()    // 로그인 시작창은 스택에서 삭제
                 } else {

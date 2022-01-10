@@ -16,5 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="구글 로그아웃"/>
+    <Button
+        android:id="@+id/btnLogDelete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="회원 탈퇴"/>
 
 </LinearLayout>
