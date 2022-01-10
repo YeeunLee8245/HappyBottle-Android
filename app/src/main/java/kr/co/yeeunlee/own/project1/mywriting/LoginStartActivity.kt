@@ -92,6 +92,19 @@ class LoginStartActivity : AppCompatActivity() {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         mAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) {task ->
+                val newUser = task.getResult().additionalUserInfo?.isNewUser
+                if (true == newUser) {
+                    Log.d("첫 계정", "${newUser}")
+                    // 닉네임 생성 다이얼로그 띄우기, 닉네임 생성 성공시에만 계정 등록
+                    val dialog = NameLayoutDialog(this)
+                    dialog.showDialog()
+//                    dialog.setOnClickListener()
+                    return@addOnCompleteListener
+                    // 데이터베이스 추가(+ 닉네임 생성창
+
+                }
+                else    // false
+                    Log.d("기존 계정","${newUser}")
                 Log.d("task:","${task.exception}")
                 Log.d("task:","${task.result}")
                 Log.d("task:","${task.isSuccessful}")

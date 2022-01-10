@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityMainBinding
 
@@ -26,5 +27,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intentLoginStart)
             finish()
         }
+    }
+
+    private fun setup(){
+        val db = Firebase.firestore
     }
 }
