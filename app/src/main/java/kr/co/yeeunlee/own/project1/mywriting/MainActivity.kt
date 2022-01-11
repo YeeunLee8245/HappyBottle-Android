@@ -30,20 +30,18 @@ class MainActivity : AppCompatActivity() {
             startActivity(intentLoginStart)
             finish()
         }
-        binding.btnLogDelete.setOnClickListener {
+        binding.btnLogDelete.setOnClickListener {   // 계정 탈퇴
+            LoginStartActivity.mAuth.currentUser!!.delete()
             logOut()
             LoginStartActivity.db.collection("user").document(userEmail)
                 .delete()
                 .addOnCompleteListener { Log.d("db삭제성공", "DocumentSnapshot successfully deleted!") }
                 .addOnFailureListener { e -> Log.w("db삭제실패", "Error deleting document", e) }
-            TODO("LoginStart화면으로 돌아가게하기")
+            startActivity(Intent(this,LoginStartActivity::class.java))
             finish()
         }
     }
 
-    private fun setup(){
-        val db = Firebase.firestore
-    }
     private fun logOut(){
         LoginStartActivity.mAuth.signOut()
         googleSignInClient.signOut()
