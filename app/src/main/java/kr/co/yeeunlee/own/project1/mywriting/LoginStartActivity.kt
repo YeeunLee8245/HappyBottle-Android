@@ -83,6 +83,7 @@ class LoginStartActivity : AppCompatActivity() {
         //updateUI(account)
     }
 
+
     private fun signIn(){
         val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         val googleSignIntent:Intent = mGoogleSignInClient.signInIntent
@@ -91,16 +92,19 @@ class LoginStartActivity : AppCompatActivity() {
 
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
+
         mAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) {task ->
                 val newUser = task.getResult().additionalUserInfo?.isNewUser
                 if (true == newUser) {
                     Log.d("첫 계정", "${newUser}")
-                    // 닉네임 생성 다이얼로그 띄우기, 닉네임 생성 성공시에만 계정 등록, 아니면 계정 삭제
+                    // 닉네임 생성 다이얼로그 띄우기, 계정 삭제 후 닉네임 생성 성공시에만 계정 등록
+                    mAuth.currentUser!!.delete()
+                    mAuth.signOut()
+                    GoogleSignIn.getClient(this, gso).signOut()
                     val dialog = NameLayoutDialog(this)
                     dialog.showDialog()
                     dialog.setOnClickListener(object : NameLayoutDialog.OnDialogClickListener{
-                        var vaild:Boolean = false
                         override fun onClicked(name: String) {
                             Log.d("name",name+"${mAuth.currentUser?.email}")
                             user = User(name,mAuth.currentUser!!.email,false,null)
@@ -114,11 +118,12 @@ class LoginStartActivity : AppCompatActivity() {
                                 .addOnFailureListener { e -> Log.e("db실패","${e}") }
                             db.collection("check").document("name")
                                 .update("name",FieldValue.arrayUnion(user.name!!))
-                            vaild = true
+                            mAuth.signInWithCredential(credential)
                         }
                         //if (vaild == true)
 
                     })
+
                     // 계정 인증 삭제 & Google 로그아웃
 //                    mAuth.currentUser?.delete()
 //                    mAuth.signOut()
@@ -147,5 +152,7 @@ class LoginStartActivity : AppCompatActivity() {
             }
     }
 
-    private fun duplateName(name:String){}
+    //private fun duplateName(name:String){}
+
+
 }
