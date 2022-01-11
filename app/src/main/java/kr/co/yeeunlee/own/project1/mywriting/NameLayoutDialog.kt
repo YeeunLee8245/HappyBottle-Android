@@ -31,20 +31,21 @@ class NameLayoutDialog(context: Context) {
         val editLayoutName = dialog.findViewById<TextInputLayout>(R.id.editLayoutName)
         val btnNameDuplicate = dialog.findViewById<Button>(R.id.btnNameDuplicate)
         val btnNameComplete = dialog.findViewById<Button>(R.id.btnNameComplete)
-        var name:String? = null
+        lateinit var name:String
         var valid:Boolean = false
 
         btnNameDuplicate.setOnClickListener {
             db.collection("check").document("name").get()
                 .addOnSuccessListener { document ->
                     val li = document.get("name") as List<String>
+                    valid = false
                     name = editLayoutName.editText?.text.toString()
                     Log.d("별명",name.toString())
-                    if ((li.contains(name.toString()) == false) and (name != null) ) {
+                    if ((li.contains(name.toString()) == false) and (name != "") ) {
                         valid = true
                         Toast.makeText(context,"가능한 별명입니다.",Toast.LENGTH_SHORT).show()
                     }
-                    else if (name == null)
+                    else if (name == "")
                         Toast.makeText(context,"별명을 입력해주세요",Toast.LENGTH_SHORT).show()
                     else // valid == false
                         Toast.makeText(context,"이미 존재하는 별명입니다.",Toast.LENGTH_SHORT).show()
@@ -59,7 +60,7 @@ class NameLayoutDialog(context: Context) {
             if (valid == true) {
                 onClickListener.onClicked(editLayoutName.editText?.text.toString())
                 dialog.dismiss()
-            }
+            }else { Toast.makeText(context,"중복확인을 해주세요.",Toast.LENGTH_SHORT).show() }
         }
 
         //val edit_name = dialog.findViewById<EditText>(R.id.name_edit)
