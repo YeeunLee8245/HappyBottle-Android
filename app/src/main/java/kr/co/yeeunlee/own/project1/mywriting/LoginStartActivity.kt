@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
@@ -95,10 +96,11 @@ class LoginStartActivity : AppCompatActivity() {
                 val newUser = task.getResult().additionalUserInfo?.isNewUser
                 if (true == newUser) {
                     Log.d("첫 계정", "${newUser}")
-                    // 닉네임 생성 다이얼로그 띄우기, 닉네임 생성 성공시에만 계정 등록
+                    // 닉네임 생성 다이얼로그 띄우기, 닉네임 생성 성공시에만 계정 등록, 아니면 계정 삭제
                     val dialog = NameLayoutDialog(this)
                     dialog.showDialog()
                     dialog.setOnClickListener(object : NameLayoutDialog.OnDialogClickListener{
+                        var vaild:Boolean = false
                         override fun onClicked(name: String) {
                             Log.d("name",name+"${mAuth.currentUser?.email}")
                             user = User(name,mAuth.currentUser!!.email,false,null)
@@ -110,7 +112,11 @@ class LoginStartActivity : AppCompatActivity() {
                                     finish()
                                 }
                                 .addOnFailureListener { e -> Log.e("db실패","${e}") }
+                            db.collection("check").document("name")
+                                .update("name",FieldValue.arrayUnion(user.name!!))
+                            vaild = true
                         }
+                        //if (vaild == true)
 
                     })
                     // 계정 인증 삭제 & Google 로그아웃
@@ -140,4 +146,6 @@ class LoginStartActivity : AppCompatActivity() {
 
             }
     }
+
+    private fun duplateName(name:String){}
 }
