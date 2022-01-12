@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:layout_marginBottom="30dp">
+                android:layout_marginBottom="10dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editEmail"
                     android:layout_width="match_parent"
@@ -56,15 +56,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="10dp"
                 app:counterMaxLength="7">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:maxLength="7"/>
             </com.google.android.material.textfield.TextInputLayout>
             <Button
-                android:id="@+id/btnNameDuplication"
+                android:id="@+id/btnNameDupli"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background = "@drawable/button_radius"
@@ -85,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:layout_marginBottom="30dp">
+                android:layout_marginBottom="10dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editpassword"
                     android:layout_width="match_parent"
@@ -107,7 +108,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:layout_marginBottom="30dp">
+                android:layout_marginBottom="10dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editPasswordCheck"
                     android:layout_width="match_parent"
