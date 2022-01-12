@@ -35,9 +35,26 @@ class LoginStartActivity : AppCompatActivity() {
     // 회원가입 Intent 결과, 무조건 전역으로 생성(아니면 에러)
     private val getSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         // 액티비티 반환 결과
+        user = it.data?.getParcelableExtra("user")!!
+        Log.d("인증메일 받음","$user")
         if(it.resultCode == Activity.RESULT_OK){
-            TODO("회원가입 성공, 계정 정보를 통해 앱 메인 접속")
-            finish()
+            //TODO("회원가입 성공, 계정 정보를 통해 앱 메인 접속")
+            mAuth.createUserWithEmailAndPassword(user.email!!, user.password!!)
+                .addOnCompleteListener{ task ->
+                    if (task.isSuccessful) { // 인증메일 보내기
+                        Log.d("이메일로 계정 등록", "${mAuth.currentUser}")
+                        mAuth.currentUser?.sendEmailVerification()
+                            ?.addOnCompleteListener { verifiTask ->
+                                if (verifiTask.isSuccessful){
+                                    Log.d("이메일 계정 인증 성공", mAuth.currentUser.toString())
+                                }else{
+                                    Log.d("이메일 계정 인증 실패", mAuth.currentUser.toString())
+                                    //mAuth.currentUser!!.delete()
+                                }
+                            }
+                    }
+                }
+            //finish()
         }
     }
     // google용 Intent 결과
@@ -63,7 +80,7 @@ class LoginStartActivity : AppCompatActivity() {
 
         }
         binding.btnSign.setOnClickListener {
-            val signInIntent = Intent(this, SignInActivity::class.java)
+            val signInIntent = Intent(this, SignInActivity::class.java) // 회원가입
             getSignInResult.launch(signInIntent)
         }
         binding.btnGoogleSign.setOnClickListener { signIn() }
