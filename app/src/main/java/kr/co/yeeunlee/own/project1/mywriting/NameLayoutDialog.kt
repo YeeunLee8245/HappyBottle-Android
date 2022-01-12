@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.Toast
 import com.google.android.material.textfield.TextInputLayout
@@ -41,6 +42,11 @@ class NameLayoutDialog(context: Context) {
                     valid = false
                     name = editLayoutName.editText?.text.toString()
                     Log.d("별명",name.toString())
+                    // 키보드 내리고 포커스 맞추기
+                    val imm = this.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(editLayoutName.editText?.windowToken,0)
+                    editLayoutName.editText?.clearFocus()
+
                     if ((li.contains(name.toString()) == false) and (name != "") ) {
                         valid = true
                         Toast.makeText(context,"가능한 별명입니다.",Toast.LENGTH_SHORT).show()
