@@ -1,128 +1,303 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_gravity="center"
-    android:background="@color/backColor"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backColor"
     tools:context=".SignInActivity">
-<!--    <de.hdodenhof.circleimageview.CircleImageView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="45dp"-->
-<!--        android:layout_marginBottom="35dp"-->
-<!--        tools:src="@tools:sample/avatars" />-->
-    <LinearLayout
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideHS"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageProfil"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:src="@drawable/purple"
+        app:layout_constraintBottom_toBottomOf="@id/guideH2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideHS" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideH2"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.25"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideH3"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.31" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideV1"
+        android:layout_width="1dp"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/signin_background"
+        app:layout_constraintBottom_toBottomOf="@id/guideH7"
+        app:layout_constraintLeft_toLeftOf="@id/guideV1"
+        app:layout_constraintRight_toRightOf="@id/guideV3"
+        app:layout_constraintTop_toBottomOf="@id/guideH3">
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideInL"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.03" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideInR"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.97" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideInT"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.03" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideIB"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.97" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideWhite1"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.26" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideWhite2"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.49" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideWhite3"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.72" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideWhite4"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.95" />
         <TextView
+            android:id="@+id/textEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnSpan="3"
             android:text="이메일"
-            android:textSize="20dp"/>
-        <LinearLayout
-            android:layout_width="match_parent"
+            android:textSize="20dp"
+            android:textColor="#0E4A09"
+            android:gravity="left"
+            app:layout_constraintLeft_toLeftOf="@id/guideInL"
+            app:layout_constraintTop_toBottomOf="@id/guideInT"/>
+        <EditText
+            android:id="@+id/editEmail"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/editLayoutEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:layout_marginBottom="10dp">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
+            android:background="@drawable/textinput_style"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:maxLines="1"
+            android:inputType="textEmailAddress"
+            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
+            app:layout_constraintRight_toRightOf="@+id/guideInR"
+            app:layout_constraintTop_toBottomOf="@+id/textEmail"/>
         <TextView
+            android:id="@+id/textErEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:textColor="#FF0000"
+            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
+            app:layout_constraintRight_toRightOf="@+id/guideInR"
+            app:layout_constraintTop_toBottomOf="@+id/editEmail"
+            app:layout_constraintBottom_toTopOf="@+id/guideWhite1"/>
+
+        <TextView
+            android:id="@+id/textName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnSpan="3"
             android:text="별명"
-            android:textSize="20dp"/>
-        <LinearLayout
-            android:layout_width="match_parent"
+            android:textSize="20dp"
+            android:textColor="#0E4A09"
+            android:gravity="left"
+            app:layout_constraintLeft_toLeftOf="@id/guideInL"
+            app:layout_constraintTop_toBottomOf="@+id/guideWhite1" />
+        <EditText
+            android:id="@+id/editName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/editLayoutName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:layout_marginBottom="10dp"
-                app:counterMaxLength="7">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLength="7"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <Button
-                android:id="@+id/btnNameDupli"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background = "@drawable/button_radius"
-                android:text="중복확인"/>
-        </LinearLayout>
+            android:background="@drawable/textinput_style"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:maxLength="7"
+            android:maxLines="1"
+            android:inputType="textPersonName"
+            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
+            app:layout_constraintRight_toLeftOf="@+id/btnNameDupli"
+            app:layout_constraintTop_toBottomOf="@+id/textName"/>
+        <Button
+            android:id="@+id/btnNameDupli"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="@drawable/btn_name_dup"
+            android:layout_marginLeft="10dp"
+            android:text="중복확인"
+            android:textColor="#FFFFFF"
+            app:layout_constraintLeft_toRightOf="@+id/editName"
+            app:layout_constraintRight_toRightOf="@+id/guideInR"
+            app:layout_constraintBottom_toBottomOf="@+id/editName"
+            app:layout_constraintTop_toBottomOf="@+id/textName"/>
         <TextView
+            android:id="@+id/textErName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:textColor="#FF0000"
+            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
+            app:layout_constraintRight_toRightOf="@+id/guideInR"
+            app:layout_constraintTop_toBottomOf="@+id/editName"
+            app:layout_constraintBottom_toTopOf="@+id/guideWhite2"/>
+
+        <TextView
+            android:id="@+id/textPW"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnSpan="3"
             android:text="비밀번호"
-            android:textSize="20dp"/>
-        <LinearLayout
-            android:layout_width="match_parent"
+            android:textSize="20dp"
+            android:textColor="#0E4A09"
+            android:gravity="left"
+            app:layout_constraintLeft_toLeftOf="@id/guideInL"
+            app:layout_constraintTop_toBottomOf="@id/guideWhite2" />
+        <EditText
+            android:id="@+id/editPW"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/editLayoutPassWord"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:layout_marginBottom="10dp">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editpassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
+            android:background="@drawable/textinput_style"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:maxLines="1"
+            android:inputType="textPassword"
+            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
+            app:layout_constraintRight_toRightOf="@+id/guideInR"
+            app:layout_constraintTop_toBottomOf="@+id/textPW"/>
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/textErPW"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:textColor="#FF0000"
+            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
+            app:layout_constraintRight_toRightOf="@+id/guideInR"
+            app:layout_constraintTop_toBottomOf="@+id/editPW"
+            app:layout_constraintBottom_toTopOf="@+id/guideWhite3"/>
+
+        <TextView
+            android:id="@+id/textPWCheck"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnSpan="3"
             android:text="비밀번호 확인"
-            android:textSize="20dp"/>
-        <LinearLayout
-            android:layout_width="match_parent"
+            android:textSize="20dp"
+            android:textColor="#0E4A09"
+            android:gravity="left"
+            app:layout_constraintLeft_toLeftOf="@id/guideInL"
+            app:layout_constraintTop_toBottomOf="@id/guideWhite3"/>
+        <EditText
+            android:id="@+id/editPWCheck"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/editLayoutPassWordCheck"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:layout_marginBottom="10dp">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editPasswordCheck"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-    </LinearLayout>
+            android:background="@drawable/textinput_style"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:maxLines="1"
+            android:inputType="textPassword"
+            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
+            app:layout_constraintRight_toRightOf="@+id/guideInR"
+            app:layout_constraintTop_toBottomOf="@+id/textPWCheck"/>
+        <TextView
+            android:id="@+id/textErPWC"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:textColor="#FF0000"
+            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
+            app:layout_constraintRight_toRightOf="@+id/guideInR"
+            app:layout_constraintTop_toBottomOf="@+id/editPWCheck"
+            app:layout_constraintBottom_toTopOf="@+id/guideWhite4"/>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideV3"
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideH7"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideHBC"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.85" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideVBC1"
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
     <Button
         android:id="@+id/btnComplete"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/btn_signin_back"
+        android:text="가입하기"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@+id/guideHBC"
+        app:layout_constraintBottom_toTopOf="@+id/guideHE"
+        app:layout_constraintLeft_toRightOf="@id/guideVBC1"
+        app:layout_constraintRight_toLeftOf="@+id/guideVBC2"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideVBC2"
+        android:layout_width="1dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/button_circle"
-        android:text="완료"
-        android:layout_marginBottom="10dp"/>
-</LinearLayout>
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideHE"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.93" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
