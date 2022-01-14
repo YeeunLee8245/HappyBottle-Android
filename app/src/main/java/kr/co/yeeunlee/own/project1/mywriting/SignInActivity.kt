@@ -7,11 +7,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import kotlinx.coroutines.*
-import kotlinx.coroutines.tasks.await
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivitySignInBinding
 import java.util.regex.Pattern
 
@@ -34,7 +31,7 @@ class SignInActivity : AppCompatActivity() {
             duplicateName(name.toString())
         }
         binding.btnComplete.setOnClickListener {
-            completeEmail(binding.editEmail.text.toString())
+            completeCheck(binding.editEmail.text.toString())
         }
         binding.editName.addTextChangedListener(listnerEditName)
     }
@@ -68,7 +65,7 @@ class SignInActivity : AppCompatActivity() {
             .addOnFailureListener { Log.d("별명 등록 실패","${it}") }
     }
 
-    private fun completeEmail(email:String):Boolean {
+    private fun completeCheck(email:String):Boolean {
         // 이메일 중복 확인
         var pattern = android.util.Patterns.EMAIL_ADDRESS
         if (pattern.matcher(email).matches()) { // 정규 이메일 맞음
@@ -80,43 +77,50 @@ class SignInActivity : AppCompatActivity() {
                 if (document.exists()) {
                     map["email"] = false
                     binding.editEmail.error = "이미 가입된 이메일 입니다."
+                    completeElse()
                 } else {
                     Log.d("이메일 리스너", "${map}")
                     map["email"] = true
                     Log.d("이메일 리스너", "${map}")
-                    if (map["name"] == false) {
-                        binding.editName.error = "별명 중복확인을 해주세요."
-                    }
-                    completePassWord(
-                        binding.editPW.text.toString(),
-                        binding.editPWCheck.text.toString()
-                    )
-
-                    Log.d("인증메일전송", "$map")
-                    val result = map.filterValues { it == true }
-                    Log.d("인증메일전송0", "${result.size}")
-                    if (result.size == 3) {
-                        // 모두 true일 때 인증 이메일 전송
-                        Log.d("인증메일전송1", "$map")
-                        // start로 액티비티 전환 후 finish
-                        val inputName = binding.editName.text.toString()
-                        val inputEmail = binding.editEmail.text.toString()
-                        val inputPassword = binding.editPW.text.toString()
-                        val intentStart = Intent(this, LoginStartActivity::class.java)
-                        user = User(inputName, inputEmail, true, inputPassword)
-                        Log.d("인증메일전송2", "$user")
-                        intentStart.putExtra("user", user)
-
-                        setResult(RESULT_OK, intentStart)
-                        finish()
-                    }
+                    completeElse()
                 }
             }
         }
-        else
+        else {
             binding.editEmail.error = "올바른 이메일 형식을 입력해주세요."
+            completeElse()
+        }
 
         return true
+    }
+
+    private fun completeElse(){
+        if (map["name"] == false) {
+            binding.editName.error = "별명 중복확인을 해주세요."
+        }
+        completePassWord(
+            binding.editPW.text.toString(),
+            binding.editPWCheck.text.toString()
+        )
+
+        Log.d("인증메일전송", "$map")
+        val result = map.filterValues { it == true }
+        Log.d("인증메일전송0", "${result.size}")
+        if (result.size == 3) {
+            // 모두 true일 때 인증 이메일 전송
+            Log.d("인증메일전송1", "$map")
+            // start로 액티비티 전환 후 finish
+            val inputName = binding.editName.text.toString()
+            val inputEmail = binding.editEmail.text.toString()
+            val inputPassword = binding.editPW.text.toString()
+            val intentStart = Intent(this, LoginStartActivity::class.java)
+            user = User(inputName, inputEmail, true, inputPassword)
+            Log.d("인증메일전송2", "$user")
+            intentStart.putExtra("user", user)
+
+            setResult(RESULT_OK, intentStart)
+            finish()
+        }
     }
 
     private fun completePassWord(password:String, checkPassword:String){
