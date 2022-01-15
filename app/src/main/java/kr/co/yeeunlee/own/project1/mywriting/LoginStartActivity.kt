@@ -42,6 +42,7 @@ class LoginStartActivity : AppCompatActivity() {
             mAuth.createUserWithEmailAndPassword(user.email!!, user.password!!) // 이메일 계정 등록/로그인
                 .addOnCompleteListener{ task ->
                     Log.d("사용자 이메일로 계정 등록1", "${mAuth.currentUser!!.email}")
+                    user.password = null
                     db.collection("user").document(user!!.email!!)
                         .set(user!!)
                         .addOnCompleteListener {

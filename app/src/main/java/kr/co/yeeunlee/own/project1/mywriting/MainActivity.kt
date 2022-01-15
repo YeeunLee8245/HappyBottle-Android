@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                 dcmSnapshot.get("name")!! as String,
                 dcmSnapshot.get("email")!! as String,
                 dcmSnapshot.get("vaildPassWord")!! as Boolean,
-                dcmSnapshot.get("password") as String?
+                null
             )
             Log.d("사용자 확인", user.toString())
         }
