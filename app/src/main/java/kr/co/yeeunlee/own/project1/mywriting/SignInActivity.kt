@@ -50,7 +50,7 @@ class SignInActivity : AppCompatActivity() {
             .addOnSuccessListener { document ->
                 val li = document.get("name") as List<String>
                 map["name"] = false
-                Log.d("별명",name.toString())
+                //.d("별명",name.toString())
                 if ((li.contains(name) == false) and (name != "") ) {
                     map["name"] = true
                     binding.editName.error = null
@@ -60,7 +60,7 @@ class SignInActivity : AppCompatActivity() {
                     binding.editName.error="별명을 입력해주세요"
                 else // valid == false
                     binding.editName.error="이미 존재하는 별명입니다."
-                Log.d("별명 valid","$name ${map["name"]}")
+                //Log.d("별명 valid","$name ${map["name"]}")
             }
             .addOnFailureListener { Log.d("별명 등록 실패","${it}") }
     }
@@ -72,16 +72,16 @@ class SignInActivity : AppCompatActivity() {
             binding.editEmail.error = null
             db.collection("user").document(email).addSnapshotListener { document, error ->
                 // 중복
-                Log.d("이메일 리스너", "${document!!.exists()}")
-                Log.d("이메일 리스너", "${error}")
-                if (document.exists()) {
+                //Log.d("이메일 리스너", "${document!!.exists()}")
+                //Log.d("이메일 리스너", "${error}")
+                if (document!!.exists()) {
                     map["email"] = false
                     binding.editEmail.error = "이미 가입된 이메일 입니다."
                     completeElse()
                 } else {
-                    Log.d("이메일 리스너", "${map}")
+                    //Log.d("이메일 리스너", "${map}")
                     map["email"] = true
-                    Log.d("이메일 리스너", "${map}")
+                    //Log.d("이메일 리스너", "${map}")
                     completeElse()
                 }
             }
@@ -103,19 +103,19 @@ class SignInActivity : AppCompatActivity() {
             binding.editPWCheck.text.toString()
         )
 
-        Log.d("인증메일전송", "$map")
+        //Log.d("인증메일전송", "$map")
         val result = map.filterValues { it == true }
-        Log.d("인증메일전송0", "${result.size}")
+        //Log.d("인증메일전송0", "${result.size}")
         if (result.size == 3) {
             // 모두 true일 때 인증 이메일 전송
-            Log.d("인증메일전송1", "$map")
+            //Log.d("인증메일전송1", "$map")
             // start로 액티비티 전환 후 finish
             val inputName = binding.editName.text.toString()
             val inputEmail = binding.editEmail.text.toString()
             val inputPassword = binding.editPW.text.toString()
             val intentStart = Intent(this, LoginStartActivity::class.java)
             user = User(inputName, inputEmail, true, inputPassword)
-            Log.d("인증메일전송2", "$user")
+            //Log.d("인증메일전송2", "$user")
             intentStart.putExtra("user", user)
 
             setResult(RESULT_OK, intentStart)
@@ -127,16 +127,21 @@ class SignInActivity : AppCompatActivity() {
         map["password"] = false
         if (password == "")
             binding.editPW.error = "비밀번호를 입력해주세요."
+        else if (password.count() < 6)
+            binding.editPW.error = "여섯 글자 이상으로 입력해주세요."
+        else{
+            if (password.equals(checkPassword)) {
+                map["password"] = true
+                binding.editPW.error = null
+                binding.editPWCheck.error = null
+            }
+            else
+                binding.editPWCheck.error = "비밀번호를 다시 한번 정확히 입력해주세요."
+        }
 
         if (checkPassword == "")
             binding.editPWCheck.error = "비밀번호 확인을 입력해주세요."
-        else if (password.equals(checkPassword)) {
-            map["password"] = true
-            binding.editPW.error = null
-            binding.editPWCheck.error = null
-        }
-        else
-            binding.editPWCheck.error = "비밀번호를 다시 한번 정확히 입력해주세요."
+
     }
 
 

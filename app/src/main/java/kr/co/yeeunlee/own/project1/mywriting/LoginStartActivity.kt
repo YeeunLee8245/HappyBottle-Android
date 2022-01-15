@@ -123,19 +123,21 @@ class LoginStartActivity : AppCompatActivity() {
                     dialog.showDialog()
                     dialog.setOnClickListener(object : NameLayoutDialog.OnDialogClickListener{
                         override fun onClicked(name: String) {
-                            Log.d("name",name+"${mAuth.currentUser?.email}")
-                            user = User(name,mAuth.currentUser!!.email,false,null)
-                            db.collection("user").document(user.email!!)
-                                .set(user)
-                                .addOnCompleteListener {
-                                    Log.d("db성공",user.name.toString())
-                                    startActivity(intentMain)
-                                    finish()
-                                }
-                                .addOnFailureListener { e -> Log.e("db실패","${e}") }
-                            db.collection("check").document("name")
-                                .update("name",FieldValue.arrayUnion(user.name!!))
                             mAuth.signInWithCredential(credential)
+                                .addOnSuccessListener {
+                                    Log.d("name",name+"${mAuth.currentUser?.email}")
+                                    user = User(name,mAuth.currentUser!!.email,false,null)
+                                    db.collection("user").document(user.email!!)
+                                        .set(user)
+                                        .addOnCompleteListener {
+                                            Log.d("db성공",user.name.toString())
+                                            startActivity(intentMain)
+                                            finish()
+                                        }
+                                        .addOnFailureListener { e -> Log.e("db실패","${e}") }
+                                    db.collection("check").document("name")
+                                        .update("name",FieldValue.arrayUnion(user.name!!))
+                                }
                         }
                         //if (vaild == true)
 
