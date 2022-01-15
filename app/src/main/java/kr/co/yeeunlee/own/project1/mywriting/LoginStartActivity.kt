@@ -39,9 +39,20 @@ class LoginStartActivity : AppCompatActivity() {
         Log.d("인증메일 받음","$user")
         if(it.resultCode == Activity.RESULT_OK){
             //TODO("회원가입 성공, 계정 정보를 통해 앱 메인 접속")
-            mAuth.createUserWithEmailAndPassword(user.email!!, user.password!!)
+            mAuth.createUserWithEmailAndPassword(user.email!!, user.password!!) // 이메일 계정 등록/로그인
                 .addOnCompleteListener{ task ->
-
+                    Log.d("사용자 이메일로 계정 등록1", "${mAuth.currentUser!!.email}")
+                    db.collection("user").document(user!!.email!!)
+                        .set(user!!)
+                        .addOnCompleteListener {
+                            db.collection("check").document("name")
+                                .update("name",FieldValue.arrayUnion(user!!.name!!))
+                                .addOnSuccessListener {
+                                    Log.d("db성공",user!!.name.toString())
+                                    startActivity(intentMain)
+                                    finish()
+                                }
+                        }
                 }
             //finish()
         }
@@ -115,7 +126,7 @@ class LoginStartActivity : AppCompatActivity() {
                             mAuth.signInWithCredential(credential) // 비동기 주의
                                 .addOnSuccessListener {
                                     Log.d("name",name+"${mAuth.currentUser?.email}")
-                                    user = User(name,mAuth.currentUser!!.email,false,null)
+                                    user = User(name,mAuth.currentUser!!.email!!,false,null)
                                     db.collection("user").document(user.email!!)
                                         .set(user)
                                         .addOnCompleteListener {

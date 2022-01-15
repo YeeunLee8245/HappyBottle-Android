@@ -31,4 +31,4 @@ class UserViewModel(application: Application): AndroidViewModel(application) {
 
 //차후에 추가
 @Parcelize
-data class User(var name:String?, var email:String?, var vaildPassWord:Boolean, var password:String?) : Parcelable
+data class User(var name:String, var email:String, var vaildPassWord:Boolean, var password:String?) : Parcelable
