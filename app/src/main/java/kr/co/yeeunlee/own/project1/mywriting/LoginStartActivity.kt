@@ -41,18 +41,7 @@ class LoginStartActivity : AppCompatActivity() {
             //TODO("회원가입 성공, 계정 정보를 통해 앱 메인 접속")
             mAuth.createUserWithEmailAndPassword(user.email!!, user.password!!)
                 .addOnCompleteListener{ task ->
-                    if (task.isSuccessful) { // 인증메일 보내기
-                        Log.d("이메일로 계정 등록", "${mAuth.currentUser}")
-                        mAuth.currentUser?.sendEmailVerification()
-                            ?.addOnCompleteListener { verifiTask ->
-                                if (verifiTask.isSuccessful){
-                                    Log.d("이메일 계정 인증 성공", mAuth.currentUser.toString())
-                                }else{
-                                    Log.d("이메일 계정 인증 실패", mAuth.currentUser.toString())
-                                    //mAuth.currentUser!!.delete()
-                                }
-                            }
-                    }
+
                 }
             //finish()
         }
@@ -123,7 +112,7 @@ class LoginStartActivity : AppCompatActivity() {
                     dialog.showDialog()
                     dialog.setOnClickListener(object : NameLayoutDialog.OnDialogClickListener{
                         override fun onClicked(name: String) {
-                            mAuth.signInWithCredential(credential)
+                            mAuth.signInWithCredential(credential) // 비동기 주의
                                 .addOnSuccessListener {
                                     Log.d("name",name+"${mAuth.currentUser?.email}")
                                     user = User(name,mAuth.currentUser!!.email,false,null)
@@ -139,8 +128,6 @@ class LoginStartActivity : AppCompatActivity() {
                                         .update("name",FieldValue.arrayUnion(user.name!!))
                                 }
                         }
-                        //if (vaild == true)
-
                     })
 
                     // 계정 인증 삭제 & Google 로그아웃
@@ -148,9 +135,7 @@ class LoginStartActivity : AppCompatActivity() {
 //                    mAuth.signOut()
 //                    GoogleSignIn.getClient(this, LoginStartActivity.gso).signOut()
 //                    dialog.setOnClickListener()
-                    return@addOnCompleteListener
-                    // 데이터베이스 추가(+ 닉네임 생성창
-
+                    return@addOnCompleteListener // 절대 지우면 안됨, if로 들어오면 밑에 if문들은 실행 X
                 }
                 else    // false, 기존 계정 데이터 데베에서 받아오기
                     Log.d("기존 계정","${newUser}")
