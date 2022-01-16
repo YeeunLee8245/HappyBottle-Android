@@ -8,8 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="backColor"> #A5DBE5 </color>
-    <color name="btnColor"> #BAD9C8 </color>
     <color name="editColor"> #FFE483 </color>
     <color name="editLineColor"> #FFC778 </color>
     <color name="completeBtnColor">#F2DE79</color>
+    <color name="btnColor"> #6FB924 </color>
+    <color name="btnShadow">#5CB007 </color>
 </resources>

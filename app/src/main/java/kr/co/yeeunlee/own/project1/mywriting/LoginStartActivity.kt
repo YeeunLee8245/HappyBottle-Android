@@ -2,8 +2,12 @@ package kr.co.yeeunlee.own.project1.mywriting
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -35,9 +39,9 @@ class LoginStartActivity : AppCompatActivity() {
     // 회원가입 Intent 결과, 무조건 전역으로 생성(아니면 에러)
     private val getSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         // 액티비티 반환 결과
-        user = it.data?.getParcelableExtra("user")!!
-        Log.d("인증메일 받음","$user")
         if(it.resultCode == Activity.RESULT_OK){
+            user = it.data?.getParcelableExtra("user")!!
+            Log.d("인증메일 받음","$user")
             //TODO("회원가입 성공, 계정 정보를 통해 앱 메인 접속")
             mAuth.createUserWithEmailAndPassword(user.email!!, user.password!!) // 이메일 계정 등록/로그인
                 .addOnCompleteListener{ task ->
@@ -55,7 +59,6 @@ class LoginStartActivity : AppCompatActivity() {
                                 }
                         }
                 }
-            //finish()
         }
     }
     // google용 Intent 결과
@@ -74,6 +77,7 @@ class LoginStartActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginStartBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setScreen()
 
         intentMain = Intent(this,MainActivity::class.java)
 
@@ -89,7 +93,7 @@ class LoginStartActivity : AppCompatActivity() {
 
     override fun onStart() {    // 자동 로그인
         super.onStart()
-        //val account = GoogleSignIn.getLastSignedInAccount(this)
+
         val account = mAuth.currentUser
 
         Log.e("기존 계정정보","${mAuth.currentUser?.email}")
@@ -98,7 +102,6 @@ class LoginStartActivity : AppCompatActivity() {
             startActivity(intentMain)
             finish()    // 로그인 시작창은 스택에서 삭제
         }else {Toast.makeText(this@LoginStartActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()}
-        //updateUI(account)
     }
 
 
@@ -141,12 +144,6 @@ class LoginStartActivity : AppCompatActivity() {
                                 }
                         }
                     })
-
-                    // 계정 인증 삭제 & Google 로그아웃
-//                    mAuth.currentUser?.delete()
-//                    mAuth.signOut()
-//                    GoogleSignIn.getClient(this, LoginStartActivity.gso).signOut()
-//                    dialog.setOnClickListener()
                     return@addOnCompleteListener // 절대 지우면 안됨, if로 들어오면 밑에 if문들은 실행 X
                 }
                 else    // false, 기존 계정 데이터 데베에서 받아오기
@@ -168,7 +165,24 @@ class LoginStartActivity : AppCompatActivity() {
             }
     }
 
-    //private fun duplateName(name:String){}
-
-
+    private fun setScreen(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){ // Android 11
+            window.setDecorFitsSystemWindows(false)
+            val controller = window.insetsController
+            if(controller != null){
+                controller.hide(
+                    WindowInsets.Type.statusBars() or
+                        WindowInsets.Type.navigationBars())
+                WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        }else{
+            window.decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_IMMERSIVE
+                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    )
+        }
+    }
 }
