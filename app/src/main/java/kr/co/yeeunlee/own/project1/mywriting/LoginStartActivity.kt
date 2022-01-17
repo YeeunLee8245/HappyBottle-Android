@@ -81,9 +81,7 @@ class LoginStartActivity : AppCompatActivity() {
 
         intentMain = Intent(this,MainActivity::class.java)
 
-        binding.btnLogin.setOnClickListener {
-
-        }
+        binding.btnLogin.setOnClickListener { logIn(binding.editEmail.text.toString(), binding.editPW.text.toString()) }
         binding.btnSign.setOnClickListener {
             val signInIntent = Intent(this, SignInActivity::class.java) // 회원가입
             getSignInResult.launch(signInIntent)
@@ -104,6 +102,34 @@ class LoginStartActivity : AppCompatActivity() {
         }else {Toast.makeText(this@LoginStartActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()}
     }
 
+    private fun logIn(email: String, password: String){
+        if (email == ""){
+            binding.editEmail.error = "이메일을 입력해주세요."
+        }
+        else{
+            db.collection("user").document(email).addSnapshotListener { document, error ->
+                if (document!!.exists() == true) {
+                    if (password == ""){
+                        binding.editPW.error = "비밀번호를 입력해주세요."
+                    }else{
+                        mAuth.signInWithEmailAndPassword(email, password)
+                            .addOnSuccessListener {
+                                startActivity(intentMain)
+                                finish()
+                            }
+                            .addOnFailureListener {
+                                binding.editEmail.error = "잘못된 이메일 또는 비밀번호입니다."
+                            }
+                    }
+                }else{
+                    binding.editEmail.error = "잘못된 이메일 또는 비밀번호입니다."
+                }
+            }
+        }
+        if (password == ""){
+            binding.editPW.error = "비밀번호를 입력해주세요."
+        }
+    }
 
     private fun signIn(){
         val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
