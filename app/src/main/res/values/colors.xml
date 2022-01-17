@@ -13,4 +13,5 @@
     <color name="completeBtnColor">#F2DE79</color>
     <color name="btnColor"> #6FB924 </color>
     <color name="btnShadow">#5CB007 </color>
+    <color name="textDialog">#54A007</color>
 </resources>
