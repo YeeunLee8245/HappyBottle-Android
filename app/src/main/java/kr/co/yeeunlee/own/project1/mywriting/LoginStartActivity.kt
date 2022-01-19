@@ -19,7 +19,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
 
@@ -35,6 +37,10 @@ class LoginStartActivity : AppCompatActivity() {
     private lateinit var binding:ActivityLoginStartBinding
     private lateinit var intentMain:Intent
     private lateinit var user: User
+    private val settings = firestoreSettings {
+        isPersistenceEnabled = true
+        setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED).build()
+    }
 
     // 회원가입 Intent 결과, 무조건 전역으로 생성(아니면 에러)
     private val getSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -71,6 +77,10 @@ class LoginStartActivity : AppCompatActivity() {
         } catch (e:ApiException){
             Log.e("구글 로그인 실패","signInResult:failed code=" + e.getStatusCode())
         }
+    }
+
+    init {
+        db.firestoreSettings = settings // 캐시와 오프라인 지속성 설정
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

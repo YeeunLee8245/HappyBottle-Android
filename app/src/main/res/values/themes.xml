@@ -15,9 +15,10 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
-        <!-- 투명 네비게이션 -->
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWriting.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
+        <item name="fullscreenTextColor">@color/light_blue_A200</item>
     </style>
 </resources>
