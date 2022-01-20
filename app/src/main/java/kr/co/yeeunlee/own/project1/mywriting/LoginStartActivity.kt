@@ -24,6 +24,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
+import org.threeten.bp.LocalDateTime
 
 class LoginStartActivity : AppCompatActivity() {
     companion object {
@@ -166,7 +167,7 @@ class LoginStartActivity : AppCompatActivity() {
                             mAuth.signInWithCredential(credential) // 비동기 주의
                                 .addOnSuccessListener {
                                     Log.d("name",name+"${mAuth.currentUser?.email}")
-                                    user = User(name,mAuth.currentUser!!.email!!,false,null)
+                                    user = User(name,mAuth.currentUser!!.email!!,false,null, 0)
                                     db.collection("user").document(user.email!!)
                                         .set(user)
                                         .addOnCompleteListener {
