@@ -11,10 +11,10 @@ import java.util.*
 
 // 유저 등록
 @Parcelize
-data class User(var name:String, var email:String, var vaildPassWord:Boolean, var password:String?) : Parcelable
+data class User(var name:String, var email:String, var vaildPassWord:Boolean, var password:String?, val numNote: Int) : Parcelable
 
 // 글 등록
-data class Note(val name: String, val text: String, val time: Timestamp, val numBottle: Int){
+data class Note(val name: String, val text: String, val time: Timestamp){
      init {
          //AndroidThreeTen.init(this) 액티비티, 프래그먼트에서 해주기
      }
@@ -38,8 +38,7 @@ data class Note(val name: String, val text: String, val time: Timestamp, val num
             return Note(
                 name = snapshot["name"] as String,
                 text = snapshot["text"] as String,
-                time = snapshot["time"] as Timestamp,
-                numBottle = snapshot["numBottle"] as Int
+                time = snapshot["time"] as Timestamp
             )
         }
 

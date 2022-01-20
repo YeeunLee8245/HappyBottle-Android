@@ -10,6 +10,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.firestore.DocumentSnapshot
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentHomeBinding
 
 
@@ -27,6 +31,7 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater,container,false)
+        initBtnWrite()
         return binding.root
     }
 
@@ -51,5 +56,24 @@ class HomeFragment : Fragment() {
 
     private fun initBottleView(snapshot: DocumentSnapshot){
 
+    }
+
+    private fun initBtnWrite(){
+        binding.btnWrite.setOnClickListener {
+            val dialog = WriteDialogFragment()
+            val firebaseRepo: FirebaseRepository = FirebaseRepository()
+            //TODO("다이얼로그 프래그먼트 생성,onClickListener로 정보 넘기기")
+            dialog.setButtonClickListener(object : WriteDialogFragment.OnButtonClickListener{
+                override fun onButtonClicked(textEditNote: String) {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        firebaseRepo.setNoteAdd(textEditNote)
+                    }
+                }
+            })
+            activity?.supportFragmentManager?.let { fragmentManager ->
+                dialog.show(fragmentManager, "writeNote")
+            }
+            //firebaseRepo.setNoteAdd(newNote)
+        }
     }
 }
