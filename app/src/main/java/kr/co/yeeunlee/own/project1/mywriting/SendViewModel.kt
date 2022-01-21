@@ -10,14 +10,14 @@ import kotlinx.coroutines.launch
 
 class SendViewModel(application: Application): AndroidViewModel(application) {
     private val firebaseRepo: FirebaseRepository = FirebaseRepository()
-    private var _commentSnapshot: MutableLiveData<DocumentSnapshot> = MutableLiveData<DocumentSnapshot>()
-    val commentSnapshot: LiveData<DocumentSnapshot> = _commentSnapshot
+    private var _sendSnapshot: MutableLiveData<DocumentSnapshot> = MutableLiveData<DocumentSnapshot>()
+    val sendSnapshot: LiveData<DocumentSnapshot> = _sendSnapshot
 
     init {
-        getNewCommentSnapshot()
+        getNewSendSnapshot()
     }
 
-    private fun getNewCommentSnapshot() = viewModelScope.launch {
-        firebaseRepo.getNewCommentSnapshot(_commentSnapshot)
+    private fun getNewSendSnapshot() = viewModelScope.launch {
+        firebaseRepo.getNewCommentSnapshot(_sendSnapshot)
     }
 }

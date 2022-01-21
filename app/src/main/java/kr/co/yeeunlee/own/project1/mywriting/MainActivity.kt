@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.ktx.auth
@@ -17,64 +19,45 @@ import com.google.firebase.ktx.Firebase
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    companion object{
+        const val HOME_TAG = "HomeFragment"
+        const val STORAGE_TAG = "StorageFragment"
+        const val SEND_TAG = "SendFragment"
+    }
     private lateinit var binding:ActivityMainBinding
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var user:User
     private var userEmail:String = LoginStartActivity.mAuth.currentUser!!.email!!
     private val homeFragment = HomeFragment()
-    private val tran = supportFragmentManager.beginTransaction()
+    private val storageFragment = StorageFragment()
+    private val sendFragment = SendFragment()
+    private val arrayTag = arrayListOf(HOME_TAG, STORAGE_TAG, SEND_TAG)
+    var currentTag:String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        tran.add(R.id.fragmentHome,homeFragment)
 
-        googleSignInClient = GoogleSignIn.getClient(this, LoginStartActivity.gso)
-        val docRef = LoginStartActivity.db.collection("user").document(userEmail)
-        docRef.get().addOnSuccessListener { dcmSnapshot ->
-            user = User(
-                dcmSnapshot.get("name")!! as String,
-                dcmSnapshot.get("email")!! as String,
-                dcmSnapshot.get("vaildPassWord")!! as Boolean,
-                null,
-                0
-            )
-            Log.d("사용자 확인", user.toString())
-        }
-
-
-        binding.btnLogOut.setOnClickListener {  // 로그아웃
-            logOut()
-            val intentLoginStart = Intent(this, LoginStartActivity::class.java)
-            startActivity(intentLoginStart)
-            finish()
-        }
-        binding.btnLogDelete.setOnClickListener {   // 계정 탈퇴
-            userDelete()
-        }
+        changeFragment(HOME_TAG, homeFragment)
+        binding.btnHome.setOnClickListener { changeFragment(HOME_TAG, homeFragment)}
+        binding.btnStorage.setOnClickListener { changeFragment(STORAGE_TAG, storageFragment) }
+        binding.btnSend.setOnClickListener { changeFragment(SEND_TAG, sendFragment) }
     }
 
-    private fun logOut(){
-        LoginStartActivity.mAuth.signOut()
-        googleSignInClient.signOut()
-    }
+    private fun changeFragment(fragmentTag: String, fragment: Fragment){
+        val tran = supportFragmentManager.beginTransaction()
 
-    private fun userDelete(){
-        LoginStartActivity.db.collection("user").document(userEmail)    // 비동기 주의
-            .delete()
-            .addOnCompleteListener {
-                Log.d("db삭제성공", "DocumentSnapshot successfully deleted!")
-                LoginStartActivity.db.collection("check").document("name")
-                    .update("name", FieldValue.arrayUnion(user!!.name!!))
-                    .addOnSuccessListener {
-                        LoginStartActivity.mAuth.currentUser!!.delete()
-                        logOut()
-                        startActivity(Intent(this,LoginStartActivity::class.java))
-                        finish()
-                    }
-            }
-            .addOnFailureListener { e -> Log.w("db삭제실패", "Error deleting document", e) }
-    }
+        if (currentTag == "") {
+            currentTag = fragmentTag
+            tran.add(R.id.fragment,fragment )
+            return
+        }
 
+        if (currentTag != fragmentTag){
+            currentTag = fragmentTag
+            tran.replace(R.id.fragment, fragment)
+            tran.commit()
+        }
+    }
 }
