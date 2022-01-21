@@ -20,6 +20,10 @@ class HomeViewModel: ViewModel(){
         firebaseRepo.getUserSnapshot(_userSnapshot)
     }
 
+    fun getUserSnapshot(snapshot: DocumentSnapshot) = viewModelScope.launch {
+        _userSnapshot.value = snapshot
+    }
+
 //    private fun getBottleSnapshot() = viewModelScope.launch {
 //        firebaseRepo.getBottleSnapshot(_noteSnapshot)
 //    }
