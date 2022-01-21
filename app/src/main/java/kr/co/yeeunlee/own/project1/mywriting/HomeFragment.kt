@@ -20,6 +20,7 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentHomeBinding
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val homeViewModel: HomeViewModel by viewModels<HomeViewModel>()
+    private val imgBottle = arrayListOf(R.drawable.bottle_50, R.drawable.bottle_70, R.drawable.bottle_100)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,21 +42,23 @@ class HomeFragment : Fragment() {
         homeViewModel.userSnapshot.observe(viewLifecycleOwner){
             initUserView(it)
         }
-        homeViewModel.noteSnapshot.observe(viewLifecycleOwner){
-            initBottleView(it)  // 데이터 변경시 보틀 상태 데이터와 UI 업데이트
-        }
+//        homeViewModel.noteSnapshot.observe(viewLifecycleOwner){
+//            initBottleView(it)  // 데이터 변경시 보틀 상태 데이터와 UI 업데이트
+//        }
     }
 
     private fun initUserView(snapshot: DocumentSnapshot){
+        val num = snapshot["numNote"]
         binding.apply {
             imgUser.text = if (snapshot["img"] == null) "프로필 나중에 추가" else "널이여야만 함"
             txtName.text = snapshot["name"].toString()
             txtStatus.text = if (snapshot["status"]== null) "상메 나중에 추가" else "널이여야만 함"
         }
-    }
-
-    private fun initBottleView(snapshot: DocumentSnapshot){
-
+        when (num){
+            in 0..1 -> binding.imgBottle.setImageResource(imgBottle[0])
+            in 2..3 -> binding.imgBottle.setImageResource(imgBottle[1])
+            else -> binding.imgBottle.setImageResource(imgBottle[2])
+        }
     }
 
     private fun initBtnWrite(){

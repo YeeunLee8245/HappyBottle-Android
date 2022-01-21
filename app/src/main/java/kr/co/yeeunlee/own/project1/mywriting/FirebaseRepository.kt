@@ -33,7 +33,7 @@ class FirebaseRepository {
 
     }
 
-    suspend fun getBottleSnapshot(_noteSnapshot:MutableLiveData<DocumentSnapshot>){
+    fun getStorageBottle(_storageBottleSnap:MutableLiveData<DocumentSnapshot>){
 
     }
 

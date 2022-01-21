@@ -8,19 +8,19 @@ class HomeViewModel: ViewModel(){
     private val firebaseRepo: FirebaseRepository = FirebaseRepository()
     private var _userSnapshot:MutableLiveData<DocumentSnapshot> = MutableLiveData<DocumentSnapshot>()
     val userSnapshot: LiveData<DocumentSnapshot> = _userSnapshot
-    private var _noteSnapshot:MutableLiveData<DocumentSnapshot> = MutableLiveData<DocumentSnapshot>()
-    val noteSnapshot: LiveData<DocumentSnapshot> = _noteSnapshot
+//    private var _noteSnapshot:MutableLiveData<DocumentSnapshot> = MutableLiveData<DocumentSnapshot>()
+//    val noteSnapshot: LiveData<DocumentSnapshot> = _noteSnapshot
 
     init {
-        getUserSnapshot()
-        getBottleSnapshot()
+        getUserSnapshot()   // 프로필, 보틀 정보
+        //getBottleSnapshot()
     }
 
     private fun getUserSnapshot() = viewModelScope.launch {
         firebaseRepo.getUserSnapshot(_userSnapshot)
     }
 
-    private fun getBottleSnapshot() = viewModelScope.launch {
-        firebaseRepo.getBottleSnapshot(_noteSnapshot)
-    }
+//    private fun getBottleSnapshot() = viewModelScope.launch {
+//        firebaseRepo.getBottleSnapshot(_noteSnapshot)
+//    }
 }
