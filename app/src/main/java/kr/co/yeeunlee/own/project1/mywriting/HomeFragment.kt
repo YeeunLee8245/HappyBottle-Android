@@ -1,6 +1,7 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -48,15 +49,19 @@ class HomeFragment : Fragment() {
     }
 
     private fun initUserView(snapshot: DocumentSnapshot){
-        val num = snapshot["numNote"]
+        val num = snapshot["numNote"].toString().toInt()
         binding.apply {
             imgUser.text = if (snapshot["img"] == null) "프로필 나중에 추가" else "널이여야만 함"
             txtName.text = snapshot["name"].toString()
             txtStatus.text = if (snapshot["status"]== null) "상메 나중에 추가" else "널이여야만 함"
         }
+        Log.d("bottle",num.toString())
         when (num){
             in 0..1 -> binding.imgBottle.setImageResource(imgBottle[0])
-            in 2..3 -> binding.imgBottle.setImageResource(imgBottle[1])
+            in 2..3 -> {
+                binding.imgBottle.setImageResource(imgBottle[1])
+                Log.d("bottle2",num.toString())
+            }
             else -> binding.imgBottle.setImageResource(imgBottle[2])
         }
     }
@@ -69,7 +74,7 @@ class HomeFragment : Fragment() {
             dialog.setButtonClickListener(object : WriteDialogFragment.OnButtonClickListener{
                 override fun onButtonClicked(textEditNote: String) {
                     CoroutineScope(Dispatchers.Default).launch {
-                        firebaseRepo.setNoteAdd(textEditNote)
+                        homeViewModel.getUserSnapshot(firebaseRepo.setNoteAdd(textEditNote))
                     }
                 }
             })

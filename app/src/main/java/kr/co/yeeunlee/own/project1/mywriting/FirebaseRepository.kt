@@ -2,6 +2,7 @@ package kr.co.yeeunlee.own.project1.mywriting
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -19,8 +20,9 @@ class FirebaseRepository {
            }
     }
 
-    suspend fun setNoteAdd(textEditNote: String){
-        val dcmRef= LoginStartActivity.db.collection("user").document(LoginStartActivity.mAuth.currentUser!!.email!!)
+    suspend fun setNoteAdd(textEditNote: String): DocumentSnapshot {
+        val dcmRef= LoginStartActivity.db.collection("user").document(userEmail)
+        var resultRef:DocumentSnapshot? = null
 
         coroutineScope {
             dcmRef.get().addOnSuccessListener {
@@ -29,8 +31,17 @@ class FirebaseRepository {
             }
         }.await()
 
-        dcmRef.update("numNote", FieldValue.increment(1))
+        coroutineScope {
+            dcmRef.update("numNote", FieldValue.increment(1))
+        }.await()
 
+        coroutineScope {
+            db.collection("user").document(userEmail).get().addOnSuccessListener {
+                resultRef = it
+            }
+        }.await()
+
+        return resultRef!!
     }
 
     fun getStorageBottle(_storageBottleSnap:MutableLiveData<DocumentSnapshot>){
