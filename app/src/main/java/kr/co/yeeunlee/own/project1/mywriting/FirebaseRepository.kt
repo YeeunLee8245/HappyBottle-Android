@@ -44,8 +44,28 @@ class FirebaseRepository {
         return resultRef!!
     }
 
-    fun getStorageBottle(_storageBottleSnap:MutableLiveData<DocumentSnapshot>){
-
+    fun getStorageBottle(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
+                         , __stgBtSnapLi:ArrayList<BottleList>){
+        __stgBtSnapLi.clear()
+        db.collection("user").document(userEmail)
+            .get().addOnSuccessListener {
+                val numBottle: Int = it.get("numNote").toString().toInt() / 5
+                Log.d("보틀 수", numBottle.toString())
+                for ( i in numBottle downTo (1) step(3)){
+                    Log.d("보틀 수1", i.toString())
+                    if ((i - 2) >= 1){
+                        __stgBtSnapLi.add(BottleList(i*5, (i-1)*5, (i-2)*5))
+                    }
+                    else if(i == 2){
+                        __stgBtSnapLi.add(BottleList(i*5, (i-1)*5, null))
+                    }
+                    else{
+                        __stgBtSnapLi.add(BottleList(i*5, null, null))
+                    }
+                }
+                Log.d("보틀 수2", __stgBtSnapLi[0].toString())
+                _stgBtSnapLi.value = __stgBtSnapLi
+            }
     }
 
     suspend fun getNewCommentSnapshot(_commentSnapshot:MutableLiveData<DocumentSnapshot>){

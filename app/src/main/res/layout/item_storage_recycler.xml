@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="@drawable/bookcase"
+    android:gravity="center"
+    android:paddingBottom="5dp">
+
+    <Button
+        android:id="@+id/btn_bottle1"
+        android:text="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="visible"
+        android:enabled="true"
+        android:layout_marginRight="30dp"/>
+    <Button
+        android:id="@+id/btn_bottle2"
+        android:text="2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="visible"
+        android:enabled="true"
+        android:layout_marginRight="30dp"/>
+    <Button
+        android:id="@+id/btn_bottle3"
+        android:text="3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:enabled="true"
+        android:layout_gravity="bottom"/>
+</LinearLayout>

@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         if (currentTag != fragmentTag){
             currentTag = fragmentTag
+
             tran.replace(R.id.fragment, fragment)
             tran.commit()
         }
