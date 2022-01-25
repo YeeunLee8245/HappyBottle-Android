@@ -27,7 +27,6 @@ class WriteDialogFragment: DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = DialogFragmentWriteBinding.inflate(inflater,container,false)
-        val view = binding.root
         dialog?.window!!.setLayout(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT
@@ -43,7 +42,7 @@ class WriteDialogFragment: DialogFragment() {
         }
         binding.btnCancle.setOnClickListener { dismiss() }
 
-        return view
+        return binding.root
     }
 
     private fun getEditNote(){

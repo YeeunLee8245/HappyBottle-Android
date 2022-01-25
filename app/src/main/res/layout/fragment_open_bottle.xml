@@ -6,9 +6,41 @@
     tools:context=".OpenBottleFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:text="오픈 쪽지 목록 화면입니다." />-->
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="오픈 쪽지 목록 화면입니다." />
+        android:layout_height="match_parent">
+        <TableRow
+            android:gravity="center">
+            <Button
+                android:id="@+id/btn1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="쪽지1"/>
+            <Button
+                android:id="@+id/btn2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+        <TableRow
+            android:gravity="center">
+            <Button
+                android:id="@+id/btn4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+
+    </TableLayout>
 
 </FrameLayout>
