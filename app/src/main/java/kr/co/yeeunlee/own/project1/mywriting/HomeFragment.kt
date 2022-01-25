@@ -62,7 +62,7 @@ class HomeFragment : Fragment() {
             txtStatus.text = if (snapshot["status"]== null) "상메 나중에 추가" else "널이여야만 함"
         }
         Log.d("bottle",num.toString())
-        when (num){
+        when (num%5){
             in 0..1 -> binding.imgBottle.setImageResource(imgBottle[0])
             in 2..3 -> {
                 binding.imgBottle.setImageResource(imgBottle[1])
