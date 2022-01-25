@@ -69,6 +69,16 @@ class FirebaseRepository {
             }
     }
 
+    suspend fun getOpnNoteSnapshot(index: Int) : DocumentSnapshot{
+        var resultRef:DocumentSnapshot? = null
+        coroutineScope {
+            db.collection("user").document(userEmail)
+                .collection("note").document(index.toString())
+                .get().addOnSuccessListener { resultRef = it }
+        }.await()
+        return resultRef!!
+    }
+
     suspend fun getNewCommentSnapshot(_commentSnapshot:MutableLiveData<DocumentSnapshot>){
 
     }
