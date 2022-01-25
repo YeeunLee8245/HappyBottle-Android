@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         const val HOME_TAG = "HomeFragment"
         const val STORAGE_TAG = "StorageFragment"
         const val SEND_TAG = "SendFragment"
+        const val OPEN_TAG = "OpnBtlFragment"
     }
     private lateinit var binding:ActivityMainBinding
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -60,5 +62,13 @@ class MainActivity : AppCompatActivity() {
             tran.replace(R.id.fragment, fragment)
             tran.commit()
         }
+    }
+
+    fun changeOpnBtlFragment(index: Int){
+        supportFragmentManager.setFragmentResult("requestKey"
+            ,  bundleOf("bundleKey" to index))
+        supportFragmentManager.beginTransaction().replace(R.id.fragment, OpenBottleFragment())
+            .commit()
+        currentTag = OPEN_TAG
     }
 }
