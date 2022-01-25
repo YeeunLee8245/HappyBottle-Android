@@ -39,7 +39,7 @@ class StorageFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        storageViewModel.oneMore()
+        storageViewModel.getStorageBottleLi()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,14 +82,26 @@ class StorageFragment : Fragment() {
                     if (item.first == null){
                         btnBottle1.visibility = View.INVISIBLE
                         btnBottle1.isEnabled = false
+                    }else{
+                        btnBottle1.setOnClickListener {
+                            (activity as MainActivity).changeOpnBtlFragment(item.first!!)
+                        }
                     }
                     if (item.second == null){
                         btnBottle2.visibility = View.INVISIBLE
                         btnBottle2.isEnabled = false
+                    }else{
+                        btnBottle2.setOnClickListener {
+                            (activity as MainActivity).changeOpnBtlFragment(item.second!!)
+                        }
                     }
                     if (item.third == null){
                         btnBottle3.visibility = View.INVISIBLE
                         btnBottle3.isEnabled = false
+                    }else{
+                        btnBottle3.setOnClickListener {
+                            (activity as MainActivity).changeOpnBtlFragment(item.third!!)
+                        }
                     }
                 }
             }

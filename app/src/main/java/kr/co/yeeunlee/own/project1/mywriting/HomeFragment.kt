@@ -37,6 +37,12 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        homeViewModel.getUserSnapshot() // 화면 뜰 때마다 업뎃, 보틀은 등록할 때 업뎃해주니 문제X
+        // 이렇게 하는 것보다 나중에 프로필 수정 버튼을 누르면 업뎃 해주는 걸로 바꾸자. 이건 부담이다.
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // LiveDate의 value가 it으로 들어감
@@ -74,7 +80,8 @@ class HomeFragment : Fragment() {
             dialog.setButtonClickListener(object : WriteDialogFragment.OnButtonClickListener{
                 override fun onButtonClicked(textEditNote: String) {
                     CoroutineScope(Dispatchers.Default).launch {
-                        homeViewModel.getUserSnapshot(firebaseRepo.setNoteAdd(textEditNote))
+                        // 보틀 업데이트
+                        homeViewModel.setUserSnapshot(firebaseRepo.setNoteAdd(textEditNote))
                     }
                 }
             })

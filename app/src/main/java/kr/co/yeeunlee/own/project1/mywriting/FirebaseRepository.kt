@@ -44,6 +44,7 @@ class FirebaseRepository {
         return resultRef!!
     }
 
+
     fun getStorageBottle(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
                          , __stgBtSnapLi:ArrayList<BottleList>){
         __stgBtSnapLi.clear()

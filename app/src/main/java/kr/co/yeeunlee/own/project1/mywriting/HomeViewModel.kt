@@ -12,15 +12,15 @@ class HomeViewModel: ViewModel(){
 //    val noteSnapshot: LiveData<DocumentSnapshot> = _noteSnapshot
 
     init {
-        getUserSnapshot()   // 프로필, 보틀 정보
+        //getUserSnapshot()   // 프로필, 보틀 정보
         //getBottleSnapshot()
     }
 
-    private fun getUserSnapshot() = viewModelScope.launch {
+    fun getUserSnapshot() = viewModelScope.launch {
         firebaseRepo.getUserSnapshot(_userSnapshot)
     }
 
-    fun getUserSnapshot(snapshot: DocumentSnapshot) = viewModelScope.launch {
+    fun setUserSnapshot(snapshot: DocumentSnapshot) = viewModelScope.launch {
         _userSnapshot.value = snapshot
     }
 

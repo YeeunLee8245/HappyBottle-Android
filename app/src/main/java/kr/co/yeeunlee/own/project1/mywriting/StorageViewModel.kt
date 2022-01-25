@@ -24,10 +24,6 @@ class StorageViewModel:ViewModel() {
         firebaseRepo.getStorageBottle(_stgBottleLi, __stgBottleLi)
     }
 
-    fun oneMore(){
-        getStorageBottleLi()
-    }
-
     fun add(bottleList: BottleList){
         __stgBottleLi.add(bottleList)
         _stgBottleLi.value = __stgBottleLi
