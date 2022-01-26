@@ -4,14 +4,18 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.messaging.FirebaseMessaging
+import okhttp3.ResponseBody
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
+import retrofit2.Response
 
 class FirebaseRepository {
     private val db = LoginStartActivity.db
-    private val userEmail = LoginStartActivity.mAuth.currentUser!!.email!!
+    private val userEmail = LoginStartActivity.mAuth.currentUser?.email.toString()
 
     fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>) {
         db.collection("user").document(userEmail)
@@ -77,6 +81,57 @@ class FirebaseRepository {
                 .get().addOnSuccessListener { resultRef = it }
         }.await()
         return resultRef!!
+    }
+
+    fun setToken(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.d("서비스 토큰", "토큰 등록에 실패함")
+                return@addOnCompleteListener
+            }
+            val token = task.result
+            db.collection("user").document(userEmail)
+                .addSnapshotListener{document, _->
+                    if (document == null) return@addSnapshotListener
+
+                    if (document["token"].toString() != token){
+                        Log.d("서비스 토큰 변경", "토큰 변경")
+                        db.collection("user").document(userEmail).update("token",token)
+                    }else
+                        Log.d("서비스 토큰 변경X", "토큰 변경X")
+
+                }
+        }
+
+    }
+
+    suspend fun setSendNoteAdd(receiver: String, textEditNote: String): Boolean {
+        var dcmRef:DocumentReference? = null
+
+        coroutineScope { db.collection("user").whereEqualTo("name",receiver).get()
+            .addOnSuccessListener { documents ->
+                for (document in documents){
+                    dcmRef = document.reference
+                }
+            }
+        }.await()
+
+        coroutineScope {
+            dcmRef!!.get().addOnSuccessListener {
+                dcmRef!!.collection("postbox").document("${(it.get("numPost") as Long) +1}")
+                    .set(Note(receiver, textEditNote, Timestamp.now()))
+            }
+        }.await()
+
+        coroutineScope {
+            dcmRef!!.update("numPost", FieldValue.increment(1))
+        }.await()
+
+        return true
+    }
+
+    suspend fun sendNotification(myResponce: MutableLiveData<Response<ResponseBody>>,notification: NotificationBody){
+        myResponce.value = RetrofitInstance.api.sendNotification(notification)
     }
 
     suspend fun getNewCommentSnapshot(_commentSnapshot:MutableLiveData<DocumentSnapshot>){

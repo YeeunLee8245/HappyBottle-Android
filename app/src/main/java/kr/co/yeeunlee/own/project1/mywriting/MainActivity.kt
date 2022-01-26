@@ -1,5 +1,6 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -25,10 +27,14 @@ class MainActivity : AppCompatActivity() {
         const val STORAGE_TAG = "StorageFragment"
         const val SEND_TAG = "SendFragment"
         const val OPEN_TAG = "OpnBtlFragment"
+        const val FCM_URL = "https://fcm.googleapis.com"
+        const val SERVER_KEY = "AAAAo5J_z7o:APA91bGez1wfMPVqb21kPXr1AUB_rr52KM3XD4pC1yES5X0-0gJlJlqZ65ANzjcSIMOnx360oDOq4PADxLAW7dbyVvW82d3rp304te3T8RuVVleef74omnENUvj9H1nW8Rr3LCFhnoSY"
+        const val CONTENT_TYPE = "application/json"
     }
     private lateinit var binding:ActivityMainBinding
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var user:User
+    private var valueService: String? = null
     private var userEmail:String = LoginStartActivity.mAuth.currentUser!!.email!!
     private val homeFragment = HomeFragment()
     private val storageFragment = StorageFragment()
@@ -45,6 +51,12 @@ class MainActivity : AppCompatActivity() {
         binding.btnHome.setOnClickListener { changeFragment(HOME_TAG, homeFragment)}
         binding.btnStorage.setOnClickListener { changeFragment(STORAGE_TAG, storageFragment) }
         binding.btnSend.setOnClickListener { changeFragment(SEND_TAG, sendFragment) }
+
+        valueService = intent.getStringExtra("service")
+        Log.d("서비스 프래그먼트", valueService.toString())
+        if (valueService != null){
+            changeFragment(SEND_TAG, sendFragment)
+        }
     }
 
     private fun changeFragment(fragmentTag: String, fragment: Fragment){

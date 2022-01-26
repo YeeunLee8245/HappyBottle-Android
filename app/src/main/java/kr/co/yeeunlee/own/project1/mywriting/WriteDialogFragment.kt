@@ -38,7 +38,6 @@ class WriteDialogFragment: DialogFragment() {
 
         binding.btnPush.setOnClickListener {
             getEditNote()
-            dismiss()
         }
         binding.btnCancle.setOnClickListener { dismiss() }
 
@@ -54,7 +53,10 @@ class WriteDialogFragment: DialogFragment() {
         binding.editNote.clearFocus()
         if (text == ""){
             Toast.makeText(this.context,"내용을 입력해주세요.", Toast.LENGTH_SHORT).show()
-        }else{onButtonClickListener.onButtonClicked(text)}
+        }else{
+            onButtonClickListener.onButtonClicked(text)
+            dismiss()
+        }
     }
 
     interface OnButtonClickListener
