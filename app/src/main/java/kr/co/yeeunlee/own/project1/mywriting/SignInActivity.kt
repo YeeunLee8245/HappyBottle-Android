@@ -114,7 +114,7 @@ class SignInActivity : AppCompatActivity() {
             val inputEmail = binding.editEmail.text.toString()
             val inputPassword = binding.editPW.text.toString()
             val intentStart = Intent(this, LoginStartActivity::class.java)
-            user = User(inputName, inputEmail, true, inputPassword, 0)
+            user = User(inputName, inputEmail, true, inputPassword, 0, 0)
             //Log.d("인증메일전송2", "$user")
             intentStart.putExtra("user", user)
 

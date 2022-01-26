@@ -42,6 +42,7 @@ class LoginStartActivity : AppCompatActivity() {
         isPersistenceEnabled = true
         setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED).build()
     }
+    private val fireRepo = FirebaseRepository()
 
     // 회원가입 Intent 결과, 무조건 전역으로 생성(아니면 에러)
     private val getSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -64,6 +65,7 @@ class LoginStartActivity : AppCompatActivity() {
                                     startActivity(intentMain)
                                     finish()
                                 }
+                            fireRepo.setToken()
                         }
                 }
         }
@@ -108,6 +110,7 @@ class LoginStartActivity : AppCompatActivity() {
         Log.e("기존 계정정보","${mAuth.currentUser?.email}")
         if (account != null) {
             Toast.makeText(this@LoginStartActivity, "구글 계정 로그인 성공${account.email}", Toast.LENGTH_SHORT).show()
+            fireRepo.setToken()
             startActivity(intentMain)
             finish()    // 로그인 시작창은 스택에서 삭제
         }else {Toast.makeText(this@LoginStartActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()}
@@ -167,10 +170,11 @@ class LoginStartActivity : AppCompatActivity() {
                             mAuth.signInWithCredential(credential) // 비동기 주의
                                 .addOnSuccessListener {
                                     Log.d("name",name+"${mAuth.currentUser?.email}")
-                                    user = User(name,mAuth.currentUser!!.email!!,false,null, 0)
+                                    user = User(name,mAuth.currentUser!!.email!!,false,null, 0, 0)
                                     db.collection("user").document(user.email!!)
                                         .set(user)
                                         .addOnCompleteListener {
+                                            fireRepo.setToken()
                                             Log.d("db성공",user.name.toString())
                                             startActivity(intentMain)
                                             finish()

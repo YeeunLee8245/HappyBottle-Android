@@ -7,17 +7,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
+import retrofit2.Response
 
 class SendViewModel(application: Application): AndroidViewModel(application) {
     private val firebaseRepo: FirebaseRepository = FirebaseRepository()
-    private var _sendSnapshot: MutableLiveData<DocumentSnapshot> = MutableLiveData<DocumentSnapshot>()
-    val sendSnapshot: LiveData<DocumentSnapshot> = _sendSnapshot
+    private var _myResponce: MutableLiveData<Response<ResponseBody>> = MutableLiveData<Response<ResponseBody>>()
+    val myResponce: LiveData<Response<ResponseBody>> = _myResponce
 
-    init {
-        getNewSendSnapshot()
-    }
 
-    private fun getNewSendSnapshot() = viewModelScope.launch {
-        firebaseRepo.getNewCommentSnapshot(_sendSnapshot)
+    fun sendNotification(notification:NotificationBody) = viewModelScope.launch {
+        firebaseRepo.sendNotification(_myResponce, notification)
     }
 }
