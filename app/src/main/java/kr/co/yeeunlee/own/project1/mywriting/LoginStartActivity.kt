@@ -23,6 +23,9 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
 import org.threeten.bp.LocalDateTime
 
@@ -51,21 +54,21 @@ class LoginStartActivity : AppCompatActivity() {
             user = it.data?.getParcelableExtra("user")!!
             Log.d("인증메일 받음","$user")
             //TODO("회원가입 성공, 계정 정보를 통해 앱 메인 접속")
-            mAuth.createUserWithEmailAndPassword(user.email!!, user.password!!) // 이메일 계정 등록/로그인
+            mAuth.createUserWithEmailAndPassword(user.email, user.password!!) // 이메일 계정 등록/로그인
                 .addOnCompleteListener{ task ->
                     Log.d("사용자 이메일로 계정 등록1", "${mAuth.currentUser!!.email}")
                     user.password = null
-                    db.collection("user").document(user!!.email!!)
-                        .set(user!!)
+                    db.collection("user").document(user.email)
+                        .set(user)
                         .addOnCompleteListener {
                             db.collection("check").document("name")
-                                .update("name",FieldValue.arrayUnion(user!!.name!!))
+                                .update("name",FieldValue.arrayUnion(user.name))
                                 .addOnSuccessListener {
-                                    Log.d("db성공",user!!.name.toString())
+                                    Log.d("db성공",user.name.toString())
                                     startActivity(intentMain)
                                     finish()
                                 }
-                            fireRepo.setToken()
+                            CoroutineScope(Dispatchers.Default).launch { fireRepo.setToken() }
                         }
                 }
         }
@@ -75,7 +78,7 @@ class LoginStartActivity : AppCompatActivity() {
         val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
         try {
             val account = task.getResult(ApiException::class.java)!!
-            Log.e("구글 계정 정보1","${account.email}")
+            Log.e("구글 계정 정보1",account.email!!)
             firebaseAuthWithGoogle(account.idToken!!)
         } catch (e:ApiException){
             Log.e("구글 로그인 실패","signInResult:failed code=" + e.getStatusCode())
@@ -110,9 +113,11 @@ class LoginStartActivity : AppCompatActivity() {
         Log.e("기존 계정정보","${mAuth.currentUser?.email}")
         if (account != null) {
             Toast.makeText(this@LoginStartActivity, "구글 계정 로그인 성공${account.email}", Toast.LENGTH_SHORT).show()
-            fireRepo.setToken()
-            startActivity(intentMain)
-            finish()    // 로그인 시작창은 스택에서 삭제
+            CoroutineScope(Dispatchers.Default).launch {
+                fireRepo.setToken()
+                startActivity(intentMain)
+                finish()    // 로그인 시작창은 스택에서 삭제
+            }
         }else {Toast.makeText(this@LoginStartActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()}
     }
 
@@ -170,18 +175,22 @@ class LoginStartActivity : AppCompatActivity() {
                             mAuth.signInWithCredential(credential) // 비동기 주의
                                 .addOnSuccessListener {
                                     Log.d("name",name+"${mAuth.currentUser?.email}")
-                                    user = User(name,mAuth.currentUser!!.email!!,false,null, 0, 0)
-                                    db.collection("user").document(user.email!!)
-                                        .set(user)
-                                        .addOnCompleteListener {
-                                            fireRepo.setToken()
-                                            Log.d("db성공",user.name.toString())
-                                            startActivity(intentMain)
-                                            finish()
-                                        }
-                                        .addOnFailureListener { e -> Log.e("db실패","${e}") }
-                                    db.collection("check").document("name")
-                                        .update("name",FieldValue.arrayUnion(user.name!!))
+                                    CoroutineScope(Dispatchers.Default).launch {
+                                        val token:String = fireRepo.setToken()
+                                        user = User(
+                                            name, mAuth.currentUser!!.email!!, false,
+                                            null, 0, 0, token)
+                                        db.collection("user").document(user.email)
+                                            .set(user)
+                                            .addOnCompleteListener {
+                                                Log.d("db성공", user.name.toString())
+                                                startActivity(intentMain)
+                                                finish()
+                                            }
+                                            .addOnFailureListener { e -> Log.e("db실패", "${e}") }
+                                        db.collection("check").document("name")
+                                            .update("name",FieldValue.arrayUnion(user.name))
+                                    }
                                 }
                         }
                     })

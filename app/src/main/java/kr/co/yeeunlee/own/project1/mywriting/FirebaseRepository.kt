@@ -68,7 +68,7 @@ class FirebaseRepository {
                         __stgBtSnapLi.add(BottleList(i*5, null, null))
                     }
                 }
-                Log.d("보틀 수2", __stgBtSnapLi[0].toString())
+                //Log.d("보틀 수2", __stgBtSnapLi[0].toString())
                 _stgBtSnapLi.value = __stgBtSnapLi
             }
     }
@@ -83,26 +83,30 @@ class FirebaseRepository {
         return resultRef!!
     }
 
-    fun setToken(){
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.d("서비스 토큰", "토큰 등록에 실패함")
-                return@addOnCompleteListener
-            }
-            val token = task.result
-            db.collection("user").document(userEmail)
-                .addSnapshotListener{document, _->
-                    if (document == null) return@addSnapshotListener
-
-                    if (document["token"].toString() != token){
-                        Log.d("서비스 토큰 변경", "토큰 변경")
-                        db.collection("user").document(userEmail).update("token",token)
-                    }else
-                        Log.d("서비스 토큰 변경X", "토큰 변경X")
-
+    suspend fun setToken(): String{
+        var token:String = ""
+        coroutineScope {
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.d("서비스 토큰", "토큰 등록에 실패함")
+                    return@addOnCompleteListener
                 }
-        }
+                token = task.result
+                db.collection("user").document(userEmail)
+                    .addSnapshotListener{document, _->
+                        Log.d("서비스 토큰 변경", document!!.get("name").toString()+token)
+                        if (document == null) return@addSnapshotListener
 
+                        if (document["token"].toString() != token){
+                            Log.d("서비스 토큰 변경", "토큰 변경")
+                            db.collection("user").document(userEmail).update("token",token)
+                        }else
+                            Log.d("서비스 토큰 변경X", "토큰 변경X")
+
+                    }
+            }
+        }.await()
+        return token
     }
 
     suspend fun setSendNoteAdd(receiver: String, textEditNote: String): Boolean {

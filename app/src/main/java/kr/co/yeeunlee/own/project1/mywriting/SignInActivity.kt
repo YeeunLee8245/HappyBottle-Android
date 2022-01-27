@@ -9,6 +9,9 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivitySignInBinding
 import java.util.regex.Pattern
 
@@ -114,12 +117,19 @@ class SignInActivity : AppCompatActivity() {
             val inputEmail = binding.editEmail.text.toString()
             val inputPassword = binding.editPW.text.toString()
             val intentStart = Intent(this, LoginStartActivity::class.java)
-            user = User(inputName, inputEmail, true, inputPassword, 0, 0)
-            //Log.d("인증메일전송2", "$user")
-            intentStart.putExtra("user", user)
+            val fireRepo = FirebaseRepository()
+            CoroutineScope(Dispatchers.Default).launch {
+                val token: String = fireRepo.setToken()
+                user = User(
+                    inputName, inputEmail, true, inputPassword,
+                    0, 0, token
+                )
+                //Log.d("인증메일전송2", "$user")
+                intentStart.putExtra("user", user)
 
-            setResult(RESULT_OK, intentStart)
-            finish()
+                setResult(RESULT_OK, intentStart)
+                finish()
+            }
         }
     }
 
