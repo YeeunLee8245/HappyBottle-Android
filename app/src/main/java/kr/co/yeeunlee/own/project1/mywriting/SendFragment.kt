@@ -50,6 +50,9 @@ class SendFragment : Fragment() {
         vaild.observe(viewLifecycleOwner){
             checkVaild(it)
         }
+        sendViewModel.myResponce.observe(viewLifecycleOwner){
+            Log.d("알림을 띄웠습니다.","알림 띄움")
+        }
 //        sendViewModel.sendSnapshot.observe(viewLifecycleOwner){
 //            initSend(it)
 //        }
@@ -71,12 +74,20 @@ class SendFragment : Fragment() {
     private fun initBtnSend(){
         binding.btnSend.setOnClickListener {
             val dialog = SendDialogFragment()
-            val firebaseRepo = FirebaseRepository()
             vaild.value = false
             dialog.setSendBtnListener(object : SendDialogFragment.SendOnBtnClickListener{
                 override fun SendOnBtnClicked(receiver: String, textEditNote: String){
                     CoroutineScope(Dispatchers.Main).launch {
                         firebaseRepo.setSendNoteAdd(receiver, textEditNote, vaild)
+                        // 푸시알림 전송
+                        Log.d("알림 이름",receiver.toString())
+                        val token = firebaseRepo.getToken(receiver.toString())
+                        Log.d("알림 토큰",token.toString())
+                        val name = firebaseRepo.getUserNameSnapshot()
+                        val data = NotificationBody.NotificationData(getString(R.string.app_name),
+                            name, textEditNote)
+                        val body = NotificationBody(token, data)
+                        sendViewModel.sendNotification(body)
                     }
                 }
             })
@@ -92,9 +103,11 @@ class SendFragment : Fragment() {
         Log.d("result",result.toString())
         if (result == false)
             return
-        else
-            Toast.makeText(context, "전송 완료!", Toast.LENGTH_SHORT).show()
+
+        Toast.makeText(context, "전송 완료!", Toast.LENGTH_SHORT).show()
         //TODO("서비스 추가하기(상대방에게 푸시 알림 전송)")
+
+
 
     }
 

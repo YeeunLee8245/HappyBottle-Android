@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("서비스 프래그먼트", valueService.toString())
         if (valueService != null){
             changeFragment(SEND_TAG, sendFragment)
+            valueService = null
         }
     }
 

@@ -1,22 +1,110 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.media.RingtoneManager
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.core.app.Person
+import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlin.random.Random
 
 class SendMessagingService: FirebaseMessagingService()  {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        if(remoteMessage.data.isEmpty()){
-            sendNotification(remoteMessage.notification?.title!!,
-            remoteMessage.notification?.body!!)
-        }else{Log.d("메시지 서비스","수신된 메시지 데이터가 텅 빔")}
+
+        // 다른 기기에서 서버로 보냈을 때
+        val title = remoteMessage.data["title"]!!
+        val name = remoteMessage.data["name"]!!
+        val message = remoteMessage.data["message"]!!
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) { // Android 8(Oreo)
+            sendMessageNotification(title, name, message)
+        }else{
+            sendNotification(remoteMessage.notification?.title,
+                remoteMessage.notification?.body!!)
+        }
+
+
+
+
+
+
     }
 
-    private fun sendNotification(title: String, body: String){
-        val intent = Intent(this, MainActivity::class.java)
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun sendMessageNotification(title: String, name: String, message: String){
+        // 팝업 클릭시 이동할 액티비티
+        val intentSend = Intent(this, MainActivity::class.java)
+        val notificationID = 0
+        intentSend.putExtra("service", "service")
+        intentSend.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복생성 방지
+        val pendingIntent = PendingIntent.getActivity(this, 0, intentSend,
+            PendingIntent.FLAG_ONE_SHOT) // 일회성
+
+        // messageStyle 설정
+        val user: androidx.core.app.Person = Person.Builder()
+            .setName(name)
+            .setIcon(IconCompat.createWithResource(this, R.drawable.pink))
+            .build()
+        val compatMsg = NotificationCompat.MessagingStyle.Message(
+            message,
+            System.currentTimeMillis(),
+            user
+        )
+        val messageStyle = NotificationCompat.MessagingStyle(user).addMessage(compatMsg)
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)  // 소리
+        val notificationBuilder = NotificationCompat.Builder(this,"service")
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(messageStyle)
+            .setSmallIcon(R.drawable.pink)
+            .setAutoCancel(true)
+            .setSound(defaultSoundUri)
+            .setContentIntent(pendingIntent)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as
+                NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // Android 8(Oreo) 버전 예외처리
+            val channel = NotificationChannel("service","알림 메시지",
+            NotificationManager.IMPORTANCE_LOW) // 소리 없앰
+            notificationManager.createNotificationChannel(channel)
+        }
+        notificationManager.notify(0, notificationBuilder.build())
+    }
+
+    private fun sendNotification(title: String?, message: String){
+        // 팝업 클릭시 이동할 액티비티
+        val intentSend = Intent(this, MainActivity::class.java)
+        val notificationID = 0
+        intentSend.putExtra("service", "service")
+        intentSend.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복생성 방지
+        val pendingIntent = PendingIntent.getActivity(this, 0, intentSend,
+            PendingIntent.FLAG_ONE_SHOT) // 일회성
+        val notificationBuilder = NotificationCompat.Builder(this,"service")
+            .setContentTitle(title)
+            .setContentText(message)
+            .setSmallIcon(R.drawable.pink)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as
+                NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // Android 8(Oreo) 버전 예외처리
+            val channel = NotificationChannel("service","알림 메시지",
+                NotificationManager.IMPORTANCE_DEFAULT)
+            notificationManager.createNotificationChannel(channel)
+        }
+        notificationManager.notify(0, notificationBuilder.build())
 
     }
+
 }
