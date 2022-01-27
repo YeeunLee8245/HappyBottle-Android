@@ -23,7 +23,7 @@ data class User(var name:String, var email:String, var vaildPassWord:Boolean
 , var password:String?, val numNote: Int, val numPost: Int, var token:String) : Parcelable
 
 // 글 등록
-data class Note(val name: String, val text: String, val time: Timestamp, val check: Boolean){
+data class Note(val name: String="", val text: String="", val time: Timestamp= Timestamp.now(), val check: Boolean=false){
      init {
          //AndroidThreeTen.init(this) 액티비티, 프래그먼트에서 해주기
      }
@@ -64,6 +64,10 @@ data class Note(val name: String, val text: String, val time: Timestamp, val che
         }
     }
 }
+
+// 푸시알림 전송 데이터
+data class MessageDTO(var fromName: String? = null, var toName: String? = null,
+var text: String? = null, var timestamp: Long? = null)
 
 data class NotificationBody(val to: String, val data: NotificationData){
     data class NotificationData(val title: String, val name: String, val message: String)

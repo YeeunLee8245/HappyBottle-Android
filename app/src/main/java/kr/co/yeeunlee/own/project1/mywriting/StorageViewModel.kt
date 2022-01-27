@@ -21,7 +21,7 @@ class StorageViewModel:ViewModel() {
     }
 
     fun getStorageBottleLi(){
-        firebaseRepo.getStorageBottle(_stgBottleLi, __stgBottleLi)
+        firebaseRepo.getStorageBottleLi(_stgBottleLi, __stgBottleLi)
     }
 
     fun add(bottleList: BottleList){
