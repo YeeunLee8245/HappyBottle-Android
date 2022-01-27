@@ -23,7 +23,7 @@ data class User(var name:String, var email:String, var vaildPassWord:Boolean
 , var password:String?, val numNote: Int, val numPost: Int, var token:String) : Parcelable
 
 // 글 등록
-data class Note(val name: String, val text: String, val time: Timestamp){
+data class Note(val name: String, val text: String, val time: Timestamp, val check: Boolean){
      init {
          //AndroidThreeTen.init(this) 액티비티, 프래그먼트에서 해주기
      }
@@ -47,7 +47,8 @@ data class Note(val name: String, val text: String, val time: Timestamp){
             return Note(
                 name = snapshot["name"] as String,
                 text = snapshot["text"] as String,
-                time = snapshot["time"] as Timestamp
+                time = snapshot["time"] as Timestamp,
+                check = snapshot["check"] as Boolean
             )
         }
 

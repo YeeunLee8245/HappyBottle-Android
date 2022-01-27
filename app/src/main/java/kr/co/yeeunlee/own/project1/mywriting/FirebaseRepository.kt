@@ -16,6 +16,7 @@ import retrofit2.Response
 class FirebaseRepository {
     private val db = LoginStartActivity.db
     private val userEmail = LoginStartActivity.mAuth.currentUser?.email.toString()
+    private var userName:String? = null
 
     fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>) {
         db.collection("user").document(userEmail)
@@ -31,7 +32,7 @@ class FirebaseRepository {
         coroutineScope {
             dcmRef.get().addOnSuccessListener {
                 dcmRef.collection("note").document("${(it.get("numNote") as Long) +1}")
-                    .set(Note(it.get("name") as String, textEditNote, Timestamp.now()))
+                    .set(Note(it.get("name") as String, textEditNote, Timestamp.now(),true))
             }
         }.await()
 
@@ -94,7 +95,8 @@ class FirebaseRepository {
                 token = task.result
                 db.collection("user").document(userEmail)
                     .addSnapshotListener{document, _->
-                        Log.d("서비스 토큰 변경", document!!.get("name").toString()+token)
+                        userName = document!!.get("name").toString()    // 사용자 이름 초기화
+                        Log.d("서비스 토큰 변경", userName+token)
                         if (document == null) return@addSnapshotListener
 
                         if (document["token"].toString() != token){
@@ -109,8 +111,14 @@ class FirebaseRepository {
         return token
     }
 
-    suspend fun setSendNoteAdd(receiver: String, textEditNote: String): Boolean {
+    suspend fun setSendNoteAdd(receiver: String, textEditNote: String, vaild:MutableLiveData<Boolean>){
+        var currentDcmRef:DocumentReference = db.collection("user").document(userEmail)
         var dcmRef:DocumentReference? = null
+        var userName:String = ""
+
+        coroutineScope { db.collection("user").document(userEmail).get()
+            .addOnSuccessListener { userName = it.get("name").toString() }
+        }.await()
 
         coroutineScope { db.collection("user").whereEqualTo("name",receiver).get()
             .addOnSuccessListener { documents ->
@@ -123,7 +131,7 @@ class FirebaseRepository {
         coroutineScope {
             dcmRef!!.get().addOnSuccessListener {
                 dcmRef!!.collection("postbox").document("${(it.get("numPost") as Long) +1}")
-                    .set(Note(receiver, textEditNote, Timestamp.now()))
+                    .set(Note(userName, textEditNote, Timestamp.now(),false))
             }
         }.await()
 
@@ -131,7 +139,7 @@ class FirebaseRepository {
             dcmRef!!.update("numPost", FieldValue.increment(1))
         }.await()
 
-        return true
+        vaild.value = true
     }
 
     suspend fun sendNotification(myResponce: MutableLiveData<Response<ResponseBody>>,notification: NotificationBody){
