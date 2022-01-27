@@ -57,7 +57,7 @@ class SendDialogFragment: DialogFragment() {
             dupliReceiver(binding.editReceiver.text.toString())}
         binding.btnCancle.setOnClickListener {dismiss()}
 
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return binding.root
     }
 
     private fun dupliReceiver(receiver: String){

@@ -1,5 +1,6 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,7 +11,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -20,11 +24,15 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var googleSignInClient: GoogleSignInClient
     private val homeViewModel: HomeViewModel by viewModels<HomeViewModel>()
     private val imgBottle = arrayListOf(R.drawable.bottle_50, R.drawable.bottle_70, R.drawable.bottle_100)
+    private val userEmail = LoginStartActivity.mAuth.currentUser?.email.toString()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("액티비티",activity.toString())
+        googleSignInClient = GoogleSignIn.getClient(activity, LoginStartActivity.gso)
     }
 
     override fun onCreateView(
@@ -90,5 +98,41 @@ class HomeFragment : Fragment() {
             }
             //firebaseRepo.setNoteAdd(newNote)
         }
+        binding.btnLogout.setOnClickListener {  // 로그아웃
+            logout()
+            val intentLoginStart = Intent(activity, LoginStartActivity::class.java)
+            startActivity(intentLoginStart)
+            activity!!.finish()
+        }
+        binding.btnLogDelete.setOnClickListener {   // 계정 탈퇴
+            userDelete()
+        }
+    }
+
+    private fun logout(){
+        googleSignInClient.signOut().addOnSuccessListener {
+            LoginStartActivity.mAuth.signOut()
+        }
+    }
+
+    private fun userDelete(){
+        LoginStartActivity.db.collection("user").document(userEmail)    // 비동기 주의
+            .delete()
+            .addOnCompleteListener {
+                Log.d("db삭제성공", "DocumentSnapshot successfully deleted!")
+                LoginStartActivity.db.collection("check").document("name")
+                    .update("name", FieldValue.arrayRemove(homeViewModel.userSnapshot.value!!.get("name").toString()))
+                    .addOnSuccessListener {
+                        Log.d("액티비티",activity.toString())
+                        LoginStartActivity.mAuth.currentUser!!.delete().addOnSuccessListener {
+                            logout()
+                            startActivity(Intent(activity,LoginStartActivity::class.java))
+                            activity!!.finish()
+                        }.addOnFailureListener {
+                            Log.d("탈퇴에러",it.toString())
+                        }
+                    }
+            }
+            .addOnFailureListener { e -> Log.w("db삭제실패", "Error deleting document", e) }
     }
 }

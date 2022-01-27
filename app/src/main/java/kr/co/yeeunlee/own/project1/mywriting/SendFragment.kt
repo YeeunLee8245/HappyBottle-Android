@@ -21,7 +21,6 @@ class SendFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initBtnSend()
     }
 
     override fun onCreateView(
