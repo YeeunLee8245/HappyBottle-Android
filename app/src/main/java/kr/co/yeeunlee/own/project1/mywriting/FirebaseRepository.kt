@@ -15,6 +15,17 @@ class FirebaseRepository {
     private val userEmail = LoginStartActivity.mAuth.currentUser?.email.toString()
     private var userName:String? = null
 
+    suspend fun getUserNameSnapshot():String{
+        var name:String? = null
+        coroutineScope {
+            db.collection("user").document(userEmail)
+                .get().addOnSuccessListener {
+                    name = it.get("name").toString()
+                }
+        }.await()
+        return name.toString()
+    }
+
     fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>) {
         db.collection("user").document(userEmail)
            .get().addOnSuccessListener {
@@ -157,6 +168,19 @@ class FirebaseRepository {
                 }
                 _checkPost.value = __checkPost
             }
+    }
+
+    suspend fun getToken(receiver: String): String{
+        var token: String? = null
+        coroutineScope {
+            db.collection("user").whereEqualTo("name", receiver)
+                .get().addOnSuccessListener { dcms ->
+                    for (dcm in dcms){
+                        token = dcm.get("token").toString()
+                    }
+                }
+        }.await()
+        return token.toString()
     }
 
     suspend fun getNewCommentSnapshot(_commentSnapshot:MutableLiveData<DocumentSnapshot>){
