@@ -14,9 +14,19 @@ class SendViewModel(application: Application): AndroidViewModel(application) {
     private val firebaseRepo: FirebaseRepository = FirebaseRepository()
     private var _myResponce: MutableLiveData<Response<ResponseBody>> = MutableLiveData<Response<ResponseBody>>()
     val myResponce: LiveData<Response<ResponseBody>> = _myResponce
+    private var __checkPost: ArrayList<Note> = ArrayList<Note>()
+    private var _checkPost: MutableLiveData<ArrayList<Note>> = MutableLiveData<ArrayList<Note>>()
+    val checkPost: LiveData<ArrayList<Note>> = _checkPost
 
+    init {
+        _checkPost.value = __checkPost
+    }
 
     fun sendNotification(notification:NotificationBody) = viewModelScope.launch {
         firebaseRepo.sendNotification(_myResponce, notification)
+    }
+
+    fun getPostSnapshot() = viewModelScope.launch{
+        firebaseRepo.getPostSnapshot(__checkPost,_checkPost)
     }
 }

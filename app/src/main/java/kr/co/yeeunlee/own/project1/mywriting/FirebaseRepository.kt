@@ -2,11 +2,8 @@ package kr.co.yeeunlee.own.project1.mywriting
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.*
 import com.google.firebase.messaging.FirebaseMessaging
 import okhttp3.ResponseBody
 import kotlinx.coroutines.coroutineScope
@@ -50,7 +47,7 @@ class FirebaseRepository {
     }
 
 
-    fun getStorageBottle(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
+    fun getStorageBottleLi(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
                          , __stgBtSnapLi:ArrayList<BottleList>){
         __stgBtSnapLi.clear()
         db.collection("user").document(userEmail)
@@ -136,14 +133,30 @@ class FirebaseRepository {
         }.await()
 
         coroutineScope {
-            dcmRef!!.update("numPost", FieldValue.increment(1))
+            dcmRef!!.update("numPost", FieldValue.increment(1)).addOnSuccessListener {
+                vaild.value = true
+            }
         }.await()
-
-        vaild.value = true
     }
 
     suspend fun sendNotification(myResponce: MutableLiveData<Response<ResponseBody>>,notification: NotificationBody){
         myResponce.value = RetrofitInstance.api.sendNotification(notification)
+    }
+
+    fun getPostSnapshot(__checkPost: ArrayList<Note> ,_checkPost: MutableLiveData<ArrayList<Note>>){
+        db.collection("user").document(userEmail).collection("postbox")
+            .orderBy("time", Query.Direction.ASCENDING).addSnapshotListener { querySnapshot, _ ->
+                if (querySnapshot == null) return@addSnapshotListener
+
+                for( dcm in querySnapshot.documentChanges){
+                    if (dcm.type == DocumentChange.Type.ADDED){
+                        var post = dcm.document.toObject(Note::class.java)
+                        Log.d("데이터 변경",post.toString())
+                        __checkPost.add(0,post)
+                    }
+                }
+                _checkPost.value = __checkPost
+            }
     }
 
     suspend fun getNewCommentSnapshot(_commentSnapshot:MutableLiveData<DocumentSnapshot>){

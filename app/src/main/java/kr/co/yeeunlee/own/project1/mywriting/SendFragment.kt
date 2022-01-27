@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,6 +53,18 @@ class SendFragment : Fragment() {
 //        sendViewModel.sendSnapshot.observe(viewLifecycleOwner){
 //            initSend(it)
 //        }
+        binding.recyclerSend.layoutManager = LinearLayoutManager(context)
+        binding.recyclerSend.adapter = SendAdapter(sendViewModel.checkPost.value!!)
+        sendViewModel.checkPost.observe(viewLifecycleOwner){
+            (binding.recyclerSend.adapter as SendAdapter).setData(it)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        sendViewModel.getPostSnapshot()
+        vaild.value = false
+
     }
 
 
@@ -64,8 +77,6 @@ class SendFragment : Fragment() {
                 override fun SendOnBtnClicked(receiver: String, textEditNote: String){
                     CoroutineScope(Dispatchers.Main).launch {
                         firebaseRepo.setSendNoteAdd(receiver, textEditNote, vaild)
-                            //TODO("서비스 추가하기(상대방에게 푸시 알림 전송)")
-
                     }
                 }
             })
@@ -78,8 +89,18 @@ class SendFragment : Fragment() {
     private fun initSend(snapshot: DocumentSnapshot){}
 
     private fun checkVaild(result:Boolean){
-        if (result == true)
+        Log.d("result",result.toString())
+        if (result == false)
+            return
+        else
             Toast.makeText(context, "전송 완료!", Toast.LENGTH_SHORT).show()
+        //TODO("서비스 추가하기(상대방에게 푸시 알림 전송)")
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        vaild.value = false
     }
 
 }
