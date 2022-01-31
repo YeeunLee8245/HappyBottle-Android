@@ -1,19 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp"
+    android:padding="5dp"
+    android:background="@drawable/box_receive">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/circleImageView"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/home_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/txtFromName"
-        android:text="보내는 이"
-        android:textSize="30dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="130dp"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:layout_marginLeft="5dp"
+        android:paddingBottom="1dp"
+        android:paddingTop="1dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:textSize="20dp"
+        android:textColor="@color/darkgreen"
+        android:fontFamily="@font/font_info"
+        android:background="@drawable/box_send_name"
+        app:layout_constraintStart_toEndOf="@+id/circleImageView"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/txtPreview"
-        android:textSize="22dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="미리보기..."/>
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="10dp"
+        android:textSize="25dp"
+        android:textColor="@color/darkgreen"
+        android:fontFamily="@font/font_info"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/circleImageView" />
+<!--    <TextView-->
+<!--        android:id="@+id/txtFromName"-->
+<!--        android:text="보내는 이"-->
+<!--        android:textSize="30dp"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"/>-->
+<!--    <TextView-->
+<!--        android:id="@+id/txtPreview"-->
+<!--        android:textSize="22dp"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="미리보기..."/>-->
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
