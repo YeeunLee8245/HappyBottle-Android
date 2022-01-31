@@ -1,36 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:background="@drawable/bookcase"
+    android:layout_height="131dp"
+    android:layout_marginTop="10dp"
     android:gravity="center"
-    android:paddingBottom="5dp">
+    android:background="@color/storage_background">
 
     <Button
         android:id="@+id/btn_bottle1"
-        android:text="1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="79dp"
         android:layout_gravity="bottom"
-        android:visibility="visible"
+        android:background="@drawable/bottle_lightgreen"
         android:enabled="true"
-        android:layout_marginRight="30dp"/>
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/bookself"
+        app:layout_constraintEnd_toStartOf="@+id/btn_bottle2"
+        app:layout_constraintStart_toStartOf="@+id/bookself" />
+
     <Button
         android:id="@+id/btn_bottle2"
-        android:text="2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="79dp"
         android:layout_gravity="bottom"
-        android:visibility="visible"
+        android:background="@drawable/bottle_blue"
         android:enabled="true"
-        android:layout_marginRight="30dp"/>
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/bookself"
+        app:layout_constraintEnd_toStartOf="@+id/btn_bottle3"
+        app:layout_constraintStart_toEndOf="@+id/btn_bottle1" />
+
     <Button
         android:id="@+id/btn_bottle3"
-        android:text="3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:layout_width="50dp"
+        android:layout_height="79dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bottle_orange"
         android:enabled="true"
-        android:layout_gravity="bottom"/>
-</LinearLayout>
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/bookself"
+        app:layout_constraintEnd_toEndOf="@+id/bookself"
+        app:layout_constraintStart_toEndOf="@id/btn_bottle2" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bookself"
+        android:layout_width="300dp"
+        android:layout_height="47dp"
+        android:background="@drawable/bookself"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="100dp"
+            android:layout_height="0dp"
+            android:fontFamily="@font/font_info"
+            android:gravity="center|top"
+            android:paddingLeft="25dp"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/text2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text2"
+            android:layout_width="100dp"
+            android:layout_height="0dp"
+            android:fontFamily="@font/font_info"
+            android:gravity="center|top"
+            android:text="2"
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text3"
+            android:layout_width="100dp"
+            android:layout_height="0dp"
+            android:gravity="center|top"
+            android:paddingRight="25dp"
+            android:fontFamily="@font/font_info"
+            android:text="3"
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/text2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
