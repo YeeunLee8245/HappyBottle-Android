@@ -44,7 +44,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/frame_profile"
+            android:src="@drawable/home_blue"
             app:layout_constraintBottom_toBottomOf="@+id/boxProfile"
             app:layout_constraintStart_toStartOf="@+id/boxProfile"
             app:layout_constraintTop_toTopOf="@+id/boxProfile" />
