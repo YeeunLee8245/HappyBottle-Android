@@ -6,14 +6,8 @@
     tools:context=".StorageFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerStorage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerStorage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </ScrollView>
-
-
+        android:layout_height="match_parent"/>
 </FrameLayout>
