@@ -65,19 +65,19 @@ class HomeFragment : Fragment() {
     private fun initUserView(snapshot: DocumentSnapshot){
         val num = snapshot["numNote"].toString().toInt()
         binding.apply {
-            imgUser.text = if (snapshot["img"] == null) "프로필 나중에 추가" else "널이여야만 함"
+//            imgUser.text = if (snapshot["img"] == null) "프로필 나중에 추가" else "널이여야만 함"
             txtName.text = snapshot["name"].toString()
             txtStatus.text = if (snapshot["status"]== null) "상메 나중에 추가" else "널이여야만 함"
         }
         Log.d("bottle",num.toString())
-        when (num%5){
-            in 0..1 -> binding.imgBottle.setImageResource(imgBottle[0])
-            in 2..3 -> {
-                binding.imgBottle.setImageResource(imgBottle[1])
-                Log.d("bottle2",num.toString())
-            }
-            else -> binding.imgBottle.setImageResource(imgBottle[2])
-        }
+//        when (num%5){
+//            in 0..1 -> binding..setImageResource(imgBottle[0])
+//            in 2..3 -> {
+//                binding.imgBottle.setImageResource(imgBottle[1])
+//                Log.d("bottle2",num.toString())
+//            }
+//            else -> binding.imgBottle.setImageResource(imgBottle[2])
+//        }
     }
 
     private fun initBtnWrite(){

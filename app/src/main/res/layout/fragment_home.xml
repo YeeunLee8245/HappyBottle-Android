@@ -4,48 +4,143 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#EBF4F5"
     tools:context=".HomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toTopOf="@+id/guideHNavi"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/imgUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="프사"
-            app:layout_constraintEnd_toStartOf="@+id/txtName"
-            app:layout_constraintStart_toStartOf="parent"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/boxProfile"
+            android:layout_width="0dp"
+            android:layout_height="82dp"
+            android:background="@drawable/box_profile"
+            app:layout_constraintBottom_toTopOf="@+id/guidePT"
+            app:layout_constraintEnd_toStartOf="@+id/guidePR"
+            app:layout_constraintRight_toLeftOf="@+id/btnSetting"
+            app:layout_constraintStart_toStartOf="@+id/guidePL"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidePL"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidePR"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.8" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgUser"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/frame_profile"
+            app:layout_constraintBottom_toBottomOf="@+id/boxProfile"
+            app:layout_constraintStart_toStartOf="@+id/boxProfile"
+            app:layout_constraintTop_toTopOf="@+id/boxProfile" />
 
         <TextView
             android:id="@+id/txtName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="별명"
-            app:layout_constraintEnd_toStartOf="@+id/txtStatus"
+            android:layout_width="117dp"
+            android:layout_height="25dp"
+            android:text="닉네임일곱자리"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="5dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/box_name"
             app:layout_constraintStart_toEndOf="@+id/imgUser"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/imgUser" />
+
+        <Button
+            android:id="@+id/btnModify"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/btn_modify"
+            app:layout_constraintEnd_toStartOf="@+id/guidePR"
+            app:layout_constraintLeft_toRightOf="@id/txtName"
+            app:layout_constraintTop_toTopOf="@+id/txtName" />
+
 
         <TextView
             android:id="@+id/txtStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="한줄소개"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/txtName"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/boxProfile"
+            app:layout_constraintEnd_toStartOf="@+id/guidePR"
+            app:layout_constraintStart_toEndOf="@+id/imgUser"
+            app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
         <Button
-            android:id="@+id/btnWrite"
+            android:id="@+id/btnSetting"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/btn_setting"
+            app:layout_constraintStart_toEndOf="@+id/boxProfile"
+            app:layout_constraintTop_toTopOf="@+id/boxProfile" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidePT"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="쪽지 쓰기"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="124dp" />
+
+        <TextView
+            android:id="@+id/textBottle"
+            android:layout_width="200dp"
+            android:layout_height="284dp"
+            android:background="@drawable/bottle_0"
+            android:paddingTop="130dp"
+            android:text="0/30"
+            android:textAlignment="center"
+            android:textColor="#0F4A0A"
+            android:fontFamily="@font/font_info"
+            android:textSize="80dp"
+            app:layout_constraintBottom_toTopOf="@+id/btnWrite"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guidePT" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideWBT"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.8"/>
+        <Button
+            android:id="@+id/btnWrite"
+            android:layout_width="95dp"
+            android:layout_height="96dp"
+            android:background="@drawable/btn_write_home"
+            app:layout_constraintBottom_toTopOf="@+id/guideWBB"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideWBT" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideWBB"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.94"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
 
         <Button
             android:id="@+id/btnLogout"
@@ -53,7 +148,7 @@
             android:layout_height="wrap_content"
             android:text="로그아웃"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnWrite" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/btnLogDelete"
@@ -61,15 +156,8 @@
             android:layout_height="wrap_content"
             android:text="회원탈퇴"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnWrite" />
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
-            android:id="@+id/imgBottle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/btnWrite"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtName" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
