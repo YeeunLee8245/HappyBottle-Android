@@ -21,5 +21,6 @@
     <color name="black_overlay">#66000000</color>
     <color name="home_background">#F3FCFD</color>
     <color name="storage_background">#FCFDF3</color>
+    <color name="open_bottle_background">#F3FDF6</color>
 
 </resources>
