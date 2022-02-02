@@ -4,6 +4,9 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +39,8 @@ class WriteDialogFragment: DialogFragment() {
         dialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.show()
 
+        binding.editNote.addTextChangedListener(listener1)
+
         binding.btnPush.setOnClickListener {
             getEditNote()
         }
@@ -66,5 +71,29 @@ class WriteDialogFragment: DialogFragment() {
 
     fun setButtonClickListener(buttonClickListener: OnButtonClickListener){ // 클릭 이벤트 객체 설정
         this.onButtonClickListener = buttonClickListener
+    }
+
+    val listener1 = object : TextWatcher {
+        var previousStr = ""
+        override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            previousStr = s.toString()
+        }
+
+        override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            Log.d("초기화 글자 개수", s.toString().length.toString())
+            binding.textWordWrite.setText(binding.editNote.length().toString()+"/100")
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            //val newLine = s.toString().filter { c -> c == '\n' }.count()
+            if(binding.editNote.lineCount >= 7){  // 6줄이 max
+                binding.editNote.setText(previousStr)
+                binding.editNote.setSelection(binding.editNote.length())
+            }
+            //Log.d("초기화 문자열",s.toString()+p3.toString())
+            Log.d("초기화 개행 개수", binding.editNote.lineCount.toString())
+
+        }
+
     }
 }
