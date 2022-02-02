@@ -33,14 +33,14 @@ class FirebaseRepository {
            }
     }
 
-    suspend fun setNoteAdd(textEditNote: String): DocumentSnapshot {
+    suspend fun setNoteAdd(textEditNote: String, type:Int): DocumentSnapshot {
         val dcmRef= LoginStartActivity.db.collection("user").document(userEmail)
         var resultRef:DocumentSnapshot? = null
 
         coroutineScope {
             dcmRef.get().addOnSuccessListener {
                 dcmRef.collection("note").document("${(it.get("numNote") as Long) +1}")
-                    .set(Note(it.get("name") as String, textEditNote, Timestamp.now(),true))
+                    .set(Note(it.get("name") as String, textEditNote, Timestamp.now(),true, type))
             }
         }.await()
 

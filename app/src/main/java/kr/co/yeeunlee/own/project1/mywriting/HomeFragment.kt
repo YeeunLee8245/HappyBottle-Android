@@ -86,10 +86,10 @@ class HomeFragment : Fragment() {
             val firebaseRepo: FirebaseRepository = FirebaseRepository()
             //TODO("다이얼로그 프래그먼트 생성,onClickListener로 정보 넘기기")
             dialog.setButtonClickListener(object : WriteDialogFragment.OnButtonClickListener{
-                override fun onButtonClicked(textEditNote: String) {
+                override fun onButtonClicked(textEditNote: String, type:Int) {
                     CoroutineScope(Dispatchers.Default).launch {
                         // 보틀 업데이트
-                        homeViewModel.setUserSnapshot(firebaseRepo.setNoteAdd(textEditNote))
+                        homeViewModel.setUserSnapshot(firebaseRepo.setNoteAdd(textEditNote, type))
                     }
                 }
             })

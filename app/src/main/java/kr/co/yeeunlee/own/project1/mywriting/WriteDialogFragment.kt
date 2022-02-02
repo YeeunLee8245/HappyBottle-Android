@@ -59,14 +59,14 @@ class WriteDialogFragment: DialogFragment() {
         if (text == ""){
             Toast.makeText(this.context,"내용을 입력해주세요.", Toast.LENGTH_SHORT).show()
         }else{
-            onButtonClickListener.onButtonClicked(text)
+            onButtonClickListener.onButtonClicked(text,CustomConstraintLayout.type)
             dismiss()
         }
     }
 
     interface OnButtonClickListener
     {
-        fun onButtonClicked(textEditNote: String)
+        fun onButtonClicked(textEditNote: String, type:Int)
     }
 
     fun setButtonClickListener(buttonClickListener: OnButtonClickListener){ // 클릭 이벤트 객체 설정
@@ -74,9 +74,7 @@ class WriteDialogFragment: DialogFragment() {
     }
 
     val listener1 = object : TextWatcher {
-        var previousStr = ""
         override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            previousStr = s.toString()
         }
 
         override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -85,12 +83,6 @@ class WriteDialogFragment: DialogFragment() {
         }
 
         override fun afterTextChanged(s: Editable?) {
-            //val newLine = s.toString().filter { c -> c == '\n' }.count()
-            if(binding.editNote.lineCount >= 7){  // 6줄이 max
-                binding.editNote.setText(previousStr)
-                binding.editNote.setSelection(binding.editNote.length())
-            }
-            //Log.d("초기화 문자열",s.toString()+p3.toString())
             Log.d("초기화 개행 개수", binding.editNote.lineCount.toString())
 
         }

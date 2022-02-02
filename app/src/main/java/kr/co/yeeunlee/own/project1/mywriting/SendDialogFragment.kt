@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +37,8 @@ class SendDialogFragment: DialogFragment() {
         dialog?.setCancelable(true)
         dialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.show()
+
+        binding.editNote.addTextChangedListener(listener1)
 
         binding.btnPush.setOnClickListener {
             val text = binding.editNote.text.toString()
@@ -88,5 +92,21 @@ class SendDialogFragment: DialogFragment() {
 
     fun setSendBtnListener(buttonClickListener: SendOnBtnClickListener){
         this.sendOnBtnClickListener = buttonClickListener
+    }
+
+    val listener1 = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            Log.d("초기화 글자 개수", s.toString().length.toString())
+            binding.textWordWrite.setText(binding.editNote.length().toString()+"/100")
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            Log.d("초기화 개행 개수", binding.editNote.lineCount.toString())
+
+        }
+
     }
 }
