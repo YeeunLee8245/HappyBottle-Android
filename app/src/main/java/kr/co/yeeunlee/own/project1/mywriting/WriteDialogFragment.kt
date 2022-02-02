@@ -74,12 +74,26 @@ class WriteDialogFragment: DialogFragment() {
     }
 
     val listener1 = object : TextWatcher {
+        var previousStr = ""
         override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            previousStr = s.toString()
         }
 
         override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
             Log.d("초기화 글자 개수", s.toString().length.toString())
-            binding.textWordWrite.setText(binding.editNote.length().toString()+"/100")
+            binding.textWordWrite.setText((binding.editNote.length()-5).toString()+"/100")
+            Log.d("초기화 문자",s.toString())
+            var str = s.toString()
+            if (str != "") {
+                if (str.substring(str.length-1) == "\n") {
+                    Log.d("초기화 문자2", "true")
+                    val newLine = str.filter { c -> c == '\n'}.count()
+                    if (newLine < 5){
+                        binding.editNote.setText(previousStr+'\n')
+                        binding.textWordWrite.invalidate()
+                    }
+                }
+            }
         }
 
         override fun afterTextChanged(s: Editable?) {
