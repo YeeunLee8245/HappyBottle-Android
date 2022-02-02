@@ -76,9 +76,9 @@ class SendFragment : Fragment() {
             val dialog = SendDialogFragment()
             vaild.value = false
             dialog.setSendBtnListener(object : SendDialogFragment.SendOnBtnClickListener{
-                override fun SendOnBtnClicked(receiver: String, textEditNote: String){
+                override fun SendOnBtnClicked(receiver: String, textEditNote: String, type: Int){
                     CoroutineScope(Dispatchers.Main).launch {
-                        firebaseRepo.setSendNoteAdd(receiver, textEditNote, vaild)
+                        firebaseRepo.setSendNoteAdd(receiver, textEditNote, type, vaild)
                         // 푸시알림 전송
                         Log.d("알림 이름",receiver.toString())
                         val token = firebaseRepo.getToken(receiver.toString())

@@ -51,7 +51,7 @@ class SendDialogFragment: DialogFragment() {
             if(vaild == true){
                 if(text != ""){
                     val receiver = binding.editReceiver.text.toString()
-                    sendOnBtnClickListener.SendOnBtnClicked(receiver, text)
+                    sendOnBtnClickListener.SendOnBtnClicked(receiver, text, CustomConstraintLayout.type)
                     dismiss()
                 }else Toast.makeText(context, "내용을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }else Toast.makeText(context, "사용자 찾기를 완료해주세요.", Toast.LENGTH_SHORT).show()
@@ -87,7 +87,7 @@ class SendDialogFragment: DialogFragment() {
 
     interface SendOnBtnClickListener
     {
-        fun SendOnBtnClicked(receiver: String, textEditNote: String)
+        fun SendOnBtnClicked(receiver: String, textEditNote: String, type: Int)
     }
 
     fun setSendBtnListener(buttonClickListener: SendOnBtnClickListener){

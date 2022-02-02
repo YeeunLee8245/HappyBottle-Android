@@ -119,7 +119,7 @@ class FirebaseRepository {
         return token
     }
 
-    suspend fun setSendNoteAdd(receiver: String, textEditNote: String, vaild:MutableLiveData<Boolean>){
+    suspend fun setSendNoteAdd(receiver: String, textEditNote: String, type: Int, vaild:MutableLiveData<Boolean>){
         var currentDcmRef:DocumentReference = db.collection("user").document(userEmail)
         var dcmRef:DocumentReference? = null
         var userName:String = ""
@@ -139,7 +139,7 @@ class FirebaseRepository {
         coroutineScope {
             dcmRef!!.get().addOnSuccessListener {
                 dcmRef!!.collection("postbox").document("${(it.get("numPost") as Long) +1}")
-                    .set(Note(userName, textEditNote, Timestamp.now(),false))
+                    .set(Note(userName, textEditNote, Timestamp.now(),false, type))
             }
         }.await()
 
