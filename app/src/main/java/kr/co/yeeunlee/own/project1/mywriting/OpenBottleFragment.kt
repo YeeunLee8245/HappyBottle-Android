@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.*
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentOpenBottleBinding
@@ -17,7 +18,7 @@ import kotlin.properties.Delegates
 class OpenBottleFragment : Fragment() {
     private lateinit var binding: FragmentOpenBottleBinding
     private val firebaseRepo = FirebaseRepository()
-    //private val opnBtlViewModel: OpnBtlViewModel by viewModels<OpnBtlViewModel>()
+    private val opnBtlViewModel: OpnBtlViewModel by viewModels<OpnBtlViewModel>()
     private var indexLast by Delegates.notNull<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,17 +35,16 @@ class OpenBottleFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentOpenBottleBinding.inflate(inflater, container, false)
-        initBtn()
+        initBtnRead()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
     }
 
-    private fun initBtn(){
+    fun initBtnRead(){
         val btnLi = arrayListOf<Button>(binding.btn1, binding.btn2, binding.btn3, binding.btn4, binding.btn5)
         for (i in 1..btnLi.size){
             btnLi[i-1].setOnClickListener {
@@ -52,6 +52,7 @@ class OpenBottleFragment : Fragment() {
                 CoroutineScope(Dispatchers.Main).launch {
                     snapshot = firebaseRepo.getOpnNoteSnapshot(indexLast - 5 + i)
                     val dialog = ReadDialogFragment(snapshot!!)
+
                     activity?.supportFragmentManager?.let { fragmentManager ->
                         dialog.show(fragmentManager, "readNote")
                     }

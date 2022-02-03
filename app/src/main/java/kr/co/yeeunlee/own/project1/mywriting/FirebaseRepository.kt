@@ -57,6 +57,14 @@ class FirebaseRepository {
         return resultRef!!
     }
 
+    suspend fun setNoteModify(textEditNote: String, order: String){
+        val dcmRef= LoginStartActivity.db.collection("user").document(userEmail)
+
+        coroutineScope {
+            dcmRef.collection("note").document(order).update("text", textEditNote)
+        }.await()
+
+    }
 
     fun getStorageBottleLi(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
                          , __stgBtSnapLi:ArrayList<BottleList>){
