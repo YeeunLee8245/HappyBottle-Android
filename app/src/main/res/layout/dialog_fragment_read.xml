@@ -38,29 +38,45 @@
             app:layout_constraintGuide_begin="30dp"/>
 
         <ScrollView
+            android:id="@+id/scrollView2"
             android:layout_width="255dp"
             android:layout_height="170dp"
-            app:layout_constraintBottom_toTopOf="@+id/btnPush"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/btnModify"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideMS" >
+            app:layout_constraintRight_toRightOf="parent">
+
             <kr.co.yeeunlee.own.project1.mywriting.CustomEditTextView
                 android:id="@+id/disableEditNote"
                 android:layout_width="255dp"
                 android:layout_height="170dp"
                 android:layout_marginBottom="10dp"
-                android:enabled="false"
-                android:textColor="@drawable/disable_edit_text"
-                android:scrollbars="vertical"
-                android:text="\n\n\n\n\n"
                 android:background="@null"
-                android:maxLength="105"
+                android:enabled="false"
                 android:fontFamily="@font/font_info"
                 android:gravity="top"
                 android:inputType="text|textMultiLine"
+                android:maxLength="105"
+                android:scrollbars="vertical"
+                android:text="\n\n\n\n\n"
                 android:textAlignment="gravity"
+                android:textColor="@drawable/disable_edit_text"
                 android:textSize="28.3dp" />
         </ScrollView>
+
+        <TextView
+            android:id="@+id/textTime"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="15dp"
+            android:textAlignment="textEnd"
+            android:fontFamily="@font/font_info"
+            android:text="2022년\n02월 04일 씀"
+            android:textSize="20dp"
+            android:textColor="@color/darkgreen"
+            app:layout_constraintBottom_toBottomOf="@+id/btnModify"
+            app:layout_constraintEnd_toStartOf="@+id/btnModify"
+            app:layout_constraintTop_toTopOf="@+id/btnModify" />
 
         <Button
             android:id="@+id/btnModify"
