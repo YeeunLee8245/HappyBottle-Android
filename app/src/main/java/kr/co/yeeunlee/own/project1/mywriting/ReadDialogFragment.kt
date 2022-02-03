@@ -26,6 +26,9 @@ class ReadDialogFragment(var snapshot: DocumentSnapshot): DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = DialogFragmentReadBinding.inflate(inflater, container, false)
+        binding.customLayout.changeBackground(snapshot.get("type").toString().toInt())
+        binding.disableEditNote.invalidate()
+
         dialog?.window!!.setLayout(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT
@@ -35,7 +38,7 @@ class ReadDialogFragment(var snapshot: DocumentSnapshot): DialogFragment() {
         dialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.show()
 
-        binding.textNote.text = snapshot.get("text").toString()
+        binding.disableEditNote.setText(snapshot.get("text").toString())
         binding.btnCancle.setOnClickListener { dismiss() }
 
         return binding.root

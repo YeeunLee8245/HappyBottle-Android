@@ -51,6 +51,7 @@ class SendDialogFragment: DialogFragment() {
             if(vaild == true){
                 if(text != ""){
                     val receiver = binding.editReceiver.text.toString()
+                    Log.d("타입",CustomConstraintLayout.type.toString())
                     sendOnBtnClickListener.SendOnBtnClicked(receiver, text, CustomConstraintLayout.type)
                     dismiss()
                 }else Toast.makeText(context, "내용을 입력해주세요.", Toast.LENGTH_SHORT).show()

@@ -1,68 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="322dp"
-    android:layout_height="290dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="4dp"
     android:layout_gravity="center"
     app:cardCornerRadius="8dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textNote"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
-            android:lines="7"
-            android:maxLines="3"
-            app:layout_constraintBottom_toTopOf="@+id/btnModify"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <kr.co.yeeunlee.own.project1.mywriting.CustomConstraintLayout
+        android:id="@+id/customLayout"
+        android:layout_width="300dp"
+        android:layout_height="272dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!--여러줄 만드려면 어쩔 수 없이 onDraw 써야할듯-->
+        <!--        <EditText-->
+        <!--            android:id="@+id/editNote"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_margin="10dp"-->
+        <!--            android:text=""-->
+        <!--            android:background="@drawable/edit_write"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideMS"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="30dp"/>
+
+        <ScrollView
+            android:layout_width="255dp"
+            android:layout_height="170dp"
+            app:layout_constraintBottom_toTopOf="@+id/btnPush"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideMS" >
+            <kr.co.yeeunlee.own.project1.mywriting.CustomEditTextView
+                android:id="@+id/disableEditNote"
+                android:layout_width="255dp"
+                android:layout_height="170dp"
+                android:layout_marginBottom="10dp"
+                android:enabled="false"
+                android:textColor="@drawable/disable_edit_text"
+                android:scrollbars="vertical"
+                android:text="\n\n\n\n\n"
+                android:background="@null"
+                android:maxLength="105"
+                android:fontFamily="@font/font_info"
+                android:gravity="top"
+                android:inputType="text|textMultiLine"
+                android:textAlignment="gravity"
+                android:textSize="28.3dp" />
+        </ScrollView>
 
         <Button
             android:id="@+id/btnModify"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="수정"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/btn_modify"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/btnLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="왼쪽"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnModify"
-            />
-
-        <Button
-            android:id="@+id/btnRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="오른쪽"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnModify" />
+            app:layout_constraintEnd_toStartOf="@+id/btnCancle" />
 
         <Button
             android:id="@+id/btnCancle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="닫기"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/btn_cancle"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/btnRight"
-            app:layout_constraintStart_toStartOf="@+id/btnLeft"
-            app:layout_constraintTop_toBottomOf="@+id/btnModify" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </kr.co.yeeunlee.own.project1.mywriting.CustomConstraintLayout>
 
-</androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
