@@ -22,6 +22,10 @@ import java.util.*
 data class User(var name:String, var email:String, var vaildPassWord:Boolean
 , var password:String?, val numNote: Int, val numPost: Int, var token:String) : Parcelable
 
+//data class BottleList(var first: Bottle = Bottle(), var second: Bottle = Bottle(), var third: Bottle = Bottle()){
+//    data class Bottle(var enable: Int? = null, var order: Int? = null)
+//}
+
 // 글 등록
 data class Note(val name: String="", val text: String="", val time: Timestamp= Timestamp.now(), val check: Boolean=false, val type: Int=0){
      init {
