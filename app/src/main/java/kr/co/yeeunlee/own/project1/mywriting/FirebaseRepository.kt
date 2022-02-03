@@ -110,9 +110,9 @@ class FirebaseRepository {
                         if (document["token"].toString() != token){
                             Log.d("서비스 토큰 변경", "토큰 변경")
                             db.collection("user").document(userEmail).update("token",token)
+                            return@addSnapshotListener
                         }else
                             Log.d("서비스 토큰 변경X", "토큰 변경X")
-
                     }
             }
         }.await()

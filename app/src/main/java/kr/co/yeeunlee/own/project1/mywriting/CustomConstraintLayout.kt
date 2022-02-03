@@ -10,9 +10,9 @@ class CustomConstraintLayout(context:Context, attrs:AttributeSet) : ConstraintLa
         var vaildLine = true
         var type:Int = 0
     }
-    private val background = arrayListOf(R.drawable.memo_blue, R.drawable.memo_pink, R.drawable.memo_six_blue
-        , R.drawable.memo_six_pink, R.drawable.memo_six_yellow, R.drawable.memo_yellow, R.drawable.post_blue
-        , R.drawable.post_pink, R.drawable.post_yellow)
+    private val background = arrayListOf(R.drawable.memo_blue, R.drawable.memo_pink, R.drawable.memo_yellow
+        , R.drawable.memo_six_blue, R.drawable.memo_six_pink, R.drawable.memo_six_yellow
+        , R.drawable.post_blue, R.drawable.post_pink, R.drawable.post_yellow)
     init {
         Log.d("초기화2","2")
         //TODO(랜덤으로 배경 초기화)
@@ -20,5 +20,11 @@ class CustomConstraintLayout(context:Context, attrs:AttributeSet) : ConstraintLa
         type = idx
         vaildLine = idx < 6 //  true/false
         setBackgroundResource(background[idx])
+    }
+
+    fun changeBackground(i:Int){
+        setBackgroundResource(background[i])
+        type = i
+        vaildLine = i < 6
     }
 }

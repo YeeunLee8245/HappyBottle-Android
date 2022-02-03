@@ -61,4 +61,6 @@ class OpenBottleFragment : Fragment() {
         }
     }
 
+    //TODO("뒤로가기시 보관함 창(프래그먼트로) 가기")
+
 }

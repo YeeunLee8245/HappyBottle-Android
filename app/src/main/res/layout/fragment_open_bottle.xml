@@ -77,6 +77,8 @@
                     android:id="@+id/btn6"
                     android:layout_width="90dp"
                     android:layout_height="109dp"
+                    android:enabled="false"
+                    android:visibility="invisible"
                     android:background="@drawable/mail_purple"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

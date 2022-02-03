@@ -41,6 +41,7 @@
             android:layout_width="255dp"
             android:layout_height="170dp"
             android:layout_marginBottom="10dp"
+            android:textColor="@color/black"
             android:text="\n\n\n\n\n"
             android:background="@null"
             android:maxLength="105"
