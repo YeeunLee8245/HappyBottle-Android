@@ -67,6 +67,9 @@ class StorageFragment : Fragment() {
             val btnBottle1 = view.btnBottle1
             val btnBottle2 = view.btnBottle2
             val btnBottle3 = view.btnBottle3
+            val text1 = view.text1
+            val text2 = view.text2
+            val text3 = view.text3
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -83,6 +86,7 @@ class StorageFragment : Fragment() {
                         btnBottle1.visibility = View.INVISIBLE
                         btnBottle1.isEnabled = false
                     }else{
+                        text1.setText((item.first!!/5).toString())
                         btnBottle1.setOnClickListener {
                             (activity as MainActivity).changeOpnBtlFragment(item.first!!)
                         }
@@ -91,6 +95,7 @@ class StorageFragment : Fragment() {
                         btnBottle2.visibility = View.INVISIBLE
                         btnBottle2.isEnabled = false
                     }else{
+                        text2.setText((item.second!!/5).toString())
                         btnBottle2.setOnClickListener {
                             (activity as MainActivity).changeOpnBtlFragment(item.second!!)
                         }
@@ -99,6 +104,7 @@ class StorageFragment : Fragment() {
                         btnBottle3.visibility = View.INVISIBLE
                         btnBottle3.isEnabled = false
                     }else{
+                        text3.setText((item.third!!/5).toString())
                         btnBottle3.setOnClickListener {
                             (activity as MainActivity).changeOpnBtlFragment(item.third!!)
                         }
