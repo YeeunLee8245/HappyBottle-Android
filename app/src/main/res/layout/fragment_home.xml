@@ -10,34 +10,32 @@
     <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toTopOf="@+id/guideHNavi"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/boxProfile"
-            android:layout_width="0dp"
-            android:layout_height="82dp"
+            android:layout_width="280dp"
+            android:layout_height="90dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/box_profile"
-            app:layout_constraintBottom_toTopOf="@+id/guidePT"
-            app:layout_constraintEnd_toStartOf="@+id/guidePR"
-            app:layout_constraintRight_toLeftOf="@+id/btnSetting"
-            app:layout_constraintStart_toStartOf="@+id/guidePL"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidePL"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.1" />
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidePR"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.8" />
+<!--        <androidx.constraintlayout.widget.Guideline-->
+<!--            android:id="@+id/guidePL"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            app:layout_constraintGuide_percent="0.15" />-->
+<!--        <androidx.constraintlayout.widget.Guideline-->
+<!--            android:id="@+id/guidePR"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            app:layout_constraintGuide_percent="0.85" />-->
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgUser"
@@ -54,6 +52,9 @@
             android:layout_width="117dp"
             android:layout_height="25dp"
             android:text="닉네임일곱자리"
+            android:textSize="20dp"
+            android:textColor="@color/darkgreen"
+            android:fontFamily="@font/font_info"
             android:gravity="center"
             android:paddingLeft="10dp"
             android:paddingRight="5dp"
@@ -68,73 +69,64 @@
             android:layout_height="20dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/btn_modify"
-            app:layout_constraintEnd_toStartOf="@+id/guidePR"
-            app:layout_constraintLeft_toRightOf="@id/txtName"
+            app:layout_constraintEnd_toEndOf="@+id/boxProfile"
             app:layout_constraintTop_toTopOf="@+id/txtName" />
 
 
-        <TextView
+        <EditText
             android:id="@+id/txtStatus"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="40dp"
             android:layout_margin="5dp"
+            android:gravity="left|center"
+            android:background="@null"
+            android:enabled="false"
+            android:maxLines="1"
+            android:maxLength="15"
+            android:inputType="text"
+            android:fontFamily="@font/font_info"
+            android:textColor="@drawable/edit_text_profile"
+            android:textSize="25dp"
             app:layout_constraintBottom_toBottomOf="@+id/boxProfile"
-            app:layout_constraintEnd_toStartOf="@+id/guidePR"
-            app:layout_constraintStart_toEndOf="@+id/imgUser"
+            app:layout_constraintEnd_toEndOf="@+id/boxProfile"
+            app:layout_constraintStart_toStartOf="@+id/txtName"
             app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
         <Button
             android:id="@+id/btnSetting"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:background="@drawable/btn_setting"
-            app:layout_constraintStart_toEndOf="@+id/boxProfile"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/boxProfile" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidePT"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="124dp" />
 
         <TextView
             android:id="@+id/textBottle"
             android:layout_width="200dp"
             android:layout_height="284dp"
             android:background="@drawable/bottle_0"
+            android:fontFamily="@font/font_info"
             android:paddingTop="130dp"
             android:text="0/30"
             android:textAlignment="center"
             android:textColor="#0F4A0A"
-            android:fontFamily="@font/font_info"
             android:textSize="80dp"
             app:layout_constraintBottom_toTopOf="@+id/btnWrite"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guidePT" />
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideWBT"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.8"/>
+            app:layout_constraintTop_toBottomOf="@+id/boxProfile" />
+
         <Button
             android:id="@+id/btnWrite"
             android:layout_width="95dp"
             android:layout_height="96dp"
+            android:layout_marginBottom="65dp"
             android:background="@drawable/btn_write_home"
-            app:layout_constraintBottom_toTopOf="@+id/guideWBB"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideWBT" />
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideWBB"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.94"/>
+            app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
