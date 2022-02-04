@@ -67,9 +67,9 @@
         <TextView
             android:id="@+id/textTime"
             android:layout_width="100dp"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:layout_marginRight="15dp"
-            android:textAlignment="textEnd"
+            android:gravity="center|right"
             android:fontFamily="@font/font_info"
             android:text="2022년\n02월 04일 씀"
             android:textSize="20dp"

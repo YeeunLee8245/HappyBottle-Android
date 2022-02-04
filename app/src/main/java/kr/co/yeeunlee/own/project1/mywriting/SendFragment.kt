@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,7 +23,9 @@ class SendFragment : Fragment() {
     private val firebaseRepo = FirebaseRepository()
     private val sendViewModel: SendViewModel by viewModels<SendViewModel>()
     // 전역 부분에 뷰모델에 접근하는 코드 넣으면 안됨(뷰모델은 프래그먼트가 detached된 상태에서 접근 불가)
-
+    companion object{
+        var deletePosition: Int? = null
+    }
     init {
         vaild.value = false
     }
@@ -66,7 +67,15 @@ class SendFragment : Fragment() {
         }
         sendAdapter.setItemClickListener(object : SendAdapter.OnItemClickListener{
             override fun onItemClick(v: View, position: Int) {
-                
+                val checkPost = sendViewModel.checkPost
+                deletePosition = position
+
+                Log.d("보내기 아이디",(checkPost.value!!.size - position).toString())
+                val dialog = SendReadDialogFragment(checkPost.value!![position]
+                    , (checkPost.value!!.size - position), checkPost, this@SendFragment)
+                activity?.supportFragmentManager?.let { fragmentManager ->
+                    dialog.show(fragmentManager, "sendReadNote")
+                }
             }
         })
     }
@@ -86,7 +95,7 @@ class SendFragment : Fragment() {
             dialog.setSendBtnListener(object : SendDialogFragment.SendOnBtnClickListener{
                 override fun SendOnBtnClicked(receiver: String, textEditNote: String, type: Int){
                     CoroutineScope(Dispatchers.Main).launch {
-                        firebaseRepo.setSendNoteAdd(receiver, textEditNote, type, vaild)
+                        firebaseRepo.setPostNoteAdd(receiver, textEditNote, type, vaild)
                         // 푸시알림 전송
                         Log.d("알림 이름",receiver.toString())
                         val token = firebaseRepo.getToken(receiver.toString())

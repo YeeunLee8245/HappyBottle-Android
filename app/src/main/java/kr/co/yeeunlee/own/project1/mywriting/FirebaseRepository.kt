@@ -33,14 +33,20 @@ class FirebaseRepository {
            }
     }
 
-    suspend fun setNoteAdd(textEditNote: String, type:Int): DocumentSnapshot {
+    suspend fun setNoteAdd(textEditNote: String, type:Int, post:Note?=null): DocumentSnapshot {
         val dcmRef= LoginStartActivity.db.collection("user").document(userEmail)
         var resultRef:DocumentSnapshot? = null
 
         coroutineScope {
             dcmRef.get().addOnSuccessListener {
-                dcmRef.collection("note").document("${(it.get("numNote") as Long) +1}")
-                    .set(Note(it.get("name") as String, textEditNote, Timestamp.now(),true, type))
+                if (post == null) {
+                    dcmRef.collection("note").document("${(it.get("numNote") as Long) +1}")
+                        .set(Note(it.get("name") as String, textEditNote, Timestamp.now(),true, type, false))
+                }
+                else{
+                    dcmRef.collection("note").document("${(it.get("numNote") as Long) +1}")
+                        .set(Note(post.name, post.text, post.time,true, post.type, true))
+                }
             }
         }.await()
 
@@ -127,7 +133,7 @@ class FirebaseRepository {
         return token
     }
 
-    suspend fun setSendNoteAdd(receiver: String, textEditNote: String, type: Int, vaild:MutableLiveData<Boolean>){
+    suspend fun setPostNoteAdd(receiver: String, textEditNote: String, type: Int, vaild:MutableLiveData<Boolean>){
         var currentDcmRef:DocumentReference = db.collection("user").document(userEmail)
         var dcmRef:DocumentReference? = null
         var userName:String = ""
@@ -146,8 +152,9 @@ class FirebaseRepository {
 
         coroutineScope {
             dcmRef!!.get().addOnSuccessListener {
-                dcmRef!!.collection("postbox").document("${(it.get("numPost") as Long) +1}")
-                    .set(Note(userName, textEditNote, Timestamp.now(),false, type))
+                val timeNow = Timestamp.now()
+                dcmRef!!.collection("postbox").document("${timeNow}")
+                    .set(Note(userName, textEditNote, timeNow,false, type, true))
             }
         }.await()
 
@@ -155,6 +162,18 @@ class FirebaseRepository {
             dcmRef!!.update("numPost", FieldValue.increment(1)).addOnSuccessListener {
                 vaild.value = true
             }
+        }.await()
+    }
+
+    suspend fun deletePostNote(note:Note){
+        val dcmRef:DocumentReference = db.collection("user").document(userEmail)
+
+        coroutineScope {
+            dcmRef.collection("postbox").document(note.time.toString()).delete()
+        }.await()
+
+        coroutineScope {
+            dcmRef.update("numPost", FieldValue.increment(-1))
         }.await()
     }
 
@@ -167,14 +186,25 @@ class FirebaseRepository {
             .orderBy("time", Query.Direction.ASCENDING).addSnapshotListener { querySnapshot, _ ->
                 if (querySnapshot == null) return@addSnapshotListener
 
-                for( dcm in querySnapshot.documentChanges){
-                    if (dcm.type == DocumentChange.Type.ADDED){
+                querySnapshot.documentChanges.forEachIndexed { i, dcm ->
+                    if (dcm.type == DocumentChange.Type.ADDED) {
                         var post = dcm.document.toObject(Note::class.java)
-                        Log.d("데이터 변경",post.toString())
-                        __checkPost.add(0,post)
+                        Log.d("데이터 변경", post.toString())
+                        __checkPost.add(0, post)
                     }
+                    if (SendFragment.deletePosition != null) {
+                        if (dcm.type == DocumentChange.Type.REMOVED) {
+                            dcm.document.get("time").toString()
+                            //Log.d("데이터 삭제", "${deletenote}")
+                            __checkPost.removeAt(SendFragment.deletePosition!!)
+                            SendFragment.deletePosition = null
+                        }
+                    }
+//                for( dcm in querySnapshot.documentChanges){
+//
+//                }
+                    _checkPost.value = __checkPost
                 }
-                _checkPost.value = __checkPost
             }
     }
 
