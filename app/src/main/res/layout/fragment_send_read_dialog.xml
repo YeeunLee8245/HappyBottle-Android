@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="4dp"
@@ -67,14 +67,13 @@
         <TextView
             android:id="@+id/textTime"
             android:layout_width="100dp"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:layout_marginRight="15dp"
-            android:textAlignment="textEnd"
             android:fontFamily="@font/font_info"
-            android:text="2022년\n02월 04일 씀"
-            android:textSize="20dp"
+            android:text="2022년\n02월 04일\n누구누구누구누가 보냄"
+            android:textAlignment="textEnd"
             android:textColor="@color/darkgreen"
-            app:layout_constraintBottom_toBottomOf="@+id/btnModify"
+            android:textSize="20dp"
             app:layout_constraintEnd_toStartOf="@+id/btnModify"
             app:layout_constraintTop_toTopOf="@+id/btnModify" />
 
@@ -84,7 +83,7 @@
             android:layout_height="40dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="20dp"
-            android:background="@drawable/btn_modify"
+            android:background="@drawable/btn_check"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnCancle" />
 
@@ -94,30 +93,10 @@
             android:layout_height="40dp"
             android:layout_marginRight="25dp"
             android:layout_marginBottom="20dp"
-            android:background="@drawable/btn_cancle"
+            android:background="@drawable/btn_delete"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
     </kr.co.yeeunlee.own.project1.mywriting.CustomConstraintLayout>
-
-    <Button
-        android:id="@+id/btnLeft"
-        android:layout_width="25dp"
-        android:layout_height="36.4dp"
-        android:layout_marginRight="5dp"
-        android:background="@drawable/btn_left"
-        app:layout_constraintBottom_toBottomOf="@+id/customLayout"
-        app:layout_constraintEnd_toStartOf="@+id/customLayout"
-        app:layout_constraintTop_toTopOf="@+id/customLayout" />
-
-    <Button
-        android:id="@+id/btnRight"
-        android:layout_width="25dp"
-        android:layout_height="36.4dp"
-        android:layout_marginLeft="5dp"
-        android:background="@drawable/btn_right"
-        app:layout_constraintBottom_toBottomOf="@+id/customLayout"
-        app:layout_constraintStart_toEndOf="@+id/customLayout"
-        app:layout_constraintTop_toTopOf="@+id/customLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
