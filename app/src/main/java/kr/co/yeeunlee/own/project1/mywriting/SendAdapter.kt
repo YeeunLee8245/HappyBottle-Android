@@ -29,6 +29,9 @@ class SendAdapter(private var postLi: ArrayList<Note>)
                 txtFromName.text = item.name
                 txtPreview.text = if(item.text.length < 8) item.text
                 else item.text.substring(0,7) + "..."
+                itemView.setOnClickListener {
+                    itemClickListener.onItemClick(it, position)
+                }
             }
         }
     }
@@ -41,4 +44,14 @@ class SendAdapter(private var postLi: ArrayList<Note>)
         postLi = newData
         notifyDataSetChanged()
     }
+
+    interface OnItemClickListener{
+        fun onItemClick(v: View, position: Int)
+    }
+
+    fun setItemClickListener(onItemClickListener: OnItemClickListener){
+        this.itemClickListener = onItemClickListener
+    }
+
+    private lateinit var itemClickListener: OnItemClickListener
 }

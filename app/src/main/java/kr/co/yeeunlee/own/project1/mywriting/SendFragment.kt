@@ -23,6 +23,7 @@ class SendFragment : Fragment() {
     private var vaild = MutableLiveData<Boolean>()
     private val firebaseRepo = FirebaseRepository()
     private val sendViewModel: SendViewModel by viewModels<SendViewModel>()
+    // 전역 부분에 뷰모델에 접근하는 코드 넣으면 안됨(뷰모델은 프래그먼트가 detached된 상태에서 접근 불가)
 
     init {
         vaild.value = false
@@ -46,6 +47,8 @@ class SendFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val sendAdapter:SendAdapter = SendAdapter(sendViewModel.checkPost.value!!)
+
         Log.d("Recreate","재배치")
         vaild.observe(viewLifecycleOwner){
             checkVaild(it)
@@ -57,10 +60,15 @@ class SendFragment : Fragment() {
 //            initSend(it)
 //        }
         binding.recyclerSend.layoutManager = LinearLayoutManager(context)
-        binding.recyclerSend.adapter = SendAdapter(sendViewModel.checkPost.value!!)
+        binding.recyclerSend.adapter = sendAdapter
         sendViewModel.checkPost.observe(viewLifecycleOwner){
             (binding.recyclerSend.adapter as SendAdapter).setData(it)
         }
+        sendAdapter.setItemClickListener(object : SendAdapter.OnItemClickListener{
+            override fun onItemClick(v: View, position: Int) {
+                
+            }
+        })
     }
 
     override fun onResume() {
