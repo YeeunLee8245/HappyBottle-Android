@@ -42,7 +42,7 @@
             android:layout_width="255dp"
             android:layout_height="170dp"
             android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/btnModify"
+            app:layout_constraintBottom_toTopOf="@+id/btnSave"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
 
@@ -70,25 +70,26 @@
             android:layout_height="60dp"
             android:layout_marginRight="15dp"
             android:fontFamily="@font/font_info"
+            android:gravity="center|right"
             android:text="2022년\n02월 04일\n누구누구누구누가 보냄"
-            android:textAlignment="textEnd"
             android:textColor="@color/darkgreen"
             android:textSize="20dp"
-            app:layout_constraintEnd_toStartOf="@+id/btnModify"
-            app:layout_constraintTop_toTopOf="@+id/btnModify" />
+            app:layout_constraintBottom_toBottomOf="@+id/btnSave"
+            app:layout_constraintEnd_toStartOf="@+id/btnSave"
+            app:layout_constraintTop_toTopOf="@+id/btnSave" />
 
         <Button
-            android:id="@+id/btnModify"
+            android:id="@+id/btnSave"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/btn_check"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnCancle" />
+            app:layout_constraintEnd_toStartOf="@+id/btnDelete" />
 
         <Button
-            android:id="@+id/btnCancle"
+            android:id="@+id/btnDelete"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginRight="25dp"

@@ -60,7 +60,8 @@ class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: 
             binding.btnLeft.visibility = View.INVISIBLE
         }
 
-        transTime()
+        val tp:String = transTime()+vaildPost()
+        binding.textTime.setText(tp)
         binding.disableEditNote.setText(currentSnapshot.get("text").toString())
         binding.btnModify.setOnClickListener {
             if (binding.disableEditNote.isEnabled == true)
@@ -104,14 +105,14 @@ class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: 
 
     }
 
-    private fun transTime(){
+    private fun transTime():String{
         val time = currentSnapshot.get("time") as Timestamp
         val milliseconds = time.seconds * 1000 + time.nanoseconds / 1000000
         val sdf = SimpleDateFormat("yyyy년\nMM월 dd일 씀", Locale.KOREA)
         val netDate = Date(milliseconds)
         val date = sdf.format(netDate).toString()
-        binding.textTime.setText(date)
         Log.d("수정 날짜", date)
+        return date
     }
 
     private fun descendOrder(){
@@ -133,7 +134,8 @@ class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: 
             binding.customLayout.changeBackground(currentSnapshot.get("type").toString().toInt())
             binding.disableEditNote.invalidate()
             binding.disableEditNote.setText(currentSnapshot.get("text").toString())
-            transTime()
+            val tp:String = transTime()+vaildPost()
+            binding.textTime.setText(tp)
         }
 
     }
@@ -157,9 +159,17 @@ class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: 
             binding.customLayout.changeBackground(currentSnapshot.get("type").toString().toInt())
             binding.disableEditNote.invalidate()
             binding.disableEditNote.setText(currentSnapshot.get("text").toString())
-            transTime()
+            val tp:String = transTime()+vaildPost()
+            binding.textTime.setText(tp)
         }
 
+    }
+
+    private fun vaildPost(): String{
+        if (true == (currentSnapshot.get("post") as Boolean)){
+            return '\n'+currentSnapshot.get("name").toString() + " 보냄"
+        }
+        return ""
     }
 
 }
