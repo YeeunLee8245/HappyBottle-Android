@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.*
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentOpenBottleBinding
@@ -19,13 +18,13 @@ class OpenBottleFragment : Fragment() {
     private lateinit var binding: FragmentOpenBottleBinding
     private val firebaseRepo = FirebaseRepository()
     private val opnBtlViewModel: OpnBtlViewModel by viewModels<OpnBtlViewModel>()
-    private var indexLast by Delegates.notNull<Int>()
+    private var orderLast by Delegates.notNull<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFragmentResultListener("requestKey"){ requestKey, bundle ->
-            indexLast = bundle.getInt("bundleKey")
-            Log.d("번들 키 값", indexLast.toString())
+            orderLast = bundle.getInt("bundleKey")
+            Log.d("번들 키 값", orderLast.toString())
         }
     }
 
@@ -50,8 +49,8 @@ class OpenBottleFragment : Fragment() {
             btnLi[i-1].setOnClickListener {
                 var snapshot: DocumentSnapshot? = null
                 CoroutineScope(Dispatchers.Main).launch {
-                    snapshot = firebaseRepo.getOpnNoteSnapshot(indexLast - 5 + i)
-                    val dialog = ReadDialogFragment(snapshot!!)
+                    snapshot = firebaseRepo.getOpnNoteSnapshot(orderLast - 5 + i) //10 - 5 + 1 = 6
+                    val dialog = ReadDialogFragment(snapshot!!, orderLast-4)
 
                     activity?.supportFragmentManager?.let { fragmentManager ->
                         dialog.show(fragmentManager, "readNote")

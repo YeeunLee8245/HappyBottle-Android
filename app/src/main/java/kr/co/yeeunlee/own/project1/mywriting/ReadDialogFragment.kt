@@ -16,17 +16,16 @@ import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
 import kr.co.yeeunlee.own.project1.mywriting.databinding.DialogFragmentReadBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ReadDialogFragment(var snapshot: DocumentSnapshot)
+class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: Int)
     : DialogFragment() {
     private var _binding: DialogFragmentReadBinding? = null
     private val binding get() = _binding!!
+    private val orderLast = orderStart + 4
+    private var currentOrder:Int = currentSnapshot.id.toInt()
     //private lateinit var readOnBtnClickListener:
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,14 +38,8 @@ class ReadDialogFragment(var snapshot: DocumentSnapshot)
         savedInstanceState: Bundle?
     ): View? {
         _binding = DialogFragmentReadBinding.inflate(inflater, container, false)
-        val time = snapshot.get("time") as Timestamp
-        val milliseconds = time.seconds * 1000 + time.nanoseconds / 1000000
-        val sdf = SimpleDateFormat("yyyy년\nMM월 dd일 씀", Locale.KOREA)
-        val netDate = Date(milliseconds)
-        val date = sdf.format(netDate).toString()
-        Log.d("수정 날짜", date)
 
-        binding.customLayout.changeBackground(snapshot.get("type").toString().toInt())
+        binding.customLayout.changeBackground(currentSnapshot.get("type").toString().toInt())
         binding.disableEditNote.invalidate()
 
         dialog?.window!!.setLayout(
@@ -58,8 +51,17 @@ class ReadDialogFragment(var snapshot: DocumentSnapshot)
         dialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.show()
 
-        binding.disableEditNote.setText(snapshot.get("text").toString())
-        binding.textTime.setText(date)
+        if (currentOrder == orderLast) {
+            binding.btnRight.isEnabled = false
+            binding.btnRight.visibility = View.INVISIBLE
+        }
+        else if (currentOrder == orderStart){
+            binding.btnLeft.isEnabled = false
+            binding.btnLeft.visibility = View.INVISIBLE
+        }
+
+        transTime()
+        binding.disableEditNote.setText(currentSnapshot.get("text").toString())
         binding.btnModify.setOnClickListener {
             if (binding.disableEditNote.isEnabled == true)
                 completeText()
@@ -67,6 +69,9 @@ class ReadDialogFragment(var snapshot: DocumentSnapshot)
                 modifyText()
         }
         binding.btnCancle.setOnClickListener { dismiss() }
+
+        binding.btnLeft.setOnClickListener { descendOrder() }
+        binding.btnRight.setOnClickListener { ascendOrder() }
 
         return binding.root
     }
@@ -94,7 +99,65 @@ class ReadDialogFragment(var snapshot: DocumentSnapshot)
 
         //TODO("수정된 데이터 보내기")
         CoroutineScope(Dispatchers.Main).launch {
-            fireRepo.setNoteModify(binding.disableEditNote.text.toString(), snapshot!!.id)
+            fireRepo.setNoteModify(binding.disableEditNote.text.toString(), currentSnapshot!!.id)
+        }
+
+    }
+
+    private fun transTime(){
+        val time = currentSnapshot.get("time") as Timestamp
+        val milliseconds = time.seconds * 1000 + time.nanoseconds / 1000000
+        val sdf = SimpleDateFormat("yyyy년\nMM월 dd일 씀", Locale.KOREA)
+        val netDate = Date(milliseconds)
+        val date = sdf.format(netDate).toString()
+        binding.textTime.setText(date)
+        Log.d("수정 날짜", date)
+    }
+
+    private fun descendOrder(){
+        val fireRepo = FirebaseRepository()
+        currentOrder -= 1
+        if (currentOrder == orderStart) {
+            binding.btnLeft.isEnabled = false
+            binding.btnLeft.visibility = View.INVISIBLE
+        }
+        else{
+            binding.btnLeft.isEnabled = true
+            binding.btnLeft.visibility = View.VISIBLE
+            binding.btnRight.isEnabled = true
+            binding.btnRight.visibility = View.VISIBLE
+        }
+        CoroutineScope(Dispatchers.Main).launch {
+            val changeSnapshot:DocumentSnapshot = fireRepo.getOpnNoteSnapshot(currentOrder)
+            currentSnapshot = changeSnapshot
+            binding.customLayout.changeBackground(currentSnapshot.get("type").toString().toInt())
+            binding.disableEditNote.invalidate()
+            binding.disableEditNote.setText(currentSnapshot.get("text").toString())
+            transTime()
+        }
+
+    }
+
+    private fun ascendOrder(){
+        val fireRepo = FirebaseRepository()
+        currentOrder += 1
+        if (currentOrder == orderLast) {
+            binding.btnRight.isEnabled = false
+            binding.btnRight.visibility = View.INVISIBLE
+        }
+        else{
+            binding.btnRight.isEnabled = true
+            binding.btnRight.visibility = View.VISIBLE
+            binding.btnLeft.isEnabled = true
+            binding.btnLeft.visibility = View.VISIBLE
+        }
+        CoroutineScope(Dispatchers.Main).launch {
+            val changeSnapshot:DocumentSnapshot = fireRepo.getOpnNoteSnapshot(currentOrder)
+            currentSnapshot = changeSnapshot
+            binding.customLayout.changeBackground(currentSnapshot.get("type").toString().toInt())
+            binding.disableEditNote.invalidate()
+            binding.disableEditNote.setText(currentSnapshot.get("text").toString())
+            transTime()
         }
 
     }
