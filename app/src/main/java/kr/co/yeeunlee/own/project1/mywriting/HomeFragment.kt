@@ -1,5 +1,6 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
@@ -26,8 +28,16 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var googleSignInClient: GoogleSignInClient
     private val homeViewModel: HomeViewModel by viewModels<HomeViewModel>()
-    private val imgBottle = arrayListOf(R.drawable.bottle_50, R.drawable.bottle_70, R.drawable.bottle_100)
+    private val imgBottle = arrayListOf(R.drawable.bottle_0,R.drawable.bottle_1,R.drawable.bottle_2,
+        R.drawable.bottle_3,R.drawable.bottle_4,R.drawable.bottle_5,R.drawable.bottle_6,
+        R.drawable.bottle_7,R.drawable.bottle_8,R.drawable.bottle_9,R.drawable.bottle_10,
+        R.drawable.bottle_11,R.drawable.bottle_12,R.drawable.bottle_13,R.drawable.bottle_14,
+        R.drawable.bottle_15,R.drawable.bottle_16,R.drawable.bottle_17,R.drawable.bottle_18,
+        R.drawable.bottle_19,R.drawable.bottle_20,R.drawable.bottle_21,R.drawable.bottle_22,
+        R.drawable.bottle_23,R.drawable.bottle_24,R.drawable.bottle_25,R.drawable.bottle_26,
+        R.drawable.bottle_27,R.drawable.bottle_28,R.drawable.bottle_29,R.drawable.bottle_30,)
     private val userEmail = LoginStartActivity.mAuth.currentUser?.email.toString()
+    private var vaildModify:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +67,12 @@ class HomeFragment : Fragment() {
         homeViewModel.userSnapshot.observe(viewLifecycleOwner){
             initUserView(it)
         }
+
+        binding.btnModify.setOnClickListener {
+            if (vaildModify == false)
+                modifyStatus()
+            else completeStatus()
+        }
 //        homeViewModel.noteSnapshot.observe(viewLifecycleOwner){
 //            initBottleView(it)  // 데이터 변경시 보틀 상태 데이터와 UI 업데이트
 //        }
@@ -64,20 +80,16 @@ class HomeFragment : Fragment() {
 
     private fun initUserView(snapshot: DocumentSnapshot){
         val num = snapshot["numNote"].toString().toInt()
+        val numMemo = num%30
+        val strMemo = "$numMemo/30"
         binding.apply {
 //            imgUser.text = if (snapshot["img"] == null) "프로필 나중에 추가" else "널이여야만 함"
             txtName.text = snapshot["name"].toString()
-            txtStatus.text = if (snapshot["status"]== null) "상메 나중에 추가" else "널이여야만 함"
+            txtStatus.setText(if (snapshot["status"]== null) "상메 나중에 추가" else "널이여야만 함")
         }
         Log.d("bottle",num.toString())
-//        when (num%5){
-//            in 0..1 -> binding..setImageResource(imgBottle[0])
-//            in 2..3 -> {
-//                binding.imgBottle.setImageResource(imgBottle[1])
-//                Log.d("bottle2",num.toString())
-//            }
-//            else -> binding.imgBottle.setImageResource(imgBottle[2])
-//        }
+        binding.textBottle.setBackgroundResource(imgBottle[numMemo])
+        binding.textBottle.text = strMemo
     }
 
     private fun initBtnWrite(){
@@ -134,5 +146,25 @@ class HomeFragment : Fragment() {
                     }
             }
             .addOnFailureListener { e -> Log.w("db삭제실패", "Error deleting document", e) }
+    }
+
+    private fun modifyStatus(){ // 수정 모드
+        vaildModify = true
+        binding.btnModify.setBackgroundResource(R.drawable.btn_check)
+        binding.txtStatus.isEnabled = true
+        binding.txtStatus.requestFocus()    // 키보드 처음 올릴 때 포커스 없으면 안 올라가니까 주의
+        val imm = context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager   //키보드 올리기
+        imm.showSoftInput(binding.txtStatus, 0)
+        binding.txtStatus.setSelection(0)
+    }
+
+    private fun completeStatus(){ // 수정 완료
+        vaildModify = false
+        binding.btnModify.setBackgroundResource(R.drawable.btn_modify)
+        binding.txtStatus.isEnabled = false
+        binding.txtStatus.clearFocus()
+        val imm = context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager   //키보드 들어가기
+        imm.hideSoftInputFromWindow(binding.txtStatus.windowToken, 0)
+        //TODO("파이어베이스에 데이터 옮기기")
     }
 }
