@@ -167,11 +167,18 @@ class FirebaseRepository {
 
     suspend fun deletePostNote(note:Note){
         val dcmRef:DocumentReference = db.collection("user").document(userEmail)
-
+        var postVaild:Boolean = true
         coroutineScope {
             dcmRef.collection("postbox").document(note.time.toString()).delete()
+                .addOnFailureListener {
+                    Log.d("삭제 실패",it.toString())
+                    postVaild = false
+                }
         }.await()
-
+        if (postVaild == false){
+            // 메시지 삭제에 실패했습니다. 인터넷 연결을 확인해주세요 하는 다이얼로그 띄우기(리턴으로 그냥 결과 값 전송에서 프래그 먼트에서 판단하는게 좋을듯)
+            return
+        }
         coroutineScope {
             dcmRef.update("numPost", FieldValue.increment(-1))
         }.await()
@@ -200,12 +207,10 @@ class FirebaseRepository {
                             SendFragment.deletePosition = null
                         }
                     }
-//                for( dcm in querySnapshot.documentChanges){
-//
-//                }
                     _checkPost.value = __checkPost
                 }
             }
+
     }
 
     suspend fun getToken(receiver: String): String{

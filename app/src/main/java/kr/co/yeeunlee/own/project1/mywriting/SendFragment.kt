@@ -57,9 +57,8 @@ class SendFragment : Fragment() {
         sendViewModel.myResponce.observe(viewLifecycleOwner){
             Log.d("알림을 띄웠습니다.","알림 띄움")
         }
-//        sendViewModel.sendSnapshot.observe(viewLifecycleOwner){
-//            initSend(it)
-//        }
+
+
         binding.recyclerSend.layoutManager = LinearLayoutManager(context)
         binding.recyclerSend.adapter = sendAdapter
         sendViewModel.checkPost.observe(viewLifecycleOwner){
