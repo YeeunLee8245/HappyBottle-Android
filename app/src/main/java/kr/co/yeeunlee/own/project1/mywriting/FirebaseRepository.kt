@@ -113,6 +113,7 @@ class FirebaseRepository {
 
     suspend fun setToken(): String{
         var token:String = ""
+        var tokenUpdate:Boolean = false
         coroutineScope {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -120,21 +121,28 @@ class FirebaseRepository {
                     return@addOnCompleteListener
                 }
                 token = task.result
-                db.collection("user").document(userEmail)
-                    .addSnapshotListener{document, _->
-                        userName = document!!.get("name").toString()    // 사용자 이름 초기화
-                        Log.d("서비스 토큰 변경", userName+token)
-                        if (document == null) return@addSnapshotListener
-
-                        if (document["token"].toString() != token){
-                            Log.d("서비스 토큰 변경", "토큰 변경")
-                            db.collection("user").document(userEmail).update("token",token)
-                            return@addSnapshotListener
-                        }else
-                            Log.d("서비스 토큰 변경X", "토큰 변경X")
-                    }
             }
         }.await()
+
+        db.collection("user").document(userEmail).addSnapshotListener{document, _->
+            userName = document!!.get("name").toString()    // 사용자 이름 초기화
+            Log.d("서비스 토큰 변경", userName+token)
+            if (document == null) return@addSnapshotListener
+
+            if (document["token"].toString() != token){
+                Log.d("서비스 토큰 변경", "토큰 변경")
+                tokenUpdate = true
+                return@addSnapshotListener
+            }else
+                Log.d("서비스 토큰 변경X", "토큰 변경X")
+        }
+
+        if (tokenUpdate == true) {
+            coroutineScope {
+                db.collection("user").document(userEmail).update("token", token)
+            }.await()
+        }
+
         return token
     }
 
@@ -203,6 +211,7 @@ class FirebaseRepository {
                         var post = dcm.document.toObject(Note::class.java)
                         Log.d("데이터 변경", post.toString())
                         __checkPost.add(0, post)
+                        _checkPost.value = __checkPost
                     }
                     if (SendFragment.deletePosition != null) {
                         if (dcm.type == DocumentChange.Type.REMOVED) {
@@ -210,9 +219,9 @@ class FirebaseRepository {
                             //Log.d("데이터 삭제", "${deletenote}")
                             __checkPost.removeAt(SendFragment.deletePosition!!)
                             SendFragment.deletePosition = null
+                            _checkPost.value = __checkPost
                         }
                     }
-                    _checkPost.value = __checkPost
                 }
             }
 
