@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -19,6 +20,10 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -47,10 +52,23 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        googleSignInClient = GoogleSignIn.getClient(this, LoginStartActivity.gso)
         changeFragment(HOME_TAG, homeFragment)
         binding.btnHome.setOnClickListener { changeFragment(HOME_TAG, homeFragment)}
         binding.btnStorage.setOnClickListener { changeFragment(STORAGE_TAG, storageFragment) }
         binding.btnSend.setOnClickListener { changeFragment(SEND_TAG, sendFragment) }
+        binding.btnClose.setOnClickListener { changeDrawer() }
+        binding.btnLogout.setOnClickListener { // 로그아웃
+            logout()
+            val intentLoginStart = Intent(this, LoginStartActivity::class.java)
+            startActivity(intentLoginStart)
+            finish()
+        }
+        binding.btnBan.setOnClickListener { // 탈퇴
+            CoroutineScope(Dispatchers.Main).launch {
+                homeFragment.userDelete()
+            }
+        }
 
         valueService = intent.getStringExtra("service")
         Log.d("서비스 프래그먼트", valueService.toString())
@@ -84,4 +102,21 @@ class MainActivity : AppCompatActivity() {
             .commit()
         currentTag = OPEN_TAG
     }
+
+    fun changeDrawer(){
+        if (!binding.drawerSetting.isDrawerOpen(Gravity.RIGHT)){
+            binding.drawerSetting.openDrawer(Gravity.RIGHT)
+            Log.d("슬라이드",binding.drawerSetting.toString())
+        }else
+            binding.drawerSetting.closeDrawer(Gravity.RIGHT)
+    }
+
+    fun logout(){
+        googleSignInClient.signOut().addOnSuccessListener {
+            LoginStartActivity.mAuth.signOut()
+        }
+    }
+
+
+
 }

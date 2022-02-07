@@ -7,18 +7,18 @@
     android:id="@+id/drawerSetting"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:visibility="visible"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    app:layout_constraintTop_toTopOf="parent"
+    tools:openDrawer="end"
+    android:layout_gravity="end">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity">
-
-
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment"
@@ -82,8 +82,8 @@
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_marginTop="20dp"
-        android:layout_gravity="right"
-        android:gravity="center"
+        android:layout_gravity="end"
+        android:layoutDirection="rtl"
         android:background="@drawable/box_setting">
         <Button
             android:id="@+id/btn_logout"
@@ -107,12 +107,13 @@
             android:id="@+id/switch_bell"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
             android:scrollbarSize="40dp"
             android:switchMinWidth="70dp"
-            android:switchPadding="40dp"
             android:checked="true"
             android:showText="false"
             android:thumbTint="#525DB0"
+            app:layout_constraintLeft_toRightOf="@id/btn_bell"
             app:layout_constraintBottom_toBottomOf="@id/btn_bell"
             app:layout_constraintRight_toRightOf="@id/btn_opinion"
             app:layout_constraintTop_toTopOf="@id/btn_bell"/>
@@ -136,6 +137,15 @@
             android:background="@drawable/icon_ban"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_opinion"/>
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/icon_close"
+            android:layout_margin="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

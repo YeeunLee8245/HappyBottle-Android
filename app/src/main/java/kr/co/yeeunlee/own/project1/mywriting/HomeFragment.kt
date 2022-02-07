@@ -4,11 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
@@ -21,6 +25,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityMainBinding
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentHomeBinding
 
 
@@ -37,6 +43,7 @@ class HomeFragment : Fragment() {
         R.drawable.bottle_23,R.drawable.bottle_24,R.drawable.bottle_25,R.drawable.bottle_26,
         R.drawable.bottle_27,R.drawable.bottle_28,R.drawable.bottle_29,R.drawable.bottle_30,)
     private val userEmail = LoginStartActivity.mAuth.currentUser?.email.toString()
+    private var userName:String? = null
     private var vaildModify:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +79,10 @@ class HomeFragment : Fragment() {
                 modifyStatus()
             else completeStatus()
         }
+        binding.btnSetting.setOnClickListener {
+            (activity as MainActivity).changeDrawer()
+
+        }
 //        homeViewModel.noteSnapshot.observe(viewLifecycleOwner){
 //            initBottleView(it)  // 데이터 변경시 보틀 상태 데이터와 UI 업데이트
 //        }
@@ -81,6 +92,7 @@ class HomeFragment : Fragment() {
         val num = snapshot["numNote"].toString().toInt()
         val numMemo = num%30
         val strMemo = "$numMemo/30"
+        userName = snapshot["name"].toString()
         binding.apply {
 //            imgUser.text = if (snapshot["img"] == null) "프로필 나중에 추가" else "널이여야만 함"
             txtName.text = snapshot["name"].toString()
@@ -109,42 +121,7 @@ class HomeFragment : Fragment() {
             }
             //firebaseRepo.setNoteAdd(newNote)
         }
-        binding.btnLogout.setOnClickListener {  // 로그아웃
-            logout()
-            val intentLoginStart = Intent(activity, LoginStartActivity::class.java)
-            startActivity(intentLoginStart)
-            activity!!.finish()
-        }
-        binding.btnLogDelete.setOnClickListener {   // 계정 탈퇴
-            userDelete()
-        }
-    }
 
-    private fun logout(){
-        googleSignInClient.signOut().addOnSuccessListener {
-            LoginStartActivity.mAuth.signOut()
-        }
-    }
-
-    private fun userDelete(){
-        LoginStartActivity.db.collection("user").document(userEmail)    // 비동기 주의
-            .delete()
-            .addOnCompleteListener {
-                Log.d("db삭제성공", "DocumentSnapshot successfully deleted!")
-                LoginStartActivity.db.collection("check").document("name")
-                    .update("name", FieldValue.arrayRemove(homeViewModel.userSnapshot.value!!.get("name").toString()))
-                    .addOnSuccessListener {
-                        Log.d("액티비티",activity.toString())
-                        LoginStartActivity.mAuth.currentUser!!.delete().addOnSuccessListener {
-                            logout()
-                            startActivity(Intent(activity,LoginStartActivity::class.java))
-                            activity!!.finish()
-                        }.addOnFailureListener {
-                            Log.d("탈퇴에러",it.toString())
-                        }
-                    }
-            }
-            .addOnFailureListener { e -> Log.w("db삭제실패", "Error deleting document", e) }
     }
 
     private fun modifyStatus(){ // 수정 모드
@@ -166,5 +143,38 @@ class HomeFragment : Fragment() {
         val imm = context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager   //키보드 들어가기
         imm.hideSoftInputFromWindow(binding.txtStatus.windowToken, 0)
         fireRepo.setUserStatusMsg(binding.txtStatus.text.toString())    // 데베 업뎃
+    }
+
+
+
+    suspend fun userDelete(){
+        coroutineScope {
+            LoginStartActivity.db.collection("user").document(userEmail)    // 비동기 주의
+                .delete()
+                .addOnCompleteListener {
+                    Log.d("db삭제성공", "DocumentSnapshot successfully deleted!")
+
+                }
+                .addOnFailureListener { e -> Log.w("db삭제실패", "Error deleting document", e) }
+        }.await()
+
+        coroutineScope {
+            LoginStartActivity.db.collection("check").document("name")
+                .update("name", FieldValue.arrayRemove(userName!!))
+                .addOnSuccessListener {
+                    Log.d("액티비티",activity.toString())
+                }
+        }.await()
+
+        coroutineScope {
+            LoginStartActivity.mAuth.currentUser!!.delete().addOnSuccessListener {
+                (activity as MainActivity).logout()
+                startActivity(Intent(activity,LoginStartActivity::class.java))
+                activity!!.finish()
+            }.addOnFailureListener {
+                Log.d("탈퇴에러",it.toString())
+            }
+        }
+
     }
 }
