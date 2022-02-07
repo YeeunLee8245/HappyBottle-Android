@@ -165,6 +165,6 @@ class HomeFragment : Fragment() {
         binding.txtStatus.clearFocus()
         val imm = context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager   //키보드 들어가기
         imm.hideSoftInputFromWindow(binding.txtStatus.windowToken, 0)
-        fireRepo.setUserStatusMsg(binding.txtStatus.text.toString())
+        fireRepo.setUserStatusMsg(binding.txtStatus.text.toString())    // 데베 업뎃
     }
 }
