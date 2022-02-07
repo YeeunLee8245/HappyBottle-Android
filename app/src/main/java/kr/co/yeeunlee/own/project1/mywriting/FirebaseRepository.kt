@@ -33,6 +33,11 @@ class FirebaseRepository {
            }
     }
 
+    fun setUserStatusMsg(newStatus:String){
+        db.collection("user").document(userEmail)
+            .update("statusMsg", newStatus)
+    }
+
     suspend fun setNoteAdd(textEditNote: String, type:Int, post:Note?=null): DocumentSnapshot {
         val dcmRef= LoginStartActivity.db.collection("user").document(userEmail)
         var resultRef:DocumentSnapshot? = null
