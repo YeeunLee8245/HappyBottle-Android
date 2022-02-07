@@ -57,8 +57,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        homeViewModel.getUserSnapshot() // 화면 뜰 때마다 업뎃, 보틀은 등록할 때 업뎃해주니 문제X
-        // 이렇게 하는 것보다 나중에 프로필 수정 버튼을 누르면 업뎃 해주는 걸로 바꾸자. 이건 부담이다.
+        homeViewModel.getUserSnapshot()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,7 +84,7 @@ class HomeFragment : Fragment() {
         binding.apply {
 //            imgUser.text = if (snapshot["img"] == null) "프로필 나중에 추가" else "널이여야만 함"
             txtName.text = snapshot["name"].toString()
-            txtStatus.setText(if (snapshot["status"]== null) "상메 나중에 추가" else "널이여야만 함")
+            txtStatus.setText(snapshot["statusMsg"].toString())
         }
         Log.d("bottle",num.toString())
         binding.textBottle.setBackgroundResource(imgBottle[numMemo])
@@ -159,12 +158,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun completeStatus(){ // 수정 완료
+        val fireRepo = FirebaseRepository()
         vaildModify = false
         binding.btnModify.setBackgroundResource(R.drawable.btn_modify)
         binding.txtStatus.isEnabled = false
         binding.txtStatus.clearFocus()
         val imm = context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager   //키보드 들어가기
         imm.hideSoftInputFromWindow(binding.txtStatus.windowToken, 0)
-        //TODO("파이어베이스에 데이터 옮기기")
+        fireRepo.setUserStatusMsg(binding.txtStatus.text.toString())
     }
 }
