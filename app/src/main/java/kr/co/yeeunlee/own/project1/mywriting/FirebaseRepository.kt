@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.*
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
 import okhttp3.ResponseBody
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
@@ -111,9 +112,8 @@ class FirebaseRepository {
         return resultRef!!
     }
 
-    suspend fun setToken(): String{
-        var token:String = ""
-        var tokenUpdate:Boolean = false
+    suspend fun getToken(): String {
+        var token: String = ""
         coroutineScope {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -124,26 +124,59 @@ class FirebaseRepository {
             }
         }.await()
 
-        db.collection("user").document(userEmail).addSnapshotListener{document, _->
-            userName = document!!.get("name").toString()    // 사용자 이름 초기화
-            Log.d("서비스 토큰 변경", userName+token)
-            if (document == null) return@addSnapshotListener
+        Log.d("서비스setToken", token)
+        return token
+    }
 
-            if (document["token"].toString() != token){
-                Log.d("서비스 토큰 변경", "토큰 변경")
-                tokenUpdate = true
-                return@addSnapshotListener
-            }else
-                Log.d("서비스 토큰 변경X", "토큰 변경X")
-        }
+    suspend fun setToken(): String{
+        var token:String = ""
+        coroutineScope {
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.d("서비스 토큰", "토큰 등록에 실패함")
+                    return@addOnCompleteListener
+                }
+                token = task.result
+                db.collection("user").document(userEmail).addSnapshotListener{document, _->
+                    userName = document!!.get("name").toString()    // 사용자 이름 초기화
+                    Log.d("서비스 토큰 변경", userName+token)
+                    if (document == null) return@addSnapshotListener
 
-        if (tokenUpdate == true) {
-            coroutineScope {
-                db.collection("user").document(userEmail).update("token", token)
-            }.await()
-        }
+                    if (document["token"].toString() == "false") {
+                        Log.d("서비스 토큰", "푸시 알림 거부")
+                        return@addSnapshotListener
+                    }else if (document["token"].toString() != token) {
+                        Log.d("서비스 토큰 변경", "토큰 변경")
+                        // 이 부분을 await으로 주었더니 정상 작동이 안된 이유는 addSnapshotListener가 사용되는 메서드 역시 비동기이기 때문.
+                        // addSnapshotListener은 데베가 업데이트 되는대로 여러번 실행될 수 있기 때문에 await이 사용될 수 없다.
+                        // await은 단일 결과만 기다리기 때문에 addSnapshotListener의 메서드와 패러다임이 맞지 않다고 한다.
+                        db.collection("user").document(userEmail).update("token", token).addOnSuccessListener {
+                            Log.d("서비스 토큰 변경success", "정상 작동")
+                        }
+                            .addOnFailureListener {
+                                Log.d("서비스 토큰 변경error", it.toString())
+                            }
+                        return@addSnapshotListener
+                    }
+                }
+
+            }
+        }.await()
+
 
         return token
+    }
+
+    suspend fun setPushAlarm(setVaild:Boolean){
+        if (setVaild == false){
+            coroutineScope {
+                db.collection("user").document(userEmail).update("token","false")
+            }.await()
+        }else if (setVaild == true){
+            coroutineScope {
+                db.collection("user").document(userEmail).update("token","true")
+            }.await()
+        }
     }
 
     suspend fun setPostNoteAdd(receiver: String, textEditNote: String, type: Int, vaild:MutableLiveData<Boolean>){

@@ -44,12 +44,13 @@ class HomeFragment : Fragment() {
         R.drawable.bottle_27,R.drawable.bottle_28,R.drawable.bottle_29,R.drawable.bottle_30,)
     private val userEmail = LoginStartActivity.mAuth.currentUser?.email.toString()
     private var userName:String? = null
+    private var userToken:String = "false"
     private var vaildModify:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("액티비티",activity.toString())
-        googleSignInClient = GoogleSignIn.getClient(activity, LoginStartActivity.gso)
+
     }
 
     override fun onCreateView(
@@ -80,7 +81,7 @@ class HomeFragment : Fragment() {
             else completeStatus()
         }
         binding.btnSetting.setOnClickListener {
-            (activity as MainActivity).changeDrawer()
+            (activity as MainActivity?)!!.changeDrawer(userToken)
 
         }
 //        homeViewModel.noteSnapshot.observe(viewLifecycleOwner){
@@ -93,6 +94,7 @@ class HomeFragment : Fragment() {
         val numMemo = num%30
         val strMemo = "$numMemo/30"
         userName = snapshot["name"].toString()
+        userToken = snapshot["token"].toString()
         binding.apply {
 //            imgUser.text = if (snapshot["img"] == null) "프로필 나중에 추가" else "널이여야만 함"
             txtName.text = snapshot["name"].toString()
@@ -145,36 +147,4 @@ class HomeFragment : Fragment() {
         fireRepo.setUserStatusMsg(binding.txtStatus.text.toString())    // 데베 업뎃
     }
 
-
-
-    suspend fun userDelete(){
-        coroutineScope {
-            LoginStartActivity.db.collection("user").document(userEmail)    // 비동기 주의
-                .delete()
-                .addOnCompleteListener {
-                    Log.d("db삭제성공", "DocumentSnapshot successfully deleted!")
-
-                }
-                .addOnFailureListener { e -> Log.w("db삭제실패", "Error deleting document", e) }
-        }.await()
-
-        coroutineScope {
-            LoginStartActivity.db.collection("check").document("name")
-                .update("name", FieldValue.arrayRemove(userName!!))
-                .addOnSuccessListener {
-                    Log.d("액티비티",activity.toString())
-                }
-        }.await()
-
-        coroutineScope {
-            LoginStartActivity.mAuth.currentUser!!.delete().addOnSuccessListener {
-                (activity as MainActivity).logout()
-                startActivity(Intent(activity,LoginStartActivity::class.java))
-                activity!!.finish()
-            }.addOnFailureListener {
-                Log.d("탈퇴에러",it.toString())
-            }
-        }
-
-    }
 }

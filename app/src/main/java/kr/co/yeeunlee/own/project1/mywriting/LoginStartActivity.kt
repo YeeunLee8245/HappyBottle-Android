@@ -68,7 +68,7 @@ class LoginStartActivity : AppCompatActivity() {
                                     startActivity(intentMain)
                                     finish()
                                 }
-                            CoroutineScope(Dispatchers.Default).launch { fireRepo.setToken() }
+                            CoroutineScope(Dispatchers.Main).launch { fireRepo.setToken() }
                         }
                 }
         }
@@ -222,7 +222,7 @@ class LoginStartActivity : AppCompatActivity() {
             if(controller != null){
                 controller.hide(
                     WindowInsets.Type.statusBars() or
-                        WindowInsets.Type.navigationBars())
+                            WindowInsets.Type.navigationBars())
                 WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         }else{

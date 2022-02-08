@@ -119,10 +119,10 @@ class SignInActivity : AppCompatActivity() {
             val intentStart = Intent(this, LoginStartActivity::class.java)
             val fireRepo = FirebaseRepository()
             CoroutineScope(Dispatchers.Default).launch {
-                val token: String = fireRepo.setToken()
+                //val token: String = fireRepo.setToken()
                 user = User(
                     inputName, inputEmail, true, inputPassword,
-                    0, 0, token
+                    0, 0, ""
                 )
                 //Log.d("인증메일전송2", "$user")
                 intentStart.putExtra("user", user)

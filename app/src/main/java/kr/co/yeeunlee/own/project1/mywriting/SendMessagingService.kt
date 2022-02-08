@@ -33,11 +33,7 @@ class SendMessagingService: FirebaseMessagingService()  {
                 remoteMessage.notification?.body!!)
         }
 
-
-
-
-
-
+        // 알림 비허용: user 토큰을 없애자.
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
