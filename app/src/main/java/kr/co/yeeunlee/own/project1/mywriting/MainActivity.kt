@@ -24,7 +24,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityMainBinding
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
     companion object{
@@ -57,16 +59,28 @@ class MainActivity : AppCompatActivity() {
         binding.btnHome.setOnClickListener { changeFragment(HOME_TAG, homeFragment)}
         binding.btnStorage.setOnClickListener { changeFragment(STORAGE_TAG, storageFragment) }
         binding.btnSend.setOnClickListener { changeFragment(SEND_TAG, sendFragment) }
-        binding.btnClose.setOnClickListener { changeDrawer() }
+        binding.btnClose.setOnClickListener { changeDrawer("close") }
         binding.btnLogout.setOnClickListener { // 로그아웃
             logout()
-            val intentLoginStart = Intent(this, LoginStartActivity::class.java)
-            startActivity(intentLoginStart)
-            finish()
         }
         binding.btnBan.setOnClickListener { // 탈퇴
             CoroutineScope(Dispatchers.Main).launch {
-                homeFragment.userDelete()
+                userDelete()
+            }
+        }
+        binding.switchBell.setOnCheckedChangeListener { _, isChecked ->
+            val fireRepo = FirebaseRepository()
+            if (isChecked){
+                Log.d("스위치","사용")
+                CoroutineScope(Dispatchers.Main).launch {
+                    fireRepo.setPushAlarm(true)
+                    fireRepo.setToken()
+                }
+            }else {
+                Log.d("스위치", "미사용")
+                CoroutineScope(Dispatchers.Main).launch {
+                    fireRepo.setPushAlarm(false)
+                }
             }
         }
 
@@ -103,20 +117,48 @@ class MainActivity : AppCompatActivity() {
         currentTag = OPEN_TAG
     }
 
-    fun changeDrawer(){
+    fun changeDrawer(userToken: String){
         if (!binding.drawerSetting.isDrawerOpen(Gravity.RIGHT)){
+            binding.switchBell.isChecked = if (userToken == "false") false else true
             binding.drawerSetting.openDrawer(Gravity.RIGHT)
             Log.d("슬라이드",binding.drawerSetting.toString())
         }else
             binding.drawerSetting.closeDrawer(Gravity.RIGHT)
     }
 
-    fun logout(){
+    private fun logout(){
         googleSignInClient.signOut().addOnSuccessListener {
             LoginStartActivity.mAuth.signOut()
+            val intentLoginStart = Intent(this, LoginStartActivity::class.java)
+            startActivity(intentLoginStart)
+            finish()
         }
     }
 
+    private suspend fun userDelete() {
+        coroutineScope {
+            val fireRepo = FirebaseRepository()
+            val userName = fireRepo.getUserNameSnapshot()
+            Log.d("사용자 이름", userName)
+            LoginStartActivity.db.collection("check").document("name")
+                .update("name", FieldValue.arrayRemove(userName))
+                .addOnFailureListener { Log.d("실패", "사용자 이름") }
+        }.await()
 
+        coroutineScope {
+            LoginStartActivity.db.collection("user").document(userEmail)    // 비동기 주의
+                .delete()
+                .addOnCompleteListener {
+                    Log.d("db삭제성공", "DocumentSnapshot successfully deleted!")
 
+                }
+                .addOnFailureListener { e -> Log.w("db삭제실패", "Error deleting document", e) }
+        }.await()
+
+        coroutineScope {
+            LoginStartActivity.mAuth.currentUser!!.delete().addOnSuccessListener {
+                logout()
+            }
+        }.await()
+    }
 }
