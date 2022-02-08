@@ -83,6 +83,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        binding.btnOpinion.setOnClickListener { // 의견 보내기
+            val dialog = OpinionDialogFragment()
+            this.supportFragmentManager.let { fragmentManager ->
+                dialog.show(fragmentManager, "opinion")
+            }
+        }
 
         valueService = intent.getStringExtra("service")
         Log.d("서비스 프래그먼트", valueService.toString())
