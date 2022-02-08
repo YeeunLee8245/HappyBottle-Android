@@ -58,18 +58,22 @@ class LoginStartActivity : AppCompatActivity() {
                 .addOnCompleteListener{ task ->
                     Log.d("사용자 이메일로 계정 등록1", "${mAuth.currentUser!!.email}")
                     user.password = null
-                    db.collection("user").document(user.email)
-                        .set(user)
-                        .addOnCompleteListener {
-                            db.collection("check").document("name")
-                                .update("name",FieldValue.arrayUnion(user.name))
-                                .addOnSuccessListener {
-                                    Log.d("db성공",user.name.toString())
-                                    startActivity(intentMain)
-                                    finish()
-                                }
-                            CoroutineScope(Dispatchers.Main).launch { fireRepo.setToken() }
-                        }
+                    CoroutineScope(Dispatchers.Main).launch { // 코루틴 플로우 뒤에 동작되어야 하는 건 반드시 스코프 괄호 안에 적자.
+                        user.token = fireRepo.getToken()
+                        db.collection("user").document(user.email)
+                            .set(user)
+                            .addOnCompleteListener {
+                                db.collection("check").document("name")
+                                    .update("name",FieldValue.arrayUnion(user.name))
+                                    .addOnSuccessListener {
+                                        Log.d("db성공",user.name.toString())
+                                        startActivity(intentMain)
+                                        finish()
+                                    }
+                                //CoroutineScope(Dispatchers.Main).launch { fireRepo.setToken() }
+                            }
+                    }
+
                 }
         }
     }

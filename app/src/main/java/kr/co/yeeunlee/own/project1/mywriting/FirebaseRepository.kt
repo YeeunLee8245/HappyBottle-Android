@@ -123,7 +123,6 @@ class FirebaseRepository {
                 token = task.result
             }
         }.await()
-
         Log.d("서비스setToken", token)
         return token
     }
