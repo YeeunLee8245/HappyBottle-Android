@@ -70,7 +70,6 @@ class LoginStartActivity : AppCompatActivity() {
                                         startActivity(intentMain)
                                         finish()
                                     }
-                                //CoroutineScope(Dispatchers.Main).launch { fireRepo.setToken() }
                             }
                     }
 
