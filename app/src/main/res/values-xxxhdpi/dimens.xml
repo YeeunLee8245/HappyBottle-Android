@@ -1,2 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <!--   1. 로그인 시작 화면   -->
+    <dimen name="text_login">22dp</dimen>
+    <dimen name="text_edit1">15dp</dimen>
+    <dimen name="text_btn_login">40dp</dimen>
+    <dimen name="text_btn_signin">25dp</dimen>
+    <dimen name="padding_l_email">23dp</dimen>
+    <dimen name="padding_r_email">15dp</dimen>
+    <dimen name="padding_b_login">5dp</dimen>
+    <!--    2. 회원가입 화면   -->
+    <dimen name="text_signin">22dp</dimen>
+    <dimen name="text_btn_signin2">40dp</dimen>
+    <dimen name="width_btn_name2">70dp</dimen>
+    <dimen name="width_btn_signin">240dp</dimen>
+    <dimen name="height_edit">35dp</dimen>
+    <dimen name="height_btn_signin">60dp</dimen>
+    <dimen name="padding_lr_edit">12dp</dimen>
+    <dimen name="margin_l_btn">10dp</dimen>
+    <dimen name="padding_b_btn2">5dp</dimen>
+
+    <!--   3. 홈 화면     -->
+    <!--    <dimen name="width_boxProfile">dp</dimen>-->
+    <!--    <dimen name="height_boxProfile">dp</dimen>-->
+    <!--    <dimen name="maring_t_boxProfile">dp</dimen>-->
+    <dimen name="width_bottle">200dp</dimen>
+    <dimen name="height_bottle">284dp</dimen>
+    <dimen name="padding_t_bottle">130dp</dimen>
+    <dimen name="width_write">95dp</dimen>
+    <dimen name="height_write">96dp</dimen>
+    <dimen name="margin_b_write">30dp</dimen>
+
+
+</resources>
