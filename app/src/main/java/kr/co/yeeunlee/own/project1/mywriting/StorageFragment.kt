@@ -19,7 +19,10 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.ItemStorageRecyclerBind
 class StorageFragment : Fragment() {
     private lateinit var binding: FragmentStorageBinding
     private val storageViewModel: StorageViewModel by viewModels<StorageViewModel>()
-
+    private val bottleColorLi = arrayListOf(R.drawable.bottle_lightgreen, R.drawable.bottle_mint, R.drawable.bottle_green
+        , R.drawable.bottle_blue, R.drawable.bottle_purple, R.drawable.bottle_orange
+        , R.drawable.bottle_sky, R.drawable.bottle_red, R.drawable.bottle_pink
+        , R.drawable.bottle_darkblue)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -87,6 +90,7 @@ class StorageFragment : Fragment() {
                         btnBottle1.isEnabled = false
                     }else{
                         text1.setText((item.first!!/5).toString())
+                        btnBottle1.setBackgroundResource(bottleColorLi[item.first!!/5%11])
                         btnBottle1.setOnClickListener {
                             (activity as MainActivity).changeOpnBtlFragment(item.first!!)
                         }
@@ -96,6 +100,7 @@ class StorageFragment : Fragment() {
                         btnBottle2.isEnabled = false
                     }else{
                         text2.setText((item.second!!/5).toString())
+                        btnBottle2.setBackgroundResource(bottleColorLi[item.second!!/5%11])
                         btnBottle2.setOnClickListener {
                             (activity as MainActivity).changeOpnBtlFragment(item.second!!)
                         }
@@ -105,6 +110,7 @@ class StorageFragment : Fragment() {
                         btnBottle3.isEnabled = false
                     }else{
                         text3.setText((item.third!!/5).toString())
+                        btnBottle3.setBackgroundResource(bottleColorLi[item.third!!/5%11])
                         btnBottle3.setOnClickListener {
                             (activity as MainActivity).changeOpnBtlFragment(item.third!!)
                         }
