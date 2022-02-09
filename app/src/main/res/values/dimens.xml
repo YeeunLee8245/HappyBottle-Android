@@ -8,6 +8,17 @@
     <dimen name="padding_l_email">23dp</dimen>
     <dimen name="padding_r_email">15dp</dimen>
     <dimen name="padding_b_login">5dp</dimen>
+    <!--    2. 회원가입 화면   -->
+    <dimen name="text_signin">22dp</dimen>
+    <dimen name="text_btn_signin2">40dp</dimen>
+    <dimen name="width_btn_name2">70dp</dimen>
+    <dimen name="width_btn_signin">240dp</dimen>
+    <dimen name="height_edit">35dp</dimen>
+    <dimen name="height_btn_signin">60dp</dimen>
+    <dimen name="padding_lr_edit">12dp</dimen>
+    <dimen name="margin_l_btn">10dp</dimen>
+    <dimen name="padding_b_btn2">5dp</dimen>
+
     <!--    홈 화면     -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>

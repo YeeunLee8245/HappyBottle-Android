@@ -45,6 +45,7 @@
         app:layout_constraintGuide_percent="0.1" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/signin_background"
@@ -52,12 +53,14 @@
         app:layout_constraintLeft_toLeftOf="@id/guideV1"
         app:layout_constraintRight_toRightOf="@id/guideV3"
         app:layout_constraintTop_toBottomOf="@id/guideH3">
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideInL"
             android:layout_width="1dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.03" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideInR"
             android:layout_width="1dp"
@@ -78,64 +81,53 @@
             android:layout_height="1dp"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.97" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideWhite1"
             android:layout_width="wrap_content"
             android:layout_height="1dp"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.26" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideWhite2"
             android:layout_width="wrap_content"
             android:layout_height="1dp"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.49" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideWhite3"
             android:layout_width="wrap_content"
             android:layout_height="1dp"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.72" />
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideWhite4"
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.95" />
+
         <TextView
             android:id="@+id/textEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnSpan="3"
             android:fontFamily="@font/font_info"
-            android:text="이메일"
-            android:textSize="22dp"
-            android:textColor="#0E4A09"
             android:gravity="left"
+            android:text="이메일"
+            android:textColor="#0E4A09"
+            android:textSize="@dimen/text_signin"
             app:layout_constraintLeft_toLeftOf="@id/guideInL"
-            app:layout_constraintTop_toBottomOf="@id/guideInT"/>
+            app:layout_constraintTop_toBottomOf="@id/guideInT" />
+
         <EditText
             android:id="@+id/editEmail"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_edit"
             android:background="@drawable/textinput_style"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:maxLines="1"
             android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/padding_lr_edit"
+            android:paddingRight="@dimen/padding_lr_edit"
             app:layout_constraintLeft_toLeftOf="@+id/guideInL"
             app:layout_constraintRight_toRightOf="@+id/guideInR"
-            app:layout_constraintTop_toBottomOf="@+id/textEmail"/>
-        <TextView
-            android:id="@+id/textErEmail"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="2dp"
-            android:textColor="#FF0000"
-            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
-            app:layout_constraintRight_toRightOf="@+id/guideInR"
-            app:layout_constraintTop_toBottomOf="@+id/editEmail"
-            app:layout_constraintBottom_toTopOf="@+id/guideWhite1"/>
+            app:layout_constraintTop_toBottomOf="@+id/textEmail" />
 
         <TextView
             android:id="@+id/textName"
@@ -143,48 +135,41 @@
             android:layout_height="wrap_content"
             android:layout_columnSpan="3"
             android:fontFamily="@font/font_info"
-            android:text="별명"
-            android:textSize="22dp"
-            android:textColor="#0E4A09"
             android:gravity="left"
+            android:text="별명"
+            android:textColor="#0E4A09"
+            android:textSize="@dimen/text_signin"
             app:layout_constraintLeft_toLeftOf="@id/guideInL"
             app:layout_constraintTop_toBottomOf="@+id/guideWhite1" />
+
         <EditText
             android:id="@+id/editName"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_edit"
             android:background="@drawable/textinput_style"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
+            android:inputType="textPersonName"
             android:maxLength="7"
             android:maxLines="1"
-            android:inputType="textPersonName"
+            android:paddingLeft="@dimen/padding_lr_edit"
+            android:paddingRight="@dimen/padding_lr_edit"
             app:layout_constraintLeft_toLeftOf="@+id/guideInL"
             app:layout_constraintRight_toLeftOf="@+id/btnNameDupli"
-            app:layout_constraintTop_toBottomOf="@+id/textName"/>
+            app:layout_constraintTop_toBottomOf="@+id/textName" />
+
         <Button
             android:id="@+id/btnNameDupli"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_width="@dimen/width_btn_name2"
+            android:layout_height="@dimen/height_edit"
+            android:layout_marginLeft="@dimen/margin_l_btn"
             android:background="@drawable/btn_name_dup"
-            android:layout_marginLeft="10dp"
             android:fontFamily="@font/font_info"
             android:text="중복확인"
-            android:textColor="#FFFFFF"
+            android:textSize="@dimen/text_signin"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/editName"
             app:layout_constraintLeft_toRightOf="@+id/editName"
             app:layout_constraintRight_toRightOf="@+id/guideInR"
-            app:layout_constraintBottom_toBottomOf="@+id/editName"
-            app:layout_constraintTop_toBottomOf="@+id/textName"/>
-        <TextView
-            android:id="@+id/textErName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="2dp"
-            android:textColor="#FF0000"
-            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
-            app:layout_constraintRight_toRightOf="@+id/guideInR"
-            app:layout_constraintTop_toBottomOf="@+id/editName"
-            app:layout_constraintBottom_toTopOf="@+id/guideWhite2"/>
+            app:layout_constraintTop_toBottomOf="@+id/textName" />
 
         <TextView
             android:id="@+id/textPW"
@@ -192,34 +177,25 @@
             android:layout_height="wrap_content"
             android:layout_columnSpan="3"
             android:fontFamily="@font/font_info"
-            android:text="비밀번호"
-            android:textSize="22dp"
-            android:textColor="#0E4A09"
             android:gravity="left"
+            android:text="비밀번호"
+            android:textColor="#0E4A09"
+            android:textSize="@dimen/text_signin"
             app:layout_constraintLeft_toLeftOf="@id/guideInL"
             app:layout_constraintTop_toBottomOf="@id/guideWhite2" />
+
         <EditText
             android:id="@+id/editPW"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_edit"
             android:background="@drawable/textinput_style"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:maxLines="1"
             android:inputType="textPassword"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/padding_lr_edit"
+            android:paddingRight="@dimen/padding_lr_edit"
             app:layout_constraintLeft_toLeftOf="@+id/guideInL"
             app:layout_constraintRight_toRightOf="@+id/guideInR"
-            app:layout_constraintTop_toBottomOf="@+id/textPW"/>
-        <TextView
-            android:id="@+id/textErPW"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="2dp"
-            android:textColor="#FF0000"
-            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
-            app:layout_constraintRight_toRightOf="@+id/guideInR"
-            app:layout_constraintTop_toBottomOf="@+id/editPW"
-            app:layout_constraintBottom_toTopOf="@+id/guideWhite3"/>
+            app:layout_constraintTop_toBottomOf="@+id/textPW" />
 
         <TextView
             android:id="@+id/textPWCheck"
@@ -227,34 +203,25 @@
             android:layout_height="wrap_content"
             android:layout_columnSpan="3"
             android:fontFamily="@font/font_info"
-            android:text="비밀번호 확인"
-            android:textSize="22dp"
-            android:textColor="#0E4A09"
             android:gravity="left"
+            android:text="비밀번호 확인"
+            android:textColor="#0E4A09"
+            android:textSize="@dimen/text_signin"
             app:layout_constraintLeft_toLeftOf="@id/guideInL"
-            app:layout_constraintTop_toBottomOf="@id/guideWhite3"/>
+            app:layout_constraintTop_toBottomOf="@id/guideWhite3" />
+
         <EditText
             android:id="@+id/editPWCheck"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_edit"
             android:background="@drawable/textinput_style"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:maxLines="1"
             android:inputType="textPassword"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/padding_lr_edit"
+            android:paddingRight="@dimen/padding_lr_edit"
             app:layout_constraintLeft_toLeftOf="@+id/guideInL"
             app:layout_constraintRight_toRightOf="@+id/guideInR"
-            app:layout_constraintTop_toBottomOf="@+id/textPWCheck"/>
-        <TextView
-            android:id="@+id/textErPWC"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="2dp"
-            android:textColor="#FF0000"
-            app:layout_constraintLeft_toLeftOf="@+id/guideInL"
-            app:layout_constraintRight_toRightOf="@+id/guideInR"
-            app:layout_constraintTop_toBottomOf="@+id/editPWCheck"
-            app:layout_constraintBottom_toTopOf="@+id/guideWhite4"/>
+            app:layout_constraintTop_toBottomOf="@+id/textPWCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.Guideline
@@ -269,43 +236,20 @@
         android:layout_height="1dp"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.8" />
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideHBC"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.85" />
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideVBC1"
-        android:layout_width="1dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.2" />
+
     <Button
         android:id="@+id/btnComplete"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/width_btn_signin"
+        android:layout_height="@dimen/height_btn_signin"
         android:background="@drawable/btn_signin_back"
-        android:paddingBottom="5dp"
         android:fontFamily="@font/font_info"
+        android:paddingBottom="@dimen/padding_b_btn2"
         android:text="가입하기"
-        android:textSize="40dp"
-        android:textColor="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@+id/guideHBC"
-        app:layout_constraintBottom_toTopOf="@+id/guideHE"
-        app:layout_constraintLeft_toRightOf="@id/guideVBC1"
-        app:layout_constraintRight_toLeftOf="@+id/guideVBC2"/>
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideVBC2"
-        android:layout_width="1dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.8" />
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideHE"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.93" />
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_btn_signin2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
