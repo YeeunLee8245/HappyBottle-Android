@@ -99,10 +99,16 @@ class LoginStartActivity : AppCompatActivity() {
         setScreen()
 
         intentMain = Intent(this,MainActivity::class.java)
+        intentMain.action = Intent.ACTION_MAIN
+        intentMain.addCategory(Intent.CATEGORY_LAUNCHER)
+        intentMain.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
 
         binding.btnLogin.setOnClickListener { logIn(binding.editEmail.text.toString(), binding.editPW.text.toString()) }
         binding.btnSign.setOnClickListener {
             val signInIntent = Intent(this, SignInActivity::class.java) // 회원가입
+            signInIntent.action = Intent.ACTION_MAIN
+            signInIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+            signInIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             getSignInResult.launch(signInIntent)
         }
         binding.btnGoogleSign.setOnClickListener { signIn() }

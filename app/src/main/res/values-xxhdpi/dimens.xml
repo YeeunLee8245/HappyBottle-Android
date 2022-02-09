@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <dimen name="width_bottle">180dp</dimen>
+    <dimen name="height_bottle">256.4dp</dimen>
+    <dimen name="padding_t_bottle">117.3dp</dimen>
+    <dimen name="width_write">85dp</dimen>
+    <dimen name="height_write">86.7dp</dimen>
+    <dimen name="margin_b_write">20dp</dimen>
+</resources>

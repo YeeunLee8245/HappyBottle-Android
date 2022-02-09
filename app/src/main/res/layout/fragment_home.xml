@@ -24,18 +24,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <androidx.constraintlayout.widget.Guideline-->
-<!--            android:id="@+id/guidePL"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            app:layout_constraintGuide_percent="0.15" />-->
-<!--        <androidx.constraintlayout.widget.Guideline-->
-<!--            android:id="@+id/guidePR"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            app:layout_constraintGuide_percent="0.85" />-->
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgUser"
@@ -103,11 +91,11 @@
 
         <TextView
             android:id="@+id/textBottle"
-            android:layout_width="200dp"
-            android:layout_height="284dp"
+            android:layout_width="@dimen/width_bottle"
+            android:layout_height="@dimen/height_bottle"
             android:background="@drawable/bottle_0"
             android:fontFamily="@font/font_info"
-            android:paddingTop="130dp"
+            android:paddingTop="@dimen/padding_t_bottle"
             android:text="0/30"
             android:textAlignment="center"
             android:textColor="#0F4A0A"
@@ -119,9 +107,9 @@
 
         <Button
             android:id="@+id/btnWrite"
-            android:layout_width="95dp"
-            android:layout_height="96dp"
-            android:layout_marginBottom="65dp"
+            android:layout_width="@dimen/width_write"
+            android:layout_height="@dimen/height_write"
+            android:layout_marginBottom="@dimen/margin_b_write"
             android:background="@drawable/btn_write_home"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
