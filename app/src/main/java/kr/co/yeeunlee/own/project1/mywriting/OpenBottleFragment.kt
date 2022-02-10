@@ -44,13 +44,17 @@ class OpenBottleFragment : Fragment() {
     }
 
     fun initBtnRead(){
-        val btnLi = arrayListOf<Button>(binding.btn1, binding.btn2, binding.btn3, binding.btn4, binding.btn5)
+        val btnLi = arrayListOf<Button>(binding.btn1, binding.btn2, binding.btn3, binding.btn4, binding.btn5
+            , binding.btn6, binding.btn7, binding.btn8, binding.btn9, binding.btn10, binding.btn11, binding.btn12
+            , binding.btn13, binding.btn14, binding.btn15, binding.btn16, binding.btn17, binding.btn18, binding.btn19
+            , binding.btn20, binding.btn21, binding.btn22, binding.btn23, binding.btn24, binding.btn25, binding.btn26
+            , binding.btn27, binding.btn28, binding.btn29, binding.btn30)
         for (i in 1..btnLi.size){
             btnLi[i-1].setOnClickListener {
                 var snapshot: DocumentSnapshot? = null
                 CoroutineScope(Dispatchers.Main).launch {
-                    snapshot = firebaseRepo.getOpnNoteSnapshot(orderLast - 5 + i) //10 - 5 + 1 = 6
-                    val dialog = ReadDialogFragment(snapshot!!, orderLast-4)
+                    snapshot = firebaseRepo.getOpnNoteSnapshot(orderLast - 30 + i) //60 - 30 + 1 = 31
+                    val dialog = ReadDialogFragment(snapshot!!, orderLast-29)
 
                     activity?.supportFragmentManager?.let { fragmentManager ->
                         dialog.show(fragmentManager, "readNote")
