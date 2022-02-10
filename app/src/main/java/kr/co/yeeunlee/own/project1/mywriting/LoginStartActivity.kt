@@ -23,11 +23,13 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
 import org.threeten.bp.LocalDateTime
+import kotlin.random.Random
 
 class LoginStartActivity : AppCompatActivity() {
     companion object {
@@ -50,6 +52,7 @@ class LoginStartActivity : AppCompatActivity() {
     // 회원가입 Intent 결과, 무조건 전역으로 생성(아니면 에러)
     private val getSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         // 액티비티 반환 결과
+        Log.d("인증메일 받음0","${it.toString()}")
         if(it.resultCode == Activity.RESULT_OK){
             user = it.data?.getParcelableExtra("user")!!
             Log.d("인증메일 받음","$user")
@@ -59,18 +62,22 @@ class LoginStartActivity : AppCompatActivity() {
                     Log.d("사용자 이메일로 계정 등록1", "${mAuth.currentUser!!.email}")
                     user.password = null
                     CoroutineScope(Dispatchers.Main).launch { // 코루틴 플로우 뒤에 동작되어야 하는 건 반드시 스코프 괄호 안에 적자.
-                        user.token = fireRepo.getToken()
-                        db.collection("user").document(user.email)
-                            .set(user)
-                            .addOnCompleteListener {
-                                db.collection("check").document("name")
-                                    .update("name",FieldValue.arrayUnion(user.name))
-                                    .addOnSuccessListener {
-                                        Log.d("db성공",user.name.toString())
-                                        startActivity(intentMain)
-                                        finish()
-                                    }
-                            }
+                        FirebaseMessaging.getInstance().token.addOnSuccessListener {token ->
+                            Log.d("인증메일 받음2","$user")
+                            user.token = token
+                            db.collection("user").document(user.email)
+                                .set(user)
+                                .addOnCompleteListener {
+                                    db.collection("check").document("name")
+                                        .update("name",FieldValue.arrayUnion(user.name))
+                                        .addOnSuccessListener {
+                                            Log.d("db성공",user.name.toString())
+                                            startActivity(intentMain)
+                                            finish()
+                                        }
+                                }
+                        }   // 실패했을 때 동작 넣어주기
+
                     }
 
                 }
@@ -101,14 +108,14 @@ class LoginStartActivity : AppCompatActivity() {
         intentMain = Intent(this,MainActivity::class.java)
         intentMain.action = Intent.ACTION_MAIN
         intentMain.addCategory(Intent.CATEGORY_LAUNCHER)
-        intentMain.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        intentMain.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
 
         binding.btnLogin.setOnClickListener { logIn(binding.editEmail.text.toString(), binding.editPW.text.toString()) }
         binding.btnSign.setOnClickListener {
             val signInIntent = Intent(this, SignInActivity::class.java) // 회원가입
             signInIntent.action = Intent.ACTION_MAIN
             signInIntent.addCategory(Intent.CATEGORY_LAUNCHER)
-            signInIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            signInIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             getSignInResult.launch(signInIntent)
         }
         binding.btnGoogleSign.setOnClickListener { signIn() }
@@ -188,7 +195,7 @@ class LoginStartActivity : AppCompatActivity() {
                                         val token:String = fireRepo.setToken()
                                         user = User(
                                             name, mAuth.currentUser!!.email!!, false,
-                                            null, 0, 0, token)
+                                            null, 0, 0, token, (0..7).random())
                                         db.collection("user").document(user.email)
                                             .set(user)
                                             .addOnCompleteListener {

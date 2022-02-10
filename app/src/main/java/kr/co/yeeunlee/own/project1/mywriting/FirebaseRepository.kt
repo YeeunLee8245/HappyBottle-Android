@@ -27,11 +27,15 @@ class FirebaseRepository {
         return name.toString()
     }
 
-    fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>) {
-        db.collection("user").document(userEmail)
-           .get().addOnSuccessListener {
-                _userSnapshot.value = it
-           }
+    suspend fun getUserSnapshot():DocumentSnapshot {
+        var resultRef:DocumentSnapshot? = null
+        coroutineScope {    // 비동기가 하나라도 순서에 구애 받아야하면 무조건 코루틴을 넣어주자
+            db.collection("user").document(userEmail)
+                .get().addOnSuccessListener {
+                    resultRef = it
+                }
+        }.await()
+        return resultRef!!
     }
 
     fun setUserStatusMsg(newStatus:String){
