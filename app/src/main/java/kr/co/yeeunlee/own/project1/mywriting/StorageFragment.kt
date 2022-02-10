@@ -89,8 +89,8 @@ class StorageFragment : Fragment() {
                         btnBottle1.visibility = View.INVISIBLE
                         btnBottle1.isEnabled = false
                     }else{
-                        text1.setText((item.first!!/5).toString())
-                        btnBottle1.setBackgroundResource(bottleColorLi[item.first!!/5%11])
+                        text1.setText((item.first!!/30).toString())
+                        btnBottle1.setBackgroundResource(bottleColorLi[item.first!!/30%11])
                         btnBottle1.setOnClickListener {
                             (activity as MainActivity).changeOpnBtlFragment(item.first!!)
                         }
@@ -99,8 +99,8 @@ class StorageFragment : Fragment() {
                         btnBottle2.visibility = View.INVISIBLE
                         btnBottle2.isEnabled = false
                     }else{
-                        text2.setText((item.second!!/5).toString())
-                        btnBottle2.setBackgroundResource(bottleColorLi[item.second!!/5%11])
+                        text2.setText((item.second!!/30).toString())
+                        btnBottle2.setBackgroundResource(bottleColorLi[item.second!!/30%11])
                         btnBottle2.setOnClickListener {
                             (activity as MainActivity).changeOpnBtlFragment(item.second!!)
                         }
@@ -109,8 +109,8 @@ class StorageFragment : Fragment() {
                         btnBottle3.visibility = View.INVISIBLE
                         btnBottle3.isEnabled = false
                     }else{
-                        text3.setText((item.third!!/5).toString())
-                        btnBottle3.setBackgroundResource(bottleColorLi[item.third!!/5%11])
+                        text3.setText((item.third!!/30).toString())
+                        btnBottle3.setBackgroundResource(bottleColorLi[item.third!!/30%11])
                         btnBottle3.setOnClickListener {
                             (activity as MainActivity).changeOpnBtlFragment(item.third!!)
                         }
