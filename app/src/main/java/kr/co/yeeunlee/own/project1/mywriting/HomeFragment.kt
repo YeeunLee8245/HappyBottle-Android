@@ -32,7 +32,7 @@ class HomeFragment : Fragment() {
         R.drawable.bottle_19,R.drawable.bottle_20,R.drawable.bottle_21,R.drawable.bottle_22,
         R.drawable.bottle_23,R.drawable.bottle_24,R.drawable.bottle_25,R.drawable.bottle_26,
         R.drawable.bottle_27,R.drawable.bottle_28,R.drawable.bottle_29,R.drawable.bottle_30)
-    private val userEmail = LoginStartActivity.mAuth.currentUser?.email.toString()
+    private var initVaild:Boolean = false
     private var userName:String? = null
     private var userToken:String = "false"
     private var vaildModify:Boolean = false
@@ -40,7 +40,6 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("액티비티",activity.toString())
-
     }
 
     override fun onCreateView(
@@ -55,7 +54,10 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        homeViewModel.getUserSnapshot()
+        CoroutineScope(Dispatchers.Main).launch {
+            homeViewModel.getUserSnapshot()
+            Log.d("바뀌나요","확인")
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,19 +94,20 @@ class HomeFragment : Fragment() {
                 sumBottle = 30
             }
         }
-        binding.textBottle.setBackgroundResource(imgBottle[sumBottle])
-        binding.textBottle.text = strMemo
-        userName = snapshot["name"].toString()
-        userToken = snapshot["token"].toString()
+
         binding.apply {
-//            imgUser.text = if (snapshot["img"] == null) "프로필 나중에 추가" else "널이여야만 함"
-            txtName.text = snapshot["name"].toString()
+            userToken = snapshot["token"].toString()
             txtStatus.setText(snapshot["statusMsg"].toString())
-        }
+            textBottle.setBackgroundResource(imgBottle[sumBottle])
+            textBottle.text = strMemo
+            txtName.text = snapshot["name"].toString()
+            imgUser.setImageResource(MainActivity.profileImgLi[snapshot["profileImg"].toString().toInt()])
+            }
+
         Log.d("bottle",num.toString())
     }
 
-    private fun initBtnWrite(){
+    private fun initBtnWrite(){ // 닉네임과 프로필 사진을 최초에 한 번만 초기화하면 안된다. 프래그먼트는 화면이 바뀔 때마다 다시 초기화되어 생성된다.
         binding.btnWrite.setOnClickListener {
             val dialog = WriteDialogFragment()
             val firebaseRepo: FirebaseRepository = FirebaseRepository()
@@ -153,4 +156,7 @@ class HomeFragment : Fragment() {
         fireRepo.setUserStatusMsg(binding.txtStatus.text.toString())    // 데베 업뎃
     }
 
+    fun updateBottle(){
+        homeViewModel.getUserSnapshot()
+    }
 }

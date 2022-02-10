@@ -38,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         const val SERVER_KEY = "AAAAo5J_z7o:APA91bGez1wfMPVqb21kPXr1AUB_rr52KM3XD4pC1yES5X0-0gJlJlqZ65ANzjcSIMOnx360oDOq4PADxLAW7dbyVvW82d3rp304te3T8RuVVleef74omnENUvj9H1nW8Rr3LCFhnoSY"
         const val CONTENT_TYPE = "application/json"
         const val OPINION_TAG = "opinionDialog"
+        val profileImgLi = arrayListOf(R.drawable.home_blue, R.drawable.home_green, R.drawable.home_mint
+            , R.drawable.home_orange, R.drawable.home_pink, R.drawable.home_purple, R.drawable.home_sky
+            , R.drawable.home_yellow)
     }
     private lateinit var binding:ActivityMainBinding
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -47,7 +50,8 @@ class MainActivity : AppCompatActivity() {
     private val homeFragment = HomeFragment()
     private val storageFragment = StorageFragment()
     private val sendFragment = SendFragment()
-    private val arrayTag = arrayListOf(HOME_TAG, STORAGE_TAG, SEND_TAG)
+    private val tagMap = mapOf(HOME_TAG to R.color.home_background, STORAGE_TAG to R.color.storage_background
+    , SEND_TAG to R.color.open_bottle_background, OPEN_TAG to R.color.open_bottle_background) // mapof는 변경 불가능(hashmap은 가능)
     var currentTag:String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,7 +114,7 @@ class MainActivity : AppCompatActivity() {
 
         if (currentTag != fragmentTag){
             currentTag = fragmentTag
-
+            tagMap[currentTag]!!.let { binding.constraintLayoutBack.setBackgroundResource(it) }
             tran.replace(R.id.fragment, fragment)
             tran.commit()
         }
@@ -120,6 +124,7 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.setFragmentResult("requestKey"
             ,  bundleOf("bundleKey" to index))
         supportFragmentManager.beginTransaction().replace(R.id.fragment, OpenBottleFragment())
+            .addToBackStack(null)
             .commit()
         currentTag = OPEN_TAG
     }
@@ -163,6 +168,7 @@ class MainActivity : AppCompatActivity() {
         }.await()
 
         coroutineScope {
+            Log.d("계정 삭제", LoginStartActivity.mAuth.currentUser.toString())
             LoginStartActivity.mAuth.currentUser!!.delete().addOnSuccessListener {
                 logout()
             }

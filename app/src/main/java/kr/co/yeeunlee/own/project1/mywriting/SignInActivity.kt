@@ -18,6 +18,10 @@ import java.util.regex.Pattern
 class SignInActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignInBinding
     private val db = LoginStartActivity.db
+    private val imgIdx:Int = (0..7).random()
+    private val imgLi = arrayListOf(R.drawable.blue, R.drawable.green, R.drawable.mint
+        , R.drawable.orange, R.drawable.pink, R.drawable.purple, R.drawable.sky
+        , R.drawable.yellow)
     private var map = hashMapOf<String,Boolean>("email" to false, "name" to false,
         "password" to false)
     private var limitName:Boolean = false
@@ -28,7 +32,7 @@ class SignInActivity : AppCompatActivity() {
         binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        binding.imageProfil.setImageResource(imgLi[imgIdx])
         binding.btnNameDupli.setOnClickListener {
             var name = binding.editName.text
             duplicateName(name.toString())
@@ -117,19 +121,15 @@ class SignInActivity : AppCompatActivity() {
             val inputEmail = binding.editEmail.text.toString()
             val inputPassword = binding.editPW.text.toString()
             val intentStart = Intent(this, LoginStartActivity::class.java)
-            val fireRepo = FirebaseRepository()
-            CoroutineScope(Dispatchers.Default).launch {
-                //val token: String = fireRepo.setToken()
-                user = User(
-                    inputName, inputEmail, true, inputPassword,
-                    0, 0, ""
-                )
-                //Log.d("인증메일전송2", "$user")
-                intentStart.putExtra("user", user)
+            //val token: String = fireRepo.setToken()
+            user = User(
+                inputName, inputEmail, true, inputPassword,
+                0, 0,"", imgIdx)
+            Log.d("인증메일전송2", "$user")
+            intentStart.putExtra("user", user)
 
-                setResult(RESULT_OK, intentStart)
-                finish()
-            }
+            setResult(RESULT_OK, intentStart)
+            finish()
         }
     }
 

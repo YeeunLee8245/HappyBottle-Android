@@ -20,7 +20,8 @@ import java.util.*
 // 유저 등록
 @Parcelize
 data class User(var name:String, val email:String, val vaildPassWord:Boolean
-, var password:String?, val numNote: Int, val numPost: Int, var token:String, var statusMsg: String = "되새기고 싶은 한 마디") : Parcelable
+    , var password:String?, val numNote: Int, val numPost: Int, var token:String
+    , val profileImg:Int , var statusMsg: String = "되새기고 싶은 한 마디") : Parcelable
 
 // 글 등록
 data class Note(val name: String="", val text: String="", val time: Timestamp= Timestamp.now(), val check: Boolean=false, val type: Int=0, var post:Boolean=false){
