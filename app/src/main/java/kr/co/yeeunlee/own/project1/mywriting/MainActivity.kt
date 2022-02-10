@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         const val FCM_URL = "https://fcm.googleapis.com"
         const val SERVER_KEY = "AAAAo5J_z7o:APA91bGez1wfMPVqb21kPXr1AUB_rr52KM3XD4pC1yES5X0-0gJlJlqZ65ANzjcSIMOnx360oDOq4PADxLAW7dbyVvW82d3rp304te3T8RuVVleef74omnENUvj9H1nW8Rr3LCFhnoSY"
         const val CONTENT_TYPE = "application/json"
+        const val OPINION_TAG = "opinionDialog"
     }
     private lateinit var binding:ActivityMainBinding
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -84,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.btnOpinion.setOnClickListener { // 의견 보내기
-            val dialog = OpinionDialogFragment()
+            val dialog = OpinionDialogFragment(OPINION_TAG)
             this.supportFragmentManager.let { fragmentManager ->
                 dialog.show(fragmentManager, "opinion")
             }
