@@ -1,36 +1,26 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityMainBinding
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentHomeBinding
 
 
 class HomeFragment : Fragment() {
+    companion object{
+        const val FILL_TAG = "fillBottleDialog"
+    }
     private lateinit var binding: FragmentHomeBinding
     private lateinit var googleSignInClient: GoogleSignInClient
     private val homeViewModel: HomeViewModel by viewModels<HomeViewModel>()
@@ -41,7 +31,7 @@ class HomeFragment : Fragment() {
         R.drawable.bottle_15,R.drawable.bottle_16,R.drawable.bottle_17,R.drawable.bottle_18,
         R.drawable.bottle_19,R.drawable.bottle_20,R.drawable.bottle_21,R.drawable.bottle_22,
         R.drawable.bottle_23,R.drawable.bottle_24,R.drawable.bottle_25,R.drawable.bottle_26,
-        R.drawable.bottle_27,R.drawable.bottle_28,R.drawable.bottle_29,R.drawable.bottle_30,)
+        R.drawable.bottle_27,R.drawable.bottle_28,R.drawable.bottle_29,R.drawable.bottle_30)
     private val userEmail = LoginStartActivity.mAuth.currentUser?.email.toString()
     private var userName:String? = null
     private var userToken:String = "false"
@@ -91,8 +81,19 @@ class HomeFragment : Fragment() {
 
     private fun initUserView(snapshot: DocumentSnapshot){
         val num = snapshot["numNote"].toString().toInt()
-        val numMemo = num%30
-        val strMemo = "$numMemo/30"
+        var sumBottle = num%30  // 최신 보틀에 있는 쪽지 개수
+        var strMemo = "$sumBottle/30"
+        if (num == 0){
+            strMemo = "0/30"
+            sumBottle = 0
+        }else{
+            if (sumBottle == 0){
+                strMemo = "30/30"
+                sumBottle = 30
+            }
+        }
+        binding.textBottle.setBackgroundResource(imgBottle[sumBottle])
+        binding.textBottle.text = strMemo
         userName = snapshot["name"].toString()
         userToken = snapshot["token"].toString()
         binding.apply {
@@ -101,8 +102,6 @@ class HomeFragment : Fragment() {
             txtStatus.setText(snapshot["statusMsg"].toString())
         }
         Log.d("bottle",num.toString())
-        binding.textBottle.setBackgroundResource(imgBottle[numMemo])
-        binding.textBottle.text = strMemo
     }
 
     private fun initBtnWrite(){
@@ -112,9 +111,16 @@ class HomeFragment : Fragment() {
             //TODO("다이얼로그 프래그먼트 생성,onClickListener로 정보 넘기기")
             dialog.setButtonClickListener(object : WriteDialogFragment.OnButtonClickListener{
                 override fun onButtonClicked(textEditNote: String, type:Int) {
-                    CoroutineScope(Dispatchers.Default).launch {
+                    CoroutineScope(Dispatchers.Main).launch {
                         // 보틀 업데이트
                         homeViewModel.setUserSnapshot(firebaseRepo.setNoteAdd(textEditNote, type))
+                        val numNote = homeViewModel.userSnapshot.value!!.get("numNote").toString().toInt()
+                        if ((numNote%30) == 0){
+                            val fillDialog = OpinionDialogFragment(FILL_TAG)
+                            activity!!.supportFragmentManager?.let { fragmentManager ->
+                                fillDialog.show(fragmentManager, "fillBottle")
+                            }
+                        }
                     }
                 }
             })

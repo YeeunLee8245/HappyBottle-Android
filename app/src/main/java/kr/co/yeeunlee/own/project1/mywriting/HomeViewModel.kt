@@ -2,6 +2,7 @@ package kr.co.yeeunlee.own.project1.mywriting
 
 import androidx.lifecycle.*
 import com.google.firebase.firestore.DocumentSnapshot
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class HomeViewModel: ViewModel(){
