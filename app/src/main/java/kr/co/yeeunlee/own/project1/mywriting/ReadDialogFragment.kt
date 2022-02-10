@@ -24,7 +24,7 @@ class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: 
     : DialogFragment() {
     private var _binding: DialogFragmentReadBinding? = null
     private val binding get() = _binding!!
-    private val orderLast = orderStart + 4
+    private val orderLast = orderStart + 29
     private var currentOrder:Int = currentSnapshot.id.toInt()
     //private lateinit var readOnBtnClickListener:
 
