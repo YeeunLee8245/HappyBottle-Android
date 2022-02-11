@@ -73,7 +73,8 @@ class SendFragment : Fragment() {
                 val dialog = SendReadDialogFragment(checkPost.value!![position]
                     , (checkPost.value!!.size - position), checkPost, this@SendFragment)
                 activity?.supportFragmentManager?.let { fragmentManager ->
-                    dialog.show(fragmentManager, "sendReadNote")
+                    if (null == fragmentManager.findFragmentByTag("sendReadNote"))
+                        dialog.show(fragmentManager, "sendReadNote")
                 }
             }
         })
@@ -108,7 +109,8 @@ class SendFragment : Fragment() {
                 }
             })
             activity?.supportFragmentManager?.let { fragmentManager ->
-                dialog.show(fragmentManager, "sendNote")
+                if (null == fragmentManager.findFragmentByTag("sendNote"))
+                    dialog.show(fragmentManager, "sendNote")
             }
         }
     }

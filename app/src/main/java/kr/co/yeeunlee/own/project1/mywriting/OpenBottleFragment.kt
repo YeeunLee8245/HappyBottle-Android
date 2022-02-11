@@ -57,7 +57,8 @@ class OpenBottleFragment : Fragment() {
                     val dialog = ReadDialogFragment(snapshot!!, orderLast-29)
 
                     activity?.supportFragmentManager?.let { fragmentManager ->
-                        dialog.show(fragmentManager, "readNote")
+                        if (null == fragmentManager.findFragmentByTag("readNote"))
+                            dialog.show(fragmentManager, "readNote")
                     }
                 }
 
