@@ -40,6 +40,8 @@
         android:layout_height="30dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="10dp"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textSize="25dp"
         android:textColor="@color/darkgreen"
         android:fontFamily="@font/font_info"

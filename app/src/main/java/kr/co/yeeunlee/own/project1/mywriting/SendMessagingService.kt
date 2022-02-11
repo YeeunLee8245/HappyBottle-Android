@@ -25,7 +25,7 @@ class SendMessagingService: FirebaseMessagingService()  {
         // 다른 기기에서 서버로 보냈을 때
         val title = remoteMessage.data["title"]!!
         val name = remoteMessage.data["name"]!!
-        val message = remoteMessage.data["message"]!!
+        val message = "쪽지가 도착했어요!"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) { // Android 8(Oreo)
             sendMessageNotification(title, name, message)
         }else{
@@ -62,7 +62,7 @@ class SendMessagingService: FirebaseMessagingService()  {
             .setContentTitle(title)
             .setContentText(message)
             .setStyle(messageStyle)
-            .setSmallIcon(R.drawable.pink)
+            .setSmallIcon(R.drawable.icon_popup)
             .setAutoCancel(true)
             .setSound(defaultSoundUri)
             .setContentIntent(pendingIntent)
@@ -88,7 +88,7 @@ class SendMessagingService: FirebaseMessagingService()  {
         val notificationBuilder = NotificationCompat.Builder(this,"service")
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(R.drawable.pink)
+            .setSmallIcon(R.drawable.icon_popup)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as
