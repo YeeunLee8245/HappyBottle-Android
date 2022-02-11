@@ -121,14 +121,16 @@ class HomeFragment : Fragment() {
                         if ((numNote%30) == 0){
                             val fillDialog = OpinionDialogFragment(FILL_TAG)
                             activity!!.supportFragmentManager?.let { fragmentManager ->
-                                fillDialog.show(fragmentManager, "fillBottle")
+                                if (null == fragmentManager.findFragmentByTag("fillBottle"))
+                                    fillDialog.show(fragmentManager, "fillBottle")
                             }
                         }
                     }
                 }
             })
             activity?.supportFragmentManager?.let { fragmentManager ->
-                dialog.show(fragmentManager, "writeNote")
+                if (null == fragmentManager.findFragmentByTag("writeNote")) // 중복 생성 방지
+                    dialog.show(fragmentManager, "writeNote")
             }
             //firebaseRepo.setNoteAdd(newNote)
         }
