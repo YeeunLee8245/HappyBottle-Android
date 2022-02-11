@@ -90,28 +90,32 @@ class SendFragment : Fragment() {
 
     private fun initBtnSend(){
         binding.btnSend.setOnClickListener {
-            val dialog = SendDialogFragment()
-            vaild.value = false
-            dialog.setSendBtnListener(object : SendDialogFragment.SendOnBtnClickListener{
-                override fun SendOnBtnClicked(receiver: String, textEditNote: String, type: Int){
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val profileImg: Int = firebaseRepo.getUserProfileImgSnapshot()
-                        firebaseRepo.setPostNoteAdd(receiver, textEditNote, type, profileImg, vaild)
-                        // 푸시알림 전송
-                        Log.d("알림 이름",receiver.toString())
-                        val token = firebaseRepo.getToken(receiver.toString())
-                        Log.d("알림 토큰",token.toString())
-                        val name = firebaseRepo.getUserNameSnapshot()
-                        val data = NotificationBody.NotificationData(getString(R.string.app_name),
-                            name, textEditNote, profileImg)
-                        val body = NotificationBody(token, data)
-                        sendViewModel.sendNotification(body)
+            var name:String? = null
+            var dialog:SendDialogFragment? = null
+            CoroutineScope(Dispatchers.Main).launch {
+                name = firebaseRepo.getUserNameSnapshot()
+                dialog = SendDialogFragment(name.toString())
+                vaild.value = false
+                dialog!!.setSendBtnListener(object : SendDialogFragment.SendOnBtnClickListener{
+                    override fun SendOnBtnClicked(receiver: String, textEditNote: String, type: Int){
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val profileImg: Int = firebaseRepo.getUserProfileImgSnapshot()
+                            firebaseRepo.setPostNoteAdd(receiver, textEditNote, type, profileImg, vaild)
+                            // 푸시알림 전송
+                            Log.d("알림 이름",receiver.toString())
+                            val token = firebaseRepo.getToken(receiver.toString())
+                            Log.d("알림 토큰",token.toString())
+                            val data = NotificationBody.NotificationData(getString(R.string.app_name),
+                                name.toString(), textEditNote, profileImg)
+                            val body = NotificationBody(token, data)
+                            sendViewModel.sendNotification(body)
+                        }
                     }
+                })
+                activity?.supportFragmentManager?.let { fragmentManager ->
+                    if (null == fragmentManager.findFragmentByTag("sendNote"))
+                        dialog!!.show(fragmentManager, "sendNote")
                 }
-            })
-            activity?.supportFragmentManager?.let { fragmentManager ->
-                if (null == fragmentManager.findFragmentByTag("sendNote"))
-                    dialog.show(fragmentManager, "sendNote")
             }
         }
     }

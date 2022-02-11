@@ -16,7 +16,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import kr.co.yeeunlee.own.project1.mywriting.databinding.DialogFragmentSendBinding
 
-class SendDialogFragment: DialogFragment() {
+class SendDialogFragment(val userName: String): DialogFragment() {
     private var _binding: DialogFragmentSendBinding? = null
     private var vaild:Boolean = false
     private val binding get() = _binding!!
@@ -76,10 +76,17 @@ class SendDialogFragment: DialogFragment() {
                     editReceiver.error = "존재하지 않는 사용자입니다."
                 } else if (receiver == "")
                     editReceiver.error = "별명을 입력해주세요."
+                else if (receiver == userName)
+                    editReceiver.error = "스스로에게 쪽지를 보낼 수는 없습니다."
                 else { // valid == false
                     vaild = true
                     editReceiver.error = null
                     Toast.makeText(context, "사용자 확인 완료!", Toast.LENGTH_SHORT).show()
+                    // 키보드 내리고 포커스 맞추기
+                    val imm =
+                        this.context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(binding.editNote.windowToken, 0)
+                    binding.editNote.clearFocus()
                 }
                 Log.d("별명 valid", "$receiver $vaild")
             }
