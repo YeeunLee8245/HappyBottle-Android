@@ -65,11 +65,12 @@ class FirebaseRepository {
             dcmRef.get().addOnSuccessListener {
                 if (post == null) {
                     dcmRef.collection("note").document("${(it.get("numNote") as Long) +1}")
-                        .set(Note(it.get("name") as String, textEditNote, Timestamp.now(),true, type, false))
+                        .set(Note(it.get("name") as String, textEditNote, Timestamp.now()
+                            ,true, type, false, -1))
                 }
                 else{
                     dcmRef.collection("note").document("${(it.get("numNote") as Long) +1}")
-                        .set(Note(post.name, post.text, post.time,true, post.type, true))
+                        .set(Note(post.name, post.text, post.time,true, post.type, true, -1))
                 }
             }
         }.await()
@@ -196,7 +197,8 @@ class FirebaseRepository {
         }
     }
 
-    suspend fun setPostNoteAdd(receiver: String, textEditNote: String, type: Int, vaild:MutableLiveData<Boolean>){
+    suspend fun setPostNoteAdd(
+        receiver: String, textEditNote: String, type: Int, profileImg:Int, vaild:MutableLiveData<Boolean>){
         var currentDcmRef:DocumentReference = db.collection("user").document(userEmail)
         var dcmRef:DocumentReference? = null
         var userName:String = ""
@@ -217,7 +219,7 @@ class FirebaseRepository {
             dcmRef!!.get().addOnSuccessListener {
                 val timeNow = Timestamp.now()
                 dcmRef!!.collection("postbox").document("${timeNow}")
-                    .set(Note(userName, textEditNote, timeNow,false, type, true))
+                    .set(Note(userName, textEditNote, timeNow,false, type, true, profileImg))
             }
         }.await()
 

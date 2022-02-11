@@ -95,14 +95,15 @@ class SendFragment : Fragment() {
             dialog.setSendBtnListener(object : SendDialogFragment.SendOnBtnClickListener{
                 override fun SendOnBtnClicked(receiver: String, textEditNote: String, type: Int){
                     CoroutineScope(Dispatchers.Main).launch {
-                        firebaseRepo.setPostNoteAdd(receiver, textEditNote, type, vaild)
+                        val profileImg: Int = firebaseRepo.getUserProfileImgSnapshot()
+                        firebaseRepo.setPostNoteAdd(receiver, textEditNote, type, profileImg, vaild)
                         // 푸시알림 전송
                         Log.d("알림 이름",receiver.toString())
                         val token = firebaseRepo.getToken(receiver.toString())
                         Log.d("알림 토큰",token.toString())
                         val name = firebaseRepo.getUserNameSnapshot()
                         val data = NotificationBody.NotificationData(getString(R.string.app_name),
-                            name, textEditNote, firebaseRepo.getUserProfileImgSnapshot())
+                            name, textEditNote, profileImg)
                         val body = NotificationBody(token, data)
                         sendViewModel.sendNotification(body)
                     }
