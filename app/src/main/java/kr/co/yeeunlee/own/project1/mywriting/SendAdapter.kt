@@ -1,5 +1,6 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,8 +28,9 @@ class SendAdapter(private var postLi: ArrayList<Note>)
         postLi!!.get(position).let { item ->
             with(holder){
                 txtFromName.text = item.name
-                txtPreview.text = if(item.text.length < 8) item.text
-                else item.text.substring(0,7) + "..."
+                val arr = item.text.split('\n')
+                Log.d("나누기", arr.toString())
+                txtPreview.text = arr[0]
                 itemView.setOnClickListener {
                     itemClickListener.onItemClick(it, position)
                 }
