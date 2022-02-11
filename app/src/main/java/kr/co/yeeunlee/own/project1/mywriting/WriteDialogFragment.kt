@@ -56,7 +56,7 @@ class WriteDialogFragment: DialogFragment() {
             this.context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.editNote.windowToken, 0)
         binding.editNote.clearFocus()
-        if (text == ""){
+        if (text == "\n\n\n\n\n"){
             Toast.makeText(this.context,"내용을 입력해주세요.", Toast.LENGTH_SHORT).show()
         }else{
             onButtonClickListener.onButtonClicked(text,CustomConstraintLayout.type)
