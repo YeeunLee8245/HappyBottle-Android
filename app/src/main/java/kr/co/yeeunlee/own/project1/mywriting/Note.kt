@@ -73,7 +73,7 @@ data class MessageDTO(var fromName: String? = null, var toName: String? = null,
 var text: String? = null, var timestamp: Long? = null)
 
 data class NotificationBody(val to: String, val data: NotificationData){
-    data class NotificationData(val title: String, val name: String, val message: String)
+    data class NotificationData(val title: String, val name: String, val message: String, val profileImg: Int)
 }
 
 interface FcmInterface{ // 푸시 메시지를 서버로 보냄

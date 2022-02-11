@@ -26,8 +26,9 @@ class SendMessagingService: FirebaseMessagingService()  {
         val title = remoteMessage.data["title"]!!
         val name = remoteMessage.data["name"]!!
         val message = "쪽지가 도착했어요!"
+        val profileImg = remoteMessage.data["profileImg"]!!.toInt()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) { // Android 8(Oreo)
-            sendMessageNotification(title, name, message)
+            sendMessageNotification(title, name, message, profileImg)
         }else{
             sendNotification(remoteMessage.notification?.title,
                 remoteMessage.notification?.body!!)
@@ -37,10 +38,11 @@ class SendMessagingService: FirebaseMessagingService()  {
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    private fun sendMessageNotification(title: String, name: String, message: String){
+    private fun sendMessageNotification(title: String, name: String, message: String, profileImg: Int){
+        val profileImgLi = arrayListOf(R.drawable.blue, R.drawable.green, R.drawable.mint,
+            R.drawable.orange, R.drawable.pink, R.drawable.purple, R.drawable.sky, R.drawable.yellow)
         // 팝업 클릭시 이동할 액티비티
         val intentSend = Intent(this, MainActivity::class.java)
-        val notificationID = 0
         intentSend.putExtra("service", "service")
         intentSend.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복생성 방지
         val pendingIntent = PendingIntent.getActivity(this, 0, intentSend,
@@ -49,7 +51,7 @@ class SendMessagingService: FirebaseMessagingService()  {
         // messageStyle 설정
         val user: androidx.core.app.Person = Person.Builder()
             .setName(name)
-            .setIcon(IconCompat.createWithResource(this, R.drawable.pink))
+            .setIcon(IconCompat.createWithResource(this, profileImgLi[profileImg]))
             .build()
         val compatMsg = NotificationCompat.MessagingStyle.Message(
             message,
@@ -80,7 +82,6 @@ class SendMessagingService: FirebaseMessagingService()  {
     private fun sendNotification(title: String?, message: String){
         // 팝업 클릭시 이동할 액티비티
         val intentSend = Intent(this, MainActivity::class.java)
-        val notificationID = 0
         intentSend.putExtra("service", "service")
         intentSend.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복생성 방지
         val pendingIntent = PendingIntent.getActivity(this, 0, intentSend,
