@@ -32,7 +32,7 @@ class FirebaseRepository {
             db.collection("user").document(userEmail)
                 .get().addOnSuccessListener {
                     _userSnapshot.value = it
-                    db.collection("user").document(userEmail)   // 변경이 있으면
+                    db.collection("user").document(userEmail)   // 변경이 있으면 다시 업뎃
                         .addSnapshotListener(MetadataChanges.INCLUDE){snapshot, e ->
                             _userSnapshot.value = snapshot
                             Log.d("메타데이터 변경", snapshot.toString())
@@ -244,7 +244,8 @@ class FirebaseRepository {
         db.collection("user").document(userEmail).collection("postbox")
             .orderBy("time", Query.Direction.ASCENDING).addSnapshotListener { querySnapshot, _ ->
                 if (querySnapshot == null) return@addSnapshotListener
-
+                if (__checkPost.size == querySnapshot.size())   // 업데이트 중복 방지
+                    return@addSnapshotListener
                 querySnapshot.documentChanges.forEachIndexed { i, dcm ->
                     if (dcm.type == DocumentChange.Type.ADDED) {
                         var post = dcm.document.toObject(Note::class.java)
@@ -263,7 +264,6 @@ class FirebaseRepository {
                     }
                 }
             }
-
     }
 
     suspend fun getToken(receiver: String): String{
