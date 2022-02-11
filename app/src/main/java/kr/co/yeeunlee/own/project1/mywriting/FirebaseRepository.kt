@@ -27,6 +27,17 @@ class FirebaseRepository {
         return name.toString()
     }
 
+    suspend fun getUserProfileImgSnapshot():Int{
+        var name:Any? = null
+        coroutineScope {
+            db.collection("user").document(userEmail)
+                .get().addOnSuccessListener {
+                    name = it.get("profileImg")
+                }
+        }.await()
+        return name.toString().toInt()
+    }
+
     suspend fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>) {
         coroutineScope {    // 비동기가 하나라도 순서에 구애 받아야하면 무조건 코루틴을 넣어주자
             db.collection("user").document(userEmail)

@@ -102,7 +102,7 @@ class SendFragment : Fragment() {
                         Log.d("알림 토큰",token.toString())
                         val name = firebaseRepo.getUserNameSnapshot()
                         val data = NotificationBody.NotificationData(getString(R.string.app_name),
-                            name, textEditNote)
+                            name, textEditNote, firebaseRepo.getUserProfileImgSnapshot())
                         val body = NotificationBody(token, data)
                         sendViewModel.sendNotification(body)
                     }
