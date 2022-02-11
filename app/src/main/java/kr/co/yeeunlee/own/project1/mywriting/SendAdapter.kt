@@ -17,6 +17,7 @@ class SendAdapter(private var postLi: ArrayList<Note>)
     inner class ViewHolder(view: ItemSendRecyclerBinding): RecyclerView.ViewHolder(view.root){
         val txtFromName = view.txtFromName
         val txtPreview = view.txtPreview
+        val circleImg = view.circleImageView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,6 +32,7 @@ class SendAdapter(private var postLi: ArrayList<Note>)
                 val arr = item.text.split('\n')
                 Log.d("나누기", arr.toString())
                 txtPreview.text = arr[0]
+                circleImg.setImageResource(MainActivity.profileImgLi[item.profileImg])
                 itemView.setOnClickListener {
                     itemClickListener.onItemClick(it, position)
                 }

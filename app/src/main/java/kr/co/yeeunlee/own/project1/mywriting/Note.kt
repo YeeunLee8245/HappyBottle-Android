@@ -24,7 +24,8 @@ data class User(var name:String, val email:String, val vaildPassWord:Boolean
     , val profileImg:Int , var statusMsg: String = "되새기고 싶은 한 마디") : Parcelable
 
 // 글 등록
-data class Note(val name: String="", val text: String="", val time: Timestamp= Timestamp.now(), val check: Boolean=false, val type: Int=0, var post:Boolean=false){
+data class Note(val name: String="", val text: String="", val time: Timestamp= Timestamp.now()
+                , val check: Boolean=false, val type: Int=0, var post:Boolean=false, val profileImg: Int=-1){
      init {
          //AndroidThreeTen.init(this) 액티비티, 프래그먼트에서 해주기
      }
@@ -51,7 +52,8 @@ data class Note(val name: String="", val text: String="", val time: Timestamp= T
                 time = snapshot["time"] as Timestamp,
                 check = snapshot["check"] as Boolean,
                 type = snapshot["type"] as Int,
-                post = snapshot["post"] as Boolean
+                post = snapshot["post"] as Boolean,
+                profileImg = snapshot["profileImg"] as Int
             )
         }
 
