@@ -16,8 +16,6 @@ import kotlin.properties.Delegates
 
 class OpenBottleFragment : Fragment() {
     private lateinit var binding: FragmentOpenBottleBinding
-    private val firebaseRepo = FirebaseRepository()
-    private val opnBtlViewModel: OpnBtlViewModel by viewModels<OpnBtlViewModel>()
     private var orderLast by Delegates.notNull<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,10 +36,6 @@ class OpenBottleFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-    }
 
     fun initBtnRead(){
         val btnLi = arrayListOf<Button>(binding.btn1, binding.btn2, binding.btn3, binding.btn4, binding.btn5
@@ -52,6 +46,7 @@ class OpenBottleFragment : Fragment() {
         for (i in 1..btnLi.size){
             btnLi[i-1].setOnClickListener {
                 var snapshot: DocumentSnapshot? = null
+                val firebaseRepo = FirebaseRepository(activity!!)
                 CoroutineScope(Dispatchers.Main).launch {
                     snapshot = firebaseRepo.getOpnNoteSnapshot(orderLast - 30 + i) //60 - 30 + 1 = 31
                     val dialog = ReadDialogFragment(snapshot!!, orderLast-29)
@@ -65,7 +60,5 @@ class OpenBottleFragment : Fragment() {
             }
         }
     }
-
-    //TODO("뒤로가기시 보관함 창(프래그먼트로) 가기")
 
 }

@@ -1,16 +1,11 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
-import android.util.Log
-import android.view.View
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.DocumentSnapshot
-import kotlinx.coroutines.launch
 
 class StorageViewModel:ViewModel() {
-    private val firebaseRepo: FirebaseRepository = FirebaseRepository()
     private var __stgBottleLi = ArrayList<BottleList>()
     private var _stgBottleLi: MutableLiveData<ArrayList<BottleList>> = MutableLiveData<ArrayList<BottleList>>()
     val stgBtSnapLi:LiveData<ArrayList<BottleList>> = _stgBottleLi
@@ -20,7 +15,8 @@ class StorageViewModel:ViewModel() {
         //getStorageBottleLi()
     }
 
-    fun getStorageBottleLi(){
+    fun getStorageBottleLi(context: Context){
+        val firebaseRepo: FirebaseRepository = FirebaseRepository(context)
         firebaseRepo.getStorageBottleLi(_stgBottleLi, __stgBottleLi)
     }
 

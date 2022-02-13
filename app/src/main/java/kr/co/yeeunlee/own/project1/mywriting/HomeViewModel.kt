@@ -1,12 +1,11 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.content.Context
 import androidx.lifecycle.*
 import com.google.firebase.firestore.DocumentSnapshot
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class HomeViewModel: ViewModel(){
-    private val firebaseRepo: FirebaseRepository = FirebaseRepository()
+class HomeViewModel(): ViewModel(){
     private var _userSnapshot:MutableLiveData<DocumentSnapshot> = MutableLiveData<DocumentSnapshot>()
     val userSnapshot: LiveData<DocumentSnapshot> = _userSnapshot
 //    private var _noteSnapshot:MutableLiveData<DocumentSnapshot> = MutableLiveData<DocumentSnapshot>()
@@ -17,7 +16,8 @@ class HomeViewModel: ViewModel(){
         //getBottleSnapshot()
     }
 
-    fun getUserSnapshot() = viewModelScope.launch {
+    fun getUserSnapshot(context: Context) = viewModelScope.launch {
+        val firebaseRepo: FirebaseRepository = FirebaseRepository(context)
        firebaseRepo.getUserSnapshot(_userSnapshot)
     }
 

@@ -1,5 +1,8 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Timestamp
@@ -10,11 +13,26 @@ import okhttp3.ResponseBody
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
 import retrofit2.Response
+import java.lang.Exception
 
-class FirebaseRepository {
+class FirebaseRepository(private val context: Context) {
     private val db = LoginStartActivity.db
     private val userEmail = LoginStartActivity.mAuth.currentUser?.email.toString()
     private var userName:String? = null
+
+    private fun makeToast(exception: Exception){
+        AlertDialog.Builder(context)
+            .setTitle("서버 오류입니다.")
+            .setMessage(" 관리자에게 문의해주세요. 오류코드:$exception")
+            .setCancelable(false)
+            .setPositiveButton("확인", object : DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, idx: Int) {
+                    dialog!!.dismiss()
+                }
+            })
+            .create()
+            .show()
+    }
 
     suspend fun getUserNameSnapshot():String{
         var name:String? = null
@@ -23,6 +41,7 @@ class FirebaseRepository {
                 .get().addOnSuccessListener {
                     name = it.get("name").toString()
                 }
+                .addOnFailureListener { makeToast(it) }
         }.await()
         return name.toString()
     }
@@ -34,6 +53,7 @@ class FirebaseRepository {
                 .get().addOnSuccessListener {
                     name = it.get("profileImg")
                 }
+                .addOnFailureListener { makeToast(it) }
         }.await()
         return name.toString().toInt()
     }
@@ -49,12 +69,13 @@ class FirebaseRepository {
                             Log.d("메타데이터 변경", snapshot.toString())
                         }
                 }
+                .addOnFailureListener { makeToast(it) }
         }.await()
     }
 
     fun setUserStatusMsg(newStatus:String){
         db.collection("user").document(userEmail)
-            .update("statusMsg", newStatus)
+            .update("statusMsg", newStatus).addOnFailureListener { makeToast(it) }
     }
 
     suspend fun setNoteAdd(textEditNote: String, type:Int, post:Note?=null): DocumentSnapshot {
@@ -67,22 +88,26 @@ class FirebaseRepository {
                     dcmRef.collection("note").document("${(it.get("numNote") as Long) +1}")
                         .set(Note(it.get("name") as String, textEditNote, Timestamp.now()
                             ,true, type, false, -1))
+                        .addOnFailureListener { makeToast(it) }
                 }
                 else{
                     dcmRef.collection("note").document("${(it.get("numNote") as Long) +1}")
                         .set(Note(post.name, post.text, post.time,true, post.type, true, -1))
+                        .addOnFailureListener { makeToast(it) }
                 }
             }
+                .addOnFailureListener { makeToast(it) }
         }.await()
 
         coroutineScope {
-            dcmRef.update("numNote", FieldValue.increment(1))
+            dcmRef.update("numNote", FieldValue.increment(1)).addOnFailureListener { makeToast(it) }
         }.await()
 
         coroutineScope {
             db.collection("user").document(userEmail).get().addOnSuccessListener {
                 resultRef = it
             }
+                .addOnFailureListener { makeToast(it) }
         }.await()
 
         return resultRef!!
@@ -93,6 +118,7 @@ class FirebaseRepository {
 
         coroutineScope {
             dcmRef.collection("note").document(order).update("text", textEditNote)
+                .addOnFailureListener { makeToast(it) }
         }.await()
 
     }
@@ -119,6 +145,7 @@ class FirebaseRepository {
                 //Log.d("보틀 수2", __stgBtSnapLi[0].toString())
                 _stgBtSnapLi.value = __stgBtSnapLi
             }
+            .addOnFailureListener { makeToast(it) }
     }
 
     suspend fun getOpnNoteSnapshot(index: Int) : DocumentSnapshot{
@@ -127,6 +154,7 @@ class FirebaseRepository {
             db.collection("user").document(userEmail)
                 .collection("note").document(index.toString())
                 .get().addOnSuccessListener { resultRef = it }
+                .addOnFailureListener { makeToast(it) }
         }.await()
         return resultRef!!
     }
@@ -141,6 +169,7 @@ class FirebaseRepository {
                 }
                 token = task.result
             }
+                .addOnFailureListener { makeToast(it) }
         }.await()
         Log.d("서비스setToken", token)
         return token
@@ -171,14 +200,13 @@ class FirebaseRepository {
                         db.collection("user").document(userEmail).update("token", token).addOnSuccessListener {
                             Log.d("서비스 토큰 변경success", "정상 작동")
                         }
-                            .addOnFailureListener {
-                                Log.d("서비스 토큰 변경error", it.toString())
-                            }
+                            .addOnFailureListener { makeToast(it) }
                         return@addSnapshotListener
                     }
                 }
 
             }
+                .addOnFailureListener { makeToast(it) }
         }.await()
 
 
@@ -189,22 +217,24 @@ class FirebaseRepository {
         if (setVaild == false){
             coroutineScope {
                 db.collection("user").document(userEmail).update("token","false")
+                    .addOnFailureListener { makeToast(it) }
             }.await()
         }else if (setVaild == true){
             coroutineScope {
                 db.collection("user").document(userEmail).update("token","true")
+                    .addOnFailureListener { makeToast(it) }
             }.await()
         }
     }
 
     suspend fun setPostNoteAdd(
         receiver: String, textEditNote: String, type: Int, profileImg:Int, vaild:MutableLiveData<Boolean>){
-        var currentDcmRef:DocumentReference = db.collection("user").document(userEmail)
         var dcmRef:DocumentReference? = null
         var userName:String = ""
 
         coroutineScope { db.collection("user").document(userEmail).get()
             .addOnSuccessListener { userName = it.get("name").toString() }
+            .addOnFailureListener { makeToast(it) }
         }.await()
 
         coroutineScope { db.collection("user").whereEqualTo("name",receiver).get()
@@ -213,6 +243,7 @@ class FirebaseRepository {
                     dcmRef = document.reference
                 }
             }
+            .addOnFailureListener { makeToast(it) }
         }.await()
 
         coroutineScope {
@@ -220,32 +251,28 @@ class FirebaseRepository {
                 val timeNow = Timestamp.now()
                 dcmRef!!.collection("postbox").document("${timeNow}")
                     .set(Note(userName, textEditNote, timeNow,false, type, true, profileImg))
+                    .addOnFailureListener { makeToast(it) }
             }
+                .addOnFailureListener { makeToast(it) }
         }.await()
 
         coroutineScope {
             dcmRef!!.update("numPost", FieldValue.increment(1)).addOnSuccessListener {
                 vaild.value = true
             }
+                .addOnFailureListener { makeToast(it) }
         }.await()
     }
 
     suspend fun deletePostNote(note:Note){
         val dcmRef:DocumentReference = db.collection("user").document(userEmail)
-        var postVaild:Boolean = true
         coroutineScope {
             dcmRef.collection("postbox").document(note.time.toString()).delete()
-                .addOnFailureListener {
-                    Log.d("삭제 실패",it.toString())
-                    postVaild = false
-                }
+                .addOnFailureListener { makeToast(it) }
         }.await()
-        if (postVaild == false){
-            // 메시지 삭제에 실패했습니다. 인터넷 연결을 확인해주세요 하는 다이얼로그 띄우기(리턴으로 그냥 결과 값 전송에서 프래그 먼트에서 판단하는게 좋을듯)
-            return
-        }
         coroutineScope {
             dcmRef.update("numPost", FieldValue.increment(-1))
+                .addOnFailureListener { makeToast(it) }
         }.await()
     }
 
@@ -288,11 +315,9 @@ class FirebaseRepository {
                         token = dcm.get("token").toString()
                     }
                 }
+                .addOnFailureListener { makeToast(it) }
         }.await()
         return token.toString()
     }
 
-    suspend fun getNewCommentSnapshot(_commentSnapshot:MutableLiveData<DocumentSnapshot>){
-
-    }
 }

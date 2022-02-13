@@ -1,40 +1,23 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkRequest
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
-import android.view.View
-import android.view.WindowInsets
-import android.view.WindowInsetsController
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityMainBinding
-import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
     companion object{
@@ -70,9 +53,7 @@ class MainActivity : AppCompatActivity() {
         connection = NetworkConnection(applicationContext)
         connection.observe(this){ isConnected ->
             if (isConnected){
-                //TODO("인터넷 연결")
             }else{
-                //TODO("인터넷 미연결")
                 makeAlterDialog()
             }
         }
@@ -92,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.switchBell.setOnCheckedChangeListener { _, isChecked ->
-            val fireRepo = FirebaseRepository()
+            val fireRepo = FirebaseRepository(this)
             if (isChecked){
                 Log.d("스위치","사용")
                 CoroutineScope(Dispatchers.Main).launch {
@@ -171,8 +152,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun userDelete() {
+        val fireRepo = FirebaseRepository(this)
         coroutineScope {
-            val fireRepo = FirebaseRepository()
             val userName = fireRepo.getUserNameSnapshot()
             Log.d("사용자 이름", userName)
             LoginStartActivity.db.collection("check").document("name")

@@ -4,16 +4,12 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.google.firebase.Timestamp
-import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,7 +64,7 @@ class SendReadDialogFragment(val note: Note, val mId:Int, val checkPost: LiveDat
     }
 
     private fun savePost(){
-        val fireRepo = FirebaseRepository()
+        val fireRepo = FirebaseRepository(activity!!)
         CoroutineScope(Dispatchers.Main).launch {
             fireRepo.setNoteAdd("",0,note)
             fireRepo.deletePostNote(note)
@@ -79,7 +75,7 @@ class SendReadDialogFragment(val note: Note, val mId:Int, val checkPost: LiveDat
     }
 
     private fun deletePost(){
-        val fireRepo = FirebaseRepository()
+        val fireRepo = FirebaseRepository(activity!!)
         CoroutineScope(Dispatchers.Main).launch {
             fireRepo.deletePostNote(note)
             dismiss()

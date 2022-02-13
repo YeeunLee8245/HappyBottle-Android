@@ -1,7 +1,6 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -12,12 +11,10 @@ import android.view.WindowInsetsController
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
@@ -30,8 +27,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
-import org.threeten.bp.LocalDateTime
-import kotlin.random.Random
 
 class LoginStartActivity : AppCompatActivity() {
     companion object {
@@ -49,7 +44,7 @@ class LoginStartActivity : AppCompatActivity() {
         isPersistenceEnabled = true
         setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED).build()
     }
-    private val fireRepo = FirebaseRepository()
+    private val fireRepo = FirebaseRepository(this)
 
     // 회원가입 Intent 결과, 무조건 전역으로 생성(아니면 에러)
     private val getSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
