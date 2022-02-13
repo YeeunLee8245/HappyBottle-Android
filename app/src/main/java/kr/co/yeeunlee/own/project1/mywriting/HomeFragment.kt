@@ -55,7 +55,7 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         CoroutineScope(Dispatchers.Main).launch {
-            homeViewModel.getUserSnapshot()
+            homeViewModel.getUserSnapshot(activity!!)
             Log.d("바뀌나요","확인")
         }
     }
@@ -110,7 +110,7 @@ class HomeFragment : Fragment() {
     private fun initBtnWrite(){ // 닉네임과 프로필 사진을 최초에 한 번만 초기화하면 안된다. 프래그먼트는 화면이 바뀔 때마다 다시 초기화되어 생성된다.
         binding.btnWrite.setOnClickListener {
             val dialog = WriteDialogFragment()
-            val firebaseRepo: FirebaseRepository = FirebaseRepository()
+            val firebaseRepo: FirebaseRepository = FirebaseRepository(activity!!)
             //TODO("다이얼로그 프래그먼트 생성,onClickListener로 정보 넘기기")
             dialog.setButtonClickListener(object : WriteDialogFragment.OnButtonClickListener{
                 override fun onButtonClicked(textEditNote: String, type:Int) {
@@ -148,7 +148,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun completeStatus(){ // 수정 완료
-        val fireRepo = FirebaseRepository()
+        val fireRepo = FirebaseRepository(activity!!)
         vaildModify = false
         binding.btnModify.setBackgroundResource(R.drawable.btn_modify)
         binding.txtStatus.isEnabled = false
@@ -159,6 +159,6 @@ class HomeFragment : Fragment() {
     }
 
     fun updateBottle(){
-        homeViewModel.getUserSnapshot()
+        homeViewModel.getUserSnapshot(activity!!)
     }
 }

@@ -88,7 +88,7 @@ class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: 
     }
 
     private fun completeText(){
-        val fireRepo = FirebaseRepository()
+        val fireRepo = FirebaseRepository(activity!!)
         Log.d("수정","완료")
         // 키보드 들어가게 하는 부분
         val imm = this.context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -116,7 +116,7 @@ class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: 
     }
 
     private fun descendOrder(){
-        val fireRepo = FirebaseRepository()
+        val fireRepo = FirebaseRepository(activity!!)
         currentOrder -= 1
         if (currentOrder == orderStart) {
             binding.btnLeft.isEnabled = false
@@ -141,7 +141,7 @@ class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: 
     }
 
     private fun ascendOrder(){
-        val fireRepo = FirebaseRepository()
+        val fireRepo = FirebaseRepository(activity!!)
         currentOrder += 1
         if (currentOrder == orderLast) {
             binding.btnRight.isEnabled = false

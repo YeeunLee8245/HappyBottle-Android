@@ -4,15 +4,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ItemSendRecyclerBinding
-import kr.co.yeeunlee.own.project1.mywriting.databinding.ItemStorageRecyclerBinding
 
 class SendAdapter(private var postLi: ArrayList<Note>)
     : RecyclerView.Adapter<SendAdapter.ViewHolder>(){
-    private val firebaseRepo = FirebaseRepository()
 
     inner class ViewHolder(view: ItemSendRecyclerBinding): RecyclerView.ViewHolder(view.root){
         val txtFromName = view.txtFromName

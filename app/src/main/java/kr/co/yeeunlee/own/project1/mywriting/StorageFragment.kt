@@ -42,7 +42,7 @@ class StorageFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        storageViewModel.getStorageBottleLi()
+        storageViewModel.getStorageBottleLi(activity!!)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

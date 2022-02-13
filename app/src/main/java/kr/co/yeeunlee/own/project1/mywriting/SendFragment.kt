@@ -20,7 +20,6 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentSendBinding
 class SendFragment : Fragment() {
     private lateinit var binding: FragmentSendBinding
     private var vaild = MutableLiveData<Boolean>()
-    private val firebaseRepo = FirebaseRepository()
     private val sendViewModel: SendViewModel by viewModels<SendViewModel>()
     // 전역 부분에 뷰모델에 접근하는 코드 넣으면 안됨(뷰모델은 프래그먼트가 detached된 상태에서 접근 불가)
     companion object{
@@ -82,7 +81,7 @@ class SendFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        sendViewModel.getPostSnapshot()
+        sendViewModel.getPostSnapshot(activity!!)
         vaild.value = false
 
     }
@@ -90,6 +89,7 @@ class SendFragment : Fragment() {
 
     private fun initBtnSend(){
         binding.btnSend.setOnClickListener {
+            val firebaseRepo = FirebaseRepository(activity!!)
             var name:String? = null
             var dialog:SendDialogFragment? = null
             CoroutineScope(Dispatchers.Main).launch {
@@ -108,7 +108,7 @@ class SendFragment : Fragment() {
                             val data = NotificationBody.NotificationData(getString(R.string.app_name),
                                 name.toString(), textEditNote, profileImg)
                             val body = NotificationBody(token, data)
-                            sendViewModel.sendNotification(body)
+                            sendViewModel.sendNotification(activity!!, body)
                         }
                     }
                 })
