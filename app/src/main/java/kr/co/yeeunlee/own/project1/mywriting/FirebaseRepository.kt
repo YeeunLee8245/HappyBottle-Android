@@ -123,29 +123,32 @@ class FirebaseRepository(private val context: Context) {
 
     }
 
-    fun getStorageBottleLi(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
-                         , __stgBtSnapLi:ArrayList<BottleList>){
+    suspend fun getStorageBottleLi(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
+                         , __stgBtSnapLi:ArrayList<BottleList>, zeroBottle:MutableLiveData<Boolean>){
         __stgBtSnapLi.clear()
-        db.collection("user").document(userEmail)
-            .get().addOnSuccessListener {
-                val numBottle: Int = it.get("numNote").toString().toInt() / 30
-                Log.d("보틀 수", numBottle.toString())
-                for ( i in numBottle downTo (1) step(3)){   // 선반 하나에 보틀 3개
-                    Log.d("보틀 수1", i.toString())
-                    if ((i - 2) >= 1){
-                        __stgBtSnapLi.add(BottleList(i*30, (i-1)*30, (i-2)*30))
+        coroutineScope {
+            db.collection("user").document(userEmail)
+                .get().addOnSuccessListener {
+                    val numBottle: Int = it.get("numNote").toString().toInt() / 30
+                    zeroBottle.value = numBottle == 0
+                    Log.d("보틀 수", numBottle.toString())
+                    for ( i in numBottle downTo (1) step(3)){   // 선반 하나에 보틀 3개
+                        Log.d("보틀 수1", i.toString())
+                        if ((i - 2) >= 1){
+                            __stgBtSnapLi.add(BottleList(i*30, (i-1)*30, (i-2)*30))
+                        }
+                        else if(i == 2){
+                            __stgBtSnapLi.add(BottleList(i*30, (i-1)*30, null))
+                        }
+                        else{
+                            __stgBtSnapLi.add(BottleList(i*30, null, null))
+                        }
                     }
-                    else if(i == 2){
-                        __stgBtSnapLi.add(BottleList(i*30, (i-1)*30, null))
-                    }
-                    else{
-                        __stgBtSnapLi.add(BottleList(i*30, null, null))
-                    }
+                    //Log.d("보틀 수2", __stgBtSnapLi[0].toString())
+                    _stgBtSnapLi.value = __stgBtSnapLi
                 }
-                //Log.d("보틀 수2", __stgBtSnapLi[0].toString())
-                _stgBtSnapLi.value = __stgBtSnapLi
-            }
-            .addOnFailureListener { makeToast(it) }
+                .addOnFailureListener { makeToast(it) }
+        }.await()
     }
 
     suspend fun getOpnNoteSnapshot(index: Int) : DocumentSnapshot{

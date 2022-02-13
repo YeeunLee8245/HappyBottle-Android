@@ -8,10 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentStorageBinding
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ItemStorageRecyclerBinding
 
@@ -23,6 +26,8 @@ class StorageFragment : Fragment() {
         , R.drawable.bottle_blue, R.drawable.bottle_purple, R.drawable.bottle_orange
         , R.drawable.bottle_sky, R.drawable.bottle_red, R.drawable.bottle_pink
         , R.drawable.bottle_darkblue)
+    private var zeroBottle:MutableLiveData<Boolean> = MutableLiveData()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,7 +47,7 @@ class StorageFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        storageViewModel.getStorageBottleLi(activity!!)
+        storageViewModel.getStorageBottleLi(activity!!, zeroBottle)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,7 +59,23 @@ class StorageFragment : Fragment() {
         storageViewModel.stgBtSnapLi.observe(viewLifecycleOwner, Observer {
             (binding.recyclerStorage.adapter as StorageAdapter).setData(it)
         })
+        zeroBottle.observe(viewLifecycleOwner){
+            if (it == true){
+                visibilityText(true)
+            }else
+                visibilityText(false)
+        }
 
+    }
+
+    private fun visibilityText(vaild: Boolean){
+        if (vaild == true) {
+            binding.textStorage.visibility = View.VISIBLE
+            binding.textStorage.isEnabled = true
+        }else{
+            binding.textStorage.visibility = View.INVISIBLE
+            binding.textStorage.isEnabled = false
+        }
     }
 
 
@@ -82,7 +103,8 @@ class StorageFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            Log.d("보틀 수4", dataLi!!.get(position).toString())
+            Log.d("보틀 수4", dataLi!!.toString())
+
             dataLi!!.get(position).let { item ->
                 with(holder){
                     if (item.first == null){
