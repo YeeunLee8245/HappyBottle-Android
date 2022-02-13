@@ -11,4 +11,16 @@
         android:id="@+id/recyclerStorage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    <TextView
+        android:id="@+id/textStorage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:text="아직 완성된 저금통이 없어요!\n저금통을 꽉 채워보세요!"
+        android:textSize="30dp"
+        android:fontFamily="@font/font_info"
+        android:textColor="@color/darkgreen"/>
 </FrameLayout>

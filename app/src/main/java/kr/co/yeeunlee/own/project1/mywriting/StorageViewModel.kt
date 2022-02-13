@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 class StorageViewModel:ViewModel() {
     private var __stgBottleLi = ArrayList<BottleList>()
@@ -15,9 +17,9 @@ class StorageViewModel:ViewModel() {
         //getStorageBottleLi()
     }
 
-    fun getStorageBottleLi(context: Context){
+    fun getStorageBottleLi(context: Context, zeroBottle:MutableLiveData<Boolean>) = viewModelScope.launch {
         val firebaseRepo: FirebaseRepository = FirebaseRepository(context)
-        firebaseRepo.getStorageBottleLi(_stgBottleLi, __stgBottleLi)
+        firebaseRepo.getStorageBottleLi(_stgBottleLi, __stgBottleLi, zeroBottle)
     }
 
     fun add(bottleList: BottleList){
