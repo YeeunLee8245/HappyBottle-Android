@@ -110,7 +110,7 @@ class SendDialogFragment(val userName: String): DialogFragment() {
 
         override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
             Log.d("초기화 글자 개수", s.toString().length.toString())
-            binding.textWordWrite.setText((binding.editNote.length()-5).toString()+"/100")
+            binding.textWordWrite.setText((binding.editNote.length()-5).toString()+"/200")
             Log.d("초기화 문자",s.toString())
             var str = s.toString()
             if (str != "") {
