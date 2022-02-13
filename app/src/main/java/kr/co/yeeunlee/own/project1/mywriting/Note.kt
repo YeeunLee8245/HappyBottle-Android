@@ -1,5 +1,9 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Parcelable
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
@@ -117,5 +121,26 @@ object RetrofitInstance{
             addInterceptor(interceptor) // httpResponse 받아옴
             build()
         }
+}
+
+// 네트워크 연결 상태 확인
+class NetworkManager {
+
+    companion object {
+        fun checkNetworkState(context: Context): Boolean {
+            val connectivityManager: ConnectivityManager =
+                context.getSystemService(ConnectivityManager::class.java)
+            val network: Network = connectivityManager.activeNetwork ?: return false
+            val actNetwork: NetworkCapabilities =
+                connectivityManager.getNetworkCapabilities(network) ?: return false
+
+            return when {
+                actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                else -> false
+            }
+        }
+    }
+
 }
 

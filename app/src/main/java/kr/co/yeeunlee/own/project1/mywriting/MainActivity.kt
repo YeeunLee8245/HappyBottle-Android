@@ -1,7 +1,13 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,10 +16,12 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.ktx.auth
@@ -44,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var binding:ActivityMainBinding
     private lateinit var googleSignInClient: GoogleSignInClient
-    private lateinit var user:User
+    private lateinit var connection: NetworkConnection
     private var valueService: String? = null
     private var userEmail:String = LoginStartActivity.mAuth.currentUser!!.email!!
     private val homeFragment = HomeFragment()
@@ -58,6 +66,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        connection = NetworkConnection(applicationContext)
+        connection.observe(this){ isConnected ->
+            if (isConnected){
+                //TODO("인터넷 연결")
+            }else{
+                //TODO("인터넷 미연결")
+                makeAlterDialog()
+            }
+        }
 
         googleSignInClient = GoogleSignIn.getClient(this, LoginStartActivity.gso)
         changeFragment(HOME_TAG, homeFragment)
@@ -101,6 +119,11 @@ class MainActivity : AppCompatActivity() {
             changeFragment(SEND_TAG, sendFragment)
             valueService = null
         }
+    }
+
+    override fun onDestroy() {
+        connection.unregister()
+        super.onDestroy()
     }
 
     private fun changeFragment(fragmentTag: String, fragment: Fragment){
@@ -173,5 +196,25 @@ class MainActivity : AppCompatActivity() {
                 logout()
             }
         }.await()
+    }
+
+    private fun makeAlterDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("인터넷 연결을 확인할 수 없습니다...")
+            .setCancelable(false)
+            .setItems(arrayOf("재접속","종료"), object : DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, idx: Int) {
+                    if (idx == 0){
+                        dialog!!.dismiss()
+                        if (connection.value == false){ // 미연결시 다시 연결
+                            makeAlterDialog()
+                        }
+                    }else if (idx == 1){
+                        finish()
+                    }
+                }
+            })
+            .create()
+            .show()
     }
 }

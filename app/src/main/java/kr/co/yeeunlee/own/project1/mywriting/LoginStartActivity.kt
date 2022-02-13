@@ -1,6 +1,7 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.view.WindowInsetsController
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -110,6 +112,8 @@ class LoginStartActivity : AppCompatActivity() {
         intentMain.addCategory(Intent.CATEGORY_LAUNCHER)
         intentMain.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
 
+
+
         binding.btnLogin.setOnClickListener { logIn(binding.editEmail.text.toString(), binding.editPW.text.toString()) }
         binding.btnSign.setOnClickListener {
             val signInIntent = Intent(this, SignInActivity::class.java) // 회원가입
@@ -135,6 +139,11 @@ class LoginStartActivity : AppCompatActivity() {
                 finish()    // 로그인 시작창은 스택에서 삭제
             }
         }else {Toast.makeText(this@LoginStartActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()}
+    }
+
+    override fun onResume() {
+        super.onResume()
+
     }
 
     private fun logIn(email: String, password: String){
