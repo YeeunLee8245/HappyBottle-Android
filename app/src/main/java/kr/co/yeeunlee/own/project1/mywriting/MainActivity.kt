@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var connection: NetworkConnection
     private var valueService: String? = null
-    private var userEmail:String = LoginStartActivity.mAuth.currentUser!!.email!!
+    private var userEmail:String = LoginStartActivity.mAuth.currentUser!!.email.toString()
     private val homeFragment = HomeFragment()
     private val storageFragment = StorageFragment()
     private val sendFragment = SendFragment()
@@ -69,7 +69,10 @@ class MainActivity : AppCompatActivity() {
         }
         binding.btnBan.setOnClickListener { // 탈퇴
             CoroutineScope(Dispatchers.Main).launch {
-                userDelete()
+                Log.d("계정 삭제", LoginStartActivity.mAuth.currentUser.toString())
+                LoginStartActivity.mAuth.currentUser!!.delete()
+                userDelete()   // 데베 데이터 삭제
+                logout()
             }
         }
         binding.switchBell.setOnCheckedChangeListener { _, isChecked ->
@@ -165,21 +168,33 @@ class MainActivity : AppCompatActivity() {
         }.await()
 
         coroutineScope {
+            LoginStartActivity.db.collection("user").document(userEmail)
+                .collection("note").get().addOnSuccessListener {
+                    it.documents.forEach {
+                        LoginStartActivity.db.runBatch { batch ->
+                            batch.delete(it.reference)
+                        }.addOnFailureListener { Log.d("에러1", it.toString()) }
+                    }
+                }
+            LoginStartActivity.db.collection("user").document(userEmail)
+                .collection("postbox").get().addOnSuccessListener {
+                    it.documents.forEach {
+                        LoginStartActivity.db.runBatch { batch ->
+                            batch.delete(it.reference)
+                        }.addOnFailureListener { Log.d("에러2", it.toString()) }
+                    }
+                }
+        }.await()
+
+        coroutineScope {
             LoginStartActivity.db.collection("user").document(userEmail)    // 비동기 주의
                 .delete()
                 .addOnCompleteListener {
                     Log.d("db삭제성공", "DocumentSnapshot successfully deleted!")
-
                 }
                 .addOnFailureListener { e -> Log.w("db삭제실패", "Error deleting document", e) }
         }.await()
 
-        coroutineScope {
-            Log.d("계정 삭제", LoginStartActivity.mAuth.currentUser.toString())
-            LoginStartActivity.mAuth.currentUser!!.delete().addOnSuccessListener {
-                logout()
-            }
-        }.await()
     }
 
     private fun makeAlterDialog() {

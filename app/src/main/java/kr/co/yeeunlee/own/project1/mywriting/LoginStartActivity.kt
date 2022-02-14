@@ -190,8 +190,10 @@ class LoginStartActivity : AppCompatActivity() {
                     mAuth.currentUser!!.delete()
                     mAuth.signOut()
                     GoogleSignIn.getClient(this, gso).signOut()
-                    val dialog = NameLayoutDialog(this)
-                    dialog.showDialog()
+                    val dialog = NameLayoutDialog()
+                    this.supportFragmentManager.let { fragmentManager ->
+                        dialog.show(fragmentManager, "nameCreate")
+                    }
                     dialog.setOnClickListener(object : NameLayoutDialog.OnDialogClickListener{
                         override fun onClicked(name: String) {
                             mAuth.signInWithCredential(credential) // 비동기 주의

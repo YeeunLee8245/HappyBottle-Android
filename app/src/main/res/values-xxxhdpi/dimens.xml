@@ -31,8 +31,8 @@
     <dimen name="margin_b_write">30dp</dimen>
 
     <!--   4. 정보 화면     -->
-    <dimen name="width_img_info">360dp</dimen>
-    <dimen name="height_img_info">712.7dp</dimen>
+<!--    <dimen name="width_img_info">360dp</dimen>-->
+<!--    <dimen name="height_img_info">712.7dp</dimen>-->
 
 
 </resources>
