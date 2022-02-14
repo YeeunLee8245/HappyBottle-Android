@@ -12,6 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <Button
+            android:id="@+id/btnInstruction"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/btn_help"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/boxProfile" />
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/boxProfile"
@@ -19,7 +28,6 @@
             android:layout_height="90dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/box_profile"
-
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -30,7 +38,6 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/home_blue"
             app:layout_constraintBottom_toBottomOf="@+id/boxProfile"
             app:layout_constraintStart_toStartOf="@+id/boxProfile"
             app:layout_constraintTop_toTopOf="@+id/boxProfile" />
@@ -39,7 +46,6 @@
             android:id="@+id/txtName"
             android:layout_width="117dp"
             android:layout_height="25dp"
-            android:text="닉네임일곱자리"
             android:textSize="20dp"
             android:textColor="@color/darkgreen"
             android:fontFamily="@font/font_info"

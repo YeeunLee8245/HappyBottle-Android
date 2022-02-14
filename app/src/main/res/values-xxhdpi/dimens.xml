@@ -6,4 +6,8 @@
     <dimen name="width_write">85dp</dimen>
     <dimen name="height_write">86.7dp</dimen>
     <dimen name="margin_b_write">20dp</dimen>
+
+    <!--   4. 정보 화면     -->
+    <dimen name="width_img_info">311.3dp</dimen>
+    <dimen name="height_img_info">616.3dp</dimen>
 </resources>
