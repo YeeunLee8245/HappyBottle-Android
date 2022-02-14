@@ -100,6 +100,7 @@ class MainActivity : AppCompatActivity() {
             changeFragment(SEND_TAG, sendFragment)
             valueService = null
         }
+        openInfoActivity()
     }
 
     override fun onDestroy() {
@@ -197,5 +198,11 @@ class MainActivity : AppCompatActivity() {
             })
             .create()
             .show()
+    }
+
+    private fun openInfoActivity(){
+        val infoIntent = Intent(this, InfoViewpagerActivity::class.java)
+        infoIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(infoIntent)
     }
 }
