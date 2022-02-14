@@ -25,6 +25,7 @@
         app:selectedDotColor="#A1A7B7" />
 
     <Button
+        android:id="@+id/btnInfoClose"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginRight="10dp"

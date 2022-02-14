@@ -30,6 +30,7 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBindi
 
 class LoginStartActivity : AppCompatActivity() {
     companion object {
+        const val INFO_TAG = 1004
         val gso:GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("702537519034-81ob9l15coeebj4kgu1cakoub43555aa.apps.googleusercontent.com")
             .requestEmail()
@@ -69,7 +70,8 @@ class LoginStartActivity : AppCompatActivity() {
                                         .update("name",FieldValue.arrayUnion(user.name))
                                         .addOnSuccessListener {
                                             Log.d("db성공",user.name.toString())
-                                            startActivity(intentMain)
+                                            intentMain.putExtra("INFO_TAG", INFO_TAG)
+                                            startActivity(intentMain)   // 정보 액티비티 추가
                                             finish()
                                         }
                                 }
@@ -204,7 +206,8 @@ class LoginStartActivity : AppCompatActivity() {
                                             .set(user)
                                             .addOnCompleteListener {
                                                 Log.d("db성공", user.name.toString())
-                                                startActivity(intentMain)
+                                                intentMain.putExtra("INFO_TAG", INFO_TAG)
+                                                startActivity(intentMain)   // 정보 액티비티 추가
                                                 finish()
                                             }
                                             .addOnFailureListener { e -> Log.e("db실패", "${e}") }

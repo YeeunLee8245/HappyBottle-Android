@@ -100,7 +100,9 @@ class MainActivity : AppCompatActivity() {
             changeFragment(SEND_TAG, sendFragment)
             valueService = null
         }
-        openInfoActivity()
+
+        if ((intent.getIntExtra("INFO_TAG", 0)) == LoginStartActivity.INFO_TAG)
+            openInfoActivity()
     }
 
     override fun onDestroy() {
