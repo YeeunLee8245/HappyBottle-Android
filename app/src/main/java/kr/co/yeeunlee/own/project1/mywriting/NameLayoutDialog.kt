@@ -1,47 +1,41 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
-import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import kr.co.yeeunlee.own.project1.mywriting.databinding.DialogNameLayoutBinding
 import java.util.regex.Pattern
 
-class NameLayoutDialog(context: Context) {
-    private val dialog = Dialog(context)
+class NameLayoutDialog() : DialogFragment() {
+    private var _binding: DialogNameLayoutBinding? = null
+    private val binding get() = _binding!!
     private lateinit var onClickListener: OnDialogClickListener
     private val db = LoginStartActivity.db
-    private val context = context
     private var limitName:Boolean = false
 
-    init { // init의 중요성
-        dialog.setContentView(R.layout.dialog_name_layout)
-    }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = DialogNameLayoutBinding.inflate(inflater,container,false)
 
-    fun setOnClickListener(listener: OnDialogClickListener) {
-        onClickListener = listener
-    }
-
-    fun showDialog() {
-        dialog.window!!.setLayout(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT
-        )
-        dialog.setCanceledOnTouchOutside(false)
-        dialog.setCancelable(true)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.show()
-
-        val editName = dialog.findViewById<EditText>(R.id.editName)
-        val btnNameDuplicate = dialog.findViewById<Button>(R.id.btnNameDuplicate)
-        val btnNameComplete = dialog.findViewById<Button>(R.id.btnNameComplete)
+        val editName = binding.editName
+        val btnNameDuplicate = binding.btnNameDuplicate
+        val btnNameComplete = binding.btnNameComplete
         lateinit var name: String
 
         editName.addTextChangedListener(listnerEditName)
@@ -49,7 +43,7 @@ class NameLayoutDialog(context: Context) {
         btnNameDuplicate.setOnClickListener {
             // 키보드 내리고 포커스 맞추기
             val imm =
-                this.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(editName.windowToken, 0)
             editName.clearFocus()
             if (limitName == false){
@@ -80,7 +74,7 @@ class NameLayoutDialog(context: Context) {
             // 닉네임 중복 확인, 중복 아닐 때만 onClick 과 dismiss 수행
             if (limitName == true) {
                 onClickListener.onClicked(editName.text.toString())
-                dialog.dismiss()
+                dialog?.dismiss()
             } else {
                 editName.error = "별명 중복확인을 해주세요."
             }
@@ -88,6 +82,20 @@ class NameLayoutDialog(context: Context) {
 
         //val edit_name = dialog.findViewById<EditText>(R.id.name_edit)
 
+        dialog?.window!!.setLayout(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        dialog?.setCanceledOnTouchOutside(false)
+        dialog?.setCancelable(true)
+        dialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.show()
+
+        return binding.root
+    }
+
+    fun setOnClickListener(listener: OnDialogClickListener) {
+        onClickListener = listener
     }
 
     interface OnDialogClickListener
@@ -102,7 +110,7 @@ class NameLayoutDialog(context: Context) {
         }
 
         override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            val editName = dialog.findViewById<EditText>(R.id.editName)
+            val editName = binding.editName
             if (s != null){
                 if (pattern.matcher(s.toString()).matches()) {   // 한글, 영어, 숫자만 있을 때
                     limitName = true

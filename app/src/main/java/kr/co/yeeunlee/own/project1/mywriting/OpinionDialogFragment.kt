@@ -19,7 +19,6 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.DialogNameLayoutBinding
 
 class OpinionDialogFragment(val typeDialog:String) : DialogFragment() {
     private var _binding: DialogNameLayoutBinding? = null
-    private val maxLength = 100
     private val binding get() = _binding!!
     private lateinit var opinionOnBtnClickListener:OpinionOnBtnClickListener
 

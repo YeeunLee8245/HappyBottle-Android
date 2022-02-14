@@ -65,6 +65,9 @@ class FirebaseRepository(private val context: Context) {
                     _userSnapshot.value = it
                     db.collection("user").document(userEmail)   // 변경이 있으면 다시 업뎃
                         .addSnapshotListener(MetadataChanges.INCLUDE){snapshot, e ->
+                            Log.d("옵저버 변경", snapshot?.get("name").toString())
+                            if (snapshot?.get("name") == null)  // 탈퇴할 때 에러방지
+                                return@addSnapshotListener
                             _userSnapshot.value = snapshot
                             Log.d("메타데이터 변경", snapshot.toString())
                         }
@@ -162,22 +165,6 @@ class FirebaseRepository(private val context: Context) {
         return resultRef!!
     }
 
-    suspend fun getToken(): String {
-        var token: String = ""
-        coroutineScope {
-            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Log.d("서비스 토큰", "토큰 등록에 실패함")
-                    return@addOnCompleteListener
-                }
-                token = task.result
-            }
-                .addOnFailureListener { makeToast(it) }
-        }.await()
-        Log.d("서비스setToken", token)
-        return token
-    }
-
     suspend fun setToken(): String{
         var token:String = ""
         coroutineScope {
@@ -203,13 +190,13 @@ class FirebaseRepository(private val context: Context) {
                         db.collection("user").document(userEmail).update("token", token).addOnSuccessListener {
                             Log.d("서비스 토큰 변경success", "정상 작동")
                         }
-                            .addOnFailureListener { makeToast(it) }
+//                            .addOnFailureListener { makeToast(it) }
                         return@addSnapshotListener
                     }
                 }
 
             }
-                .addOnFailureListener { makeToast(it) }
+//                .addOnFailureListener { makeToast(it) }
         }.await()
 
 
