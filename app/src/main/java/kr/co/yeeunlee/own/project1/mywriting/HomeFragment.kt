@@ -1,6 +1,7 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -76,6 +77,7 @@ class HomeFragment : Fragment() {
             (activity as MainActivity?)!!.changeDrawer(userToken)
 
         }
+        binding.btnInstruction.setOnClickListener { openInfoActivity() }
 //        homeViewModel.noteSnapshot.observe(viewLifecycleOwner){
 //            initBottleView(it)  // 데이터 변경시 보틀 상태 데이터와 UI 업데이트
 //        }
@@ -158,7 +160,9 @@ class HomeFragment : Fragment() {
         fireRepo.setUserStatusMsg(binding.txtStatus.text.toString())    // 데베 업뎃
     }
 
-    fun updateBottle(){
-        homeViewModel.getUserSnapshot(activity!!)
+    private fun openInfoActivity(){
+        val infoIntent = Intent(activity, InfoViewpagerActivity::class.java)
+        infoIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(infoIntent)
     }
 }

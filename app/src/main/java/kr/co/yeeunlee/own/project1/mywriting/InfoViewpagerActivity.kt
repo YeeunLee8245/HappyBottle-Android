@@ -33,6 +33,7 @@ class InfoViewpagerActivity : AppCompatActivity() {
         binding.viewPagerInfo.adapter = ViewPagerAdapter(infoArr)
         binding.viewPagerInfo.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         binding.dotIndicator.setViewPager2(binding.viewPagerInfo)
+        binding.btnInfoClose.setOnClickListener { finish() }
 
     }
 
