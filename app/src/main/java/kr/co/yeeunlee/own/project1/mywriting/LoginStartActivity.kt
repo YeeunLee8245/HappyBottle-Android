@@ -18,9 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
@@ -33,21 +31,13 @@ class LoginStartActivity : AppCompatActivity() {
         const val INFO_TAG = 1004
         const val PROFILE_IMG_TAG = "profileImg"
         const val NAME_TAG = "username"
-        val gso:GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("702537519034-81ob9l15coeebj4kgu1cakoub43555aa.apps.googleusercontent.com")
-            .requestEmail()
-            .build()
-        val mAuth:FirebaseAuth = Firebase.auth
-        val db = Firebase.firestore
     }
     private lateinit var binding:ActivityLoginStartBinding
     private lateinit var intentMain:Intent
     private lateinit var user: User
-    private val settings = firestoreSettings {
-        isPersistenceEnabled = true
-        setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED).build()
-    }
-    private val fireRepo = FirebaseRepository(this)
+    private val gso = SplashActivity.gso
+    private val db = SplashActivity.db
+    private val mAuth = SplashActivity.mAuth
 
     // 회원가입 Intent 결과, 무조건 전역으로 생성(아니면 에러)
     private val getSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -71,20 +61,13 @@ class LoginStartActivity : AppCompatActivity() {
                                     db.collection("check").document("name")
                                         .update("name",FieldValue.arrayUnion(user.name))
                                         .addOnSuccessListener {
-                                            CoroutineScope(Dispatchers.Main).launch {
-                                                Log.d("db성공", user.name.toString())
-                                                intentMain.putExtra("INFO_TAG", INFO_TAG)
-                                                intentMain.putExtra(
-                                                    NAME_TAG,
-                                                    fireRepo.getUserNameSnapshot()
-                                                )
-                                                intentMain.putExtra(
-                                                    PROFILE_IMG_TAG,
-                                                    fireRepo.getUserProfileImgSnapshot()
-                                                )
-                                                startActivity(intentMain)   // 정보 액티비티 추가
-                                                finish()
-                                            }
+                                            Log.d("db성공", user.name.toString())
+                                            intentMain.putExtra("INFO_TAG", INFO_TAG)
+                                            intentMain.putExtra(NAME_TAG, user.name)
+                                            intentMain.putExtra(PROFILE_IMG_TAG, user.profileImg)
+                                            startActivity(intentMain)   // 정보 액티비티 추가
+                                            finish()
+
                                         }
                                 }
                         }   // 실패했을 때 동작 넣어주기
@@ -104,10 +87,6 @@ class LoginStartActivity : AppCompatActivity() {
         } catch (e:ApiException){
             Log.e("구글 로그인 실패","signInResult:failed code=" + e.getStatusCode())
         }
-    }
-
-    init {
-        db.firestoreSettings = settings // 캐시와 오프라인 지속성 설정
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,29 +113,6 @@ class LoginStartActivity : AppCompatActivity() {
         binding.btnGoogleSign.setOnClickListener { signIn() }
     }
 
-    override fun onStart() {    // 자동 로그인
-        super.onStart()
-
-        val account = mAuth.currentUser
-
-        Log.e("기존 계정정보","${mAuth.currentUser?.email}")
-        if (account != null) {
-            Toast.makeText(this@LoginStartActivity, "구글 계정 로그인 성공${account.email}", Toast.LENGTH_SHORT).show()
-            CoroutineScope(Dispatchers.Main).launch {
-                fireRepo.setToken()
-                intentMain.putExtra(NAME_TAG, fireRepo.getUserNameSnapshot())
-                intentMain.putExtra(PROFILE_IMG_TAG, fireRepo.getUserProfileImgSnapshot())
-                startActivity(intentMain)
-                finish()    // 로그인 시작창은 스택에서 삭제
-            }
-        }else {Toast.makeText(this@LoginStartActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()}
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-    }
-
     private fun logIn(email: String, password: String){
         if (email == ""){
             binding.editEmail.error = "이메일을 입력해주세요."
@@ -170,8 +126,11 @@ class LoginStartActivity : AppCompatActivity() {
                         mAuth.signInWithEmailAndPassword(email, password)
                             .addOnSuccessListener {
                                 CoroutineScope(Dispatchers.Main).launch {
-                                    intentMain.putExtra(NAME_TAG, fireRepo.getUserNameSnapshot())
-                                    intentMain.putExtra(PROFILE_IMG_TAG, fireRepo.getUserProfileImgSnapshot())
+                                    val fireRepo = FirebaseRepository(this@LoginStartActivity)
+                                    val userData = fireRepo.getNameImgSnapshot()
+                                    Log.d("계정 오류잡기", mAuth.currentUser?.email.toString()+"  "+email)
+                                    intentMain.putExtra(NAME_TAG, userData.first)
+                                    intentMain.putExtra(PROFILE_IMG_TAG, userData.second)
                                     startActivity(intentMain)
                                     finish()
                                 }
@@ -214,6 +173,7 @@ class LoginStartActivity : AppCompatActivity() {
                     }
                     dialog.setOnClickListener(object : NameLayoutDialog.OnDialogClickListener{
                         override fun onClicked(name: String) {
+                            val fireRepo = FirebaseRepository(this@LoginStartActivity)
                             mAuth.signInWithCredential(credential) // 비동기 주의
                                 .addOnSuccessListener {
                                     Log.d("name",name+"${mAuth.currentUser?.email}")
@@ -227,9 +187,10 @@ class LoginStartActivity : AppCompatActivity() {
                                             .addOnCompleteListener {
                                                 CoroutineScope(Dispatchers.Main).launch {
                                                     Log.d("db성공", user.name.toString())
+                                                    val userData = fireRepo.getNameImgSnapshot()
                                                     intentMain.putExtra("INFO_TAG", INFO_TAG)
-                                                    intentMain.putExtra(NAME_TAG, fireRepo.getUserNameSnapshot())
-                                                    intentMain.putExtra(PROFILE_IMG_TAG, fireRepo.getUserProfileImgSnapshot())
+                                                    intentMain.putExtra(NAME_TAG, userData.first)
+                                                    intentMain.putExtra(PROFILE_IMG_TAG, userData.second)
                                                     startActivity(intentMain)   // 정보 액티비티 추가
                                                     finish()
                                                 }
@@ -243,16 +204,25 @@ class LoginStartActivity : AppCompatActivity() {
                     })
                     return@addOnCompleteListener // 절대 지우면 안됨, if로 들어오면 밑에 if문들은 실행 X
                 }
-                else    // false, 기존 계정 데이터 데베에서 받아오기
+                else{    // false, 기존 계정 데이터 데베에서 받아오기
                     Log.d("기존 계정","${newUser}")
-
-                Log.d("task:","${task.exception}")
-                Log.d("task:","${task.result}")
-                Log.d("task:","${task.isSuccessful}")
-                if (!task.isSuccessful) {
-                    Toast.makeText(this, "Sorry auth failed.", Toast.LENGTH_SHORT)
-                        .show()
-                    Log.e("구글 로그인 실패 계정 정보","${mAuth.currentUser}")
+                    Log.d("task:","${task.exception}")
+                    Log.d("task:","${task.result}")
+                    Log.d("task:","${task.isSuccessful}")
+                    if (!task.isSuccessful) {
+                        Toast.makeText(this, "Sorry auth failed.", Toast.LENGTH_SHORT)
+                            .show()
+                        Log.e("구글 로그인 실패 계정 정보","${mAuth.currentUser}")
+                    }else {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val fireRepo = FirebaseRepository(this@LoginStartActivity)
+                            val userData = fireRepo.getNameImgSnapshot()
+                            intentMain.putExtra(NAME_TAG, userData.first)
+                            intentMain.putExtra(PROFILE_IMG_TAG, userData.second)
+                            startActivity(intentMain)
+                            finish()    // 로그인 시작창은 스택에서 삭제
+                        }
+                    }
                 }
             }
     }

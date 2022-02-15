@@ -37,7 +37,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var connection: NetworkConnection
     private var valueService: String? = null
-    private var userEmail:String = LoginStartActivity.mAuth.currentUser!!.email.toString()
+    private var mAuth = SplashActivity.mAuth
+    private val db = SplashActivity.db
     private val homeFragment = HomeFragment()
     private val storageFragment = StorageFragment()
     private val sendFragment = SendFragment()
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        googleSignInClient = GoogleSignIn.getClient(this, LoginStartActivity.gso)
+        googleSignInClient = GoogleSignIn.getClient(this, SplashActivity.gso)
         changeFragment(HOME_TAG, homeFragment)
         binding.btnHome.setOnClickListener { changeFragment(HOME_TAG, homeFragment)}
         binding.btnStorage.setOnClickListener { changeFragment(STORAGE_TAG, storageFragment) }
@@ -88,10 +89,9 @@ class MainActivity : AppCompatActivity() {
                         if (idx == 0){
                             CoroutineScope(Dispatchers.Main).launch {
                                 dialog!!.dismiss()
-                                Log.d("계정 삭제", LoginStartActivity.mAuth.currentUser.toString())
-                                LoginStartActivity.mAuth.currentUser!!.delete()
+                                Log.d("계정 삭제", SplashActivity.mAuth.currentUser.toString())
+                                SplashActivity.mAuth.currentUser!!.delete()
                                 userDelete()   // 데베 데이터 삭제 TODO("로딩창 넣어야할듯")
-                                logout()
                             }
                         }else if (idx == 1)
                             dialog!!.dismiss()
@@ -175,7 +175,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun logout(){
         googleSignInClient.signOut().addOnSuccessListener {
-            LoginStartActivity.mAuth.signOut()
+            SplashActivity.mAuth.signOut()
             val intentLoginStart = Intent(this, LoginStartActivity::class.java)
             startActivity(intentLoginStart)
             finish()
@@ -183,28 +183,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun userDelete() {
-        val fireRepo = FirebaseRepository(this)
+        val userEmail = mAuth.currentUser!!.email.toString()
         coroutineScope {
-            val userName = fireRepo.getUserNameSnapshot()
+            val userName = getUserName()
             Log.d("사용자 이름", userName)
-            LoginStartActivity.db.collection("check").document("name")
+            db.collection("check").document("name")
                 .update("name", FieldValue.arrayRemove(userName))
                 .addOnFailureListener { Log.d("실패", "사용자 이름") }
         }.await()
 
         coroutineScope {
-            LoginStartActivity.db.collection("user").document(userEmail)
+            db.collection("user").document(userEmail)
                 .collection("note").get().addOnSuccessListener {
                     it.documents.forEach {
-                        LoginStartActivity.db.runBatch { batch ->
+                        db.runBatch { batch ->
                             batch.delete(it.reference)
                         }.addOnFailureListener { Log.d("에러1", it.toString()) }
                     }
                 }
-            LoginStartActivity.db.collection("user").document(userEmail)
+            db.collection("user").document(userEmail)
                 .collection("postbox").get().addOnSuccessListener {
                     it.documents.forEach {
-                        LoginStartActivity.db.runBatch { batch ->
+                        db.runBatch { batch ->
                             batch.delete(it.reference)
                         }.addOnFailureListener { Log.d("에러2", it.toString()) }
                     }
@@ -212,10 +212,11 @@ class MainActivity : AppCompatActivity() {
         }.await()
 
         coroutineScope {
-            LoginStartActivity.db.collection("user").document(userEmail)    // 비동기 주의
+            db.collection("user").document(userEmail)    // 비동기 주의
                 .delete()
                 .addOnCompleteListener {
                     Log.d("db삭제성공", "DocumentSnapshot successfully deleted!")
+                    logout()
                 }
                 .addOnFailureListener { e -> Log.w("db삭제실패", "Error deleting document", e) }
         }.await()
@@ -249,5 +250,5 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getUserName(): String = intent.getStringExtra(LoginStartActivity.NAME_TAG)?:"오류"
-    fun getProfileImg(): Int = intent.getIntExtra(LoginStartActivity.PROFILE_IMG_TAG, 3)
+    fun getProfileImg(): Int = intent.getIntExtra(LoginStartActivity.PROFILE_IMG_TAG, 0)
 }
