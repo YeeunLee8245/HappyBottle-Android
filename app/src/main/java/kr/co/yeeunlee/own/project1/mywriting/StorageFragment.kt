@@ -28,11 +28,6 @@ class StorageFragment : Fragment() {
         , R.drawable.bottle_darkblue)
     private var zeroBottle:MutableLiveData<Boolean> = MutableLiveData()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
