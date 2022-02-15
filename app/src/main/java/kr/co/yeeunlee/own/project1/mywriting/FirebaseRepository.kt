@@ -47,12 +47,12 @@ class FirebaseRepository(private val context: Context) {
     }
 
     suspend fun getUserProfileImgSnapshot():Int{
-        var name:Any? = null
+        var name:Int? = null
         coroutineScope {
             db.collection("user").document(userEmail)
                 .get().addOnSuccessListener {
-                    name = it.get("profileImg").toString()
-                    Log.d("이름 오류 잡기", name as String)
+                    name = it.get("profileImg").toString().toInt()
+                    Log.d("이름 오류 잡기", name.toString())
                 }
                 .addOnFailureListener { makeToast(it) }
         }.await()

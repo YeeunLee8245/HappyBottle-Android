@@ -31,6 +31,8 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBindi
 class LoginStartActivity : AppCompatActivity() {
     companion object {
         const val INFO_TAG = 1004
+        const val PROFILE_IMG_TAG = "profileImg"
+        const val NAME_TAG = "username"
         val gso:GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("702537519034-81ob9l15coeebj4kgu1cakoub43555aa.apps.googleusercontent.com")
             .requestEmail()
@@ -69,10 +71,20 @@ class LoginStartActivity : AppCompatActivity() {
                                     db.collection("check").document("name")
                                         .update("name",FieldValue.arrayUnion(user.name))
                                         .addOnSuccessListener {
-                                            Log.d("db성공",user.name.toString())
-                                            intentMain.putExtra("INFO_TAG", INFO_TAG)
-                                            startActivity(intentMain)   // 정보 액티비티 추가
-                                            finish()
+                                            CoroutineScope(Dispatchers.Main).launch {
+                                                Log.d("db성공", user.name.toString())
+                                                intentMain.putExtra("INFO_TAG", INFO_TAG)
+                                                intentMain.putExtra(
+                                                    NAME_TAG,
+                                                    fireRepo.getUserNameSnapshot()
+                                                )
+                                                intentMain.putExtra(
+                                                    PROFILE_IMG_TAG,
+                                                    fireRepo.getUserProfileImgSnapshot()
+                                                )
+                                                startActivity(intentMain)   // 정보 액티비티 추가
+                                                finish()
+                                            }
                                         }
                                 }
                         }   // 실패했을 때 동작 넣어주기
@@ -130,8 +142,10 @@ class LoginStartActivity : AppCompatActivity() {
         Log.e("기존 계정정보","${mAuth.currentUser?.email}")
         if (account != null) {
             Toast.makeText(this@LoginStartActivity, "구글 계정 로그인 성공${account.email}", Toast.LENGTH_SHORT).show()
-            CoroutineScope(Dispatchers.Default).launch {
+            CoroutineScope(Dispatchers.Main).launch {
                 fireRepo.setToken()
+                intentMain.putExtra(NAME_TAG, fireRepo.getUserNameSnapshot())
+                intentMain.putExtra(PROFILE_IMG_TAG, fireRepo.getUserProfileImgSnapshot())
                 startActivity(intentMain)
                 finish()    // 로그인 시작창은 스택에서 삭제
             }
@@ -155,8 +169,12 @@ class LoginStartActivity : AppCompatActivity() {
                     }else{
                         mAuth.signInWithEmailAndPassword(email, password)
                             .addOnSuccessListener {
-                                startActivity(intentMain)
-                                finish()
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    intentMain.putExtra(NAME_TAG, fireRepo.getUserNameSnapshot())
+                                    intentMain.putExtra(PROFILE_IMG_TAG, fireRepo.getUserProfileImgSnapshot())
+                                    startActivity(intentMain)
+                                    finish()
+                                }
                             }
                             .addOnFailureListener {
                                 binding.editEmail.error = "잘못된 이메일 또는 비밀번호입니다."
@@ -207,10 +225,14 @@ class LoginStartActivity : AppCompatActivity() {
                                         db.collection("user").document(user.email)
                                             .set(user)
                                             .addOnCompleteListener {
-                                                Log.d("db성공", user.name.toString())
-                                                intentMain.putExtra("INFO_TAG", INFO_TAG)
-                                                startActivity(intentMain)   // 정보 액티비티 추가
-                                                finish()
+                                                CoroutineScope(Dispatchers.Main).launch {
+                                                    Log.d("db성공", user.name.toString())
+                                                    intentMain.putExtra("INFO_TAG", INFO_TAG)
+                                                    intentMain.putExtra(NAME_TAG, fireRepo.getUserNameSnapshot())
+                                                    intentMain.putExtra(PROFILE_IMG_TAG, fireRepo.getUserProfileImgSnapshot())
+                                                    startActivity(intentMain)   // 정보 액티비티 추가
+                                                    finish()
+                                                }
                                             }
                                             .addOnFailureListener { e -> Log.e("db실패", "${e}") }
                                         db.collection("check").document("name")
@@ -223,20 +245,15 @@ class LoginStartActivity : AppCompatActivity() {
                 }
                 else    // false, 기존 계정 데이터 데베에서 받아오기
                     Log.d("기존 계정","${newUser}")
+
                 Log.d("task:","${task.exception}")
                 Log.d("task:","${task.result}")
                 Log.d("task:","${task.isSuccessful}")
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    //intentMain.putExtra("user",user)
-                    startActivity(intentMain)
-                    finish()    // 로그인 시작창은 스택에서 삭제
-                } else {
+                if (!task.isSuccessful) {
                     Toast.makeText(this, "Sorry auth failed.", Toast.LENGTH_SHORT)
                         .show()
                     Log.e("구글 로그인 실패 계정 정보","${mAuth.currentUser}")
                 }
-
             }
     }
 
