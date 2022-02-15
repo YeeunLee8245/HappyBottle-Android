@@ -1,6 +1,8 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -34,7 +36,7 @@ class SendDialogFragment(val userName: String): DialogFragment() {
             WindowManager.LayoutParams.WRAP_CONTENT
         )
         dialog?.setCanceledOnTouchOutside(false)
-        dialog?.setCancelable(true)
+        dialog?.setCancelable(false)
         dialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.show()
 
@@ -60,7 +62,21 @@ class SendDialogFragment(val userName: String): DialogFragment() {
         binding.btnCheck.setOnClickListener {
             vaild = false
             dupliReceiver(binding.editReceiver.text.toString())}
-        binding.btnCancle.setOnClickListener {dismiss()}
+        binding.btnCancle.setOnClickListener {
+            AlertDialog.Builder(activity)
+                .setTitle("작성 중인 쪽지가 소멸됩니다.")
+                .setCancelable(false)
+                .setItems(arrayOf("나가기","계속 쓰기"), object : DialogInterface.OnClickListener{
+                    override fun onClick(dialog: DialogInterface?, idx: Int) {
+                        dialog!!.dismiss()
+                        if (idx == 0){
+                            dismiss()
+                        }
+                    }
+                })
+                .create()
+                .show()
+        }
 
         return binding.root
     }

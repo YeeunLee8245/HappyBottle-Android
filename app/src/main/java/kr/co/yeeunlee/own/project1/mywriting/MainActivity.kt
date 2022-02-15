@@ -65,15 +65,40 @@ class MainActivity : AppCompatActivity() {
         binding.btnSend.setOnClickListener { changeFragment(SEND_TAG, sendFragment) }
         binding.btnClose.setOnClickListener { changeDrawer("close") }
         binding.btnLogout.setOnClickListener { // 로그아웃
-            logout()
+            AlertDialog.Builder(this)
+                .setTitle("로그아웃하시겠습니까?")
+                .setCancelable(false)
+                .setItems(arrayOf("로그아웃하기","취소"), object : DialogInterface.OnClickListener{
+                    override fun onClick(dialog: DialogInterface?, idx: Int) {
+                        dialog!!.dismiss()
+                        if (idx == 0)
+                            logout()
+                    }
+                })
+                .create()
+                .show()
+
         }
         binding.btnBan.setOnClickListener { // 탈퇴
-            CoroutineScope(Dispatchers.Main).launch {
-                Log.d("계정 삭제", LoginStartActivity.mAuth.currentUser.toString())
-                LoginStartActivity.mAuth.currentUser!!.delete()
-                userDelete()   // 데베 데이터 삭제
-                logout()
-            }
+            AlertDialog.Builder(this)
+                .setTitle("서버에 있는 계정의 모든 데이터가 삭제됩니다.")
+                .setCancelable(false)
+                .setItems(arrayOf("탈퇴하기","취소"), object : DialogInterface.OnClickListener{
+                    override fun onClick(dialog: DialogInterface?, idx: Int) {
+                        if (idx == 0){
+                            CoroutineScope(Dispatchers.Main).launch {
+                                dialog!!.dismiss()
+                                Log.d("계정 삭제", LoginStartActivity.mAuth.currentUser.toString())
+                                LoginStartActivity.mAuth.currentUser!!.delete()
+                                userDelete()   // 데베 데이터 삭제 TODO("로딩창 넣어야할듯")
+                                logout()
+                            }
+                        }else if (idx == 1)
+                            dialog!!.dismiss()
+                    }
+                })
+                .create()
+                .show()
         }
         binding.switchBell.setOnCheckedChangeListener { _, isChecked ->
             val fireRepo = FirebaseRepository(this)

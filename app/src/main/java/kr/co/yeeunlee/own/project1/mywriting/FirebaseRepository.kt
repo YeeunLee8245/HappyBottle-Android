@@ -51,7 +51,8 @@ class FirebaseRepository(private val context: Context) {
         coroutineScope {
             db.collection("user").document(userEmail)
                 .get().addOnSuccessListener {
-                    name = it.get("profileImg")
+                    name = it.get("profileImg").toString()
+                    Log.d("이름 오류 잡기", name as String)
                 }
                 .addOnFailureListener { makeToast(it) }
         }.await()
