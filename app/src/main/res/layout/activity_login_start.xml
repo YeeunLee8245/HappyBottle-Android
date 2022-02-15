@@ -160,7 +160,7 @@
         android:id="@+id/btnLogin"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/btn_start_login"
+        android:background="@drawable/btn_pressed_lss"
         android:paddingBottom="@dimen/padding_b_login"
         android:fontFamily="@font/font_info"
         android:text="로그인"
