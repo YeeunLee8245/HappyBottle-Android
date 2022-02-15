@@ -1,5 +1,7 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -55,10 +57,36 @@ class SendReadDialogFragment(val note: Note, val mId:Int, val checkPost: LiveDat
         binding.disableEditNote.setText(note.text)
         binding.textTime.setText(dateSender)
         binding.btnSave.setOnClickListener {
-            savePost()
+            AlertDialog.Builder(activity)
+                .setTitle("내 저금통에 보관하겠습니까?")
+                .setCancelable(false)
+                .setItems(arrayOf("보관하기","취소"), object : DialogInterface.OnClickListener{
+                    override fun onClick(dialog: DialogInterface?, idx: Int) {
+                        dialog!!.dismiss()
+                        if (idx == 0){
+                            savePost()
+                        }
+                    }
+                })
+                .create()
+                .show()
         }
 
-        binding.btnDelete.setOnClickListener { deletePost() }
+        binding.btnDelete.setOnClickListener {
+            AlertDialog.Builder(activity)
+                .setTitle("삭제하시겠습니까?")
+                .setCancelable(false)
+                .setItems(arrayOf("삭제하기","취소"), object : DialogInterface.OnClickListener{
+                    override fun onClick(dialog: DialogInterface?, idx: Int) {
+                        dialog!!.dismiss()
+                        if (idx == 0){
+                            deletePost()
+                        }
+                    }
+                })
+                .create()
+                .show()
+        }
 
         return binding.root
     }
