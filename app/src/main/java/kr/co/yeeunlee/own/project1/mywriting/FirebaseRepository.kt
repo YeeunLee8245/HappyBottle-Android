@@ -143,30 +143,31 @@ class FirebaseRepository(private val context: Context) {
     suspend fun getStorageBottleLi(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
                          , __stgBtSnapLi:ArrayList<BottleList>, zeroBottle:MutableLiveData<Boolean>){
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
-        __stgBtSnapLi.clear()
-        coroutineScope {
-            db.collection("user").document(userEmail)
-                .get().addOnSuccessListener {
-                    val numBottle: Int = it.get("numNote").toString().toInt() / 30
-                    zeroBottle.value = numBottle == 0
-                    Log.d("보틀 수", numBottle.toString())
-                    for ( i in numBottle downTo (1) step(3)){   // 선반 하나에 보틀 3개
-                        Log.d("보틀 수1", i.toString())
-                        if ((i - 2) >= 1){
-                            __stgBtSnapLi.add(BottleList(i*30, (i-1)*30, (i-2)*30))
-                        }
-                        else if(i == 2){
-                            __stgBtSnapLi.add(BottleList(i*30, (i-1)*30, null))
-                        }
-                        else{
-                            __stgBtSnapLi.add(BottleList(i*30, null, null))
-                        }
+        db.collection("user").document(userEmail)
+            .addSnapshotListener(MetadataChanges.INCLUDE){snapshot, e ->
+                __stgBtSnapLi.clear()
+                val numBottle: Int = snapshot!!.get("numNote").toString().toInt() / 30
+                Log.d("저장소 옵저버 변경", snapshot.get("name").toString())
+                zeroBottle.value = numBottle == 0
+                if (zeroBottle.value == true) return@addSnapshotListener
+
+                Log.d("보틀 수", numBottle.toString())
+                for ( i in numBottle downTo (1) step(3)){   // 선반 하나에 보틀 3개
+                    Log.d("보틀 수1", i.toString())
+                    if ((i - 2) >= 1){
+                        __stgBtSnapLi.add(BottleList(i*30, (i-1)*30, (i-2)*30))
                     }
-                    //Log.d("보틀 수2", __stgBtSnapLi[0].toString())
-                    _stgBtSnapLi.value = __stgBtSnapLi
+                    else if(i == 2){
+                        __stgBtSnapLi.add(BottleList(i*30, (i-1)*30, null))
+                    }
+                    else{
+                        __stgBtSnapLi.add(BottleList(i*30, null, null))
+                    }
                 }
-                .addOnFailureListener { makeToast(it) }
-        }.await()
+                //Log.d("보틀 수2", __stgBtSnapLi[0].toString())
+                _stgBtSnapLi.value = __stgBtSnapLi
+                Log.d("저장소 메타데이터 변경", snapshot.toString())
+            }
     }
 
     suspend fun getOpnNoteSnapshot(index: Int) : DocumentSnapshot{
