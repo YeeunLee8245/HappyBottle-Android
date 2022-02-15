@@ -22,7 +22,7 @@ class SendDialogFragment(val userName: String): DialogFragment() {
     private var _binding: DialogFragmentSendBinding? = null
     private var vaild:Boolean = false
     private val binding get() = _binding!!
-    private val db = LoginStartActivity.db
+    private val db = SplashActivity.db
     private lateinit var sendOnBtnClickListener: SendOnBtnClickListener
 
     override fun onCreateView(

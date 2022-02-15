@@ -23,7 +23,7 @@ class NameLayoutDialog() : DialogFragment() {
     private var _binding: DialogNameLayoutBinding? = null
     private val binding get() = _binding!!
     private lateinit var onClickListener: OnDialogClickListener
-    private val db = LoginStartActivity.db
+    private val db = SplashActivity.db
     private var limitName:Boolean = false
 
     override fun onCreateView(

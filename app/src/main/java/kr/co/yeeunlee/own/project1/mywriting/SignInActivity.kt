@@ -17,7 +17,7 @@ import java.util.regex.Pattern
 
 class SignInActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignInBinding
-    private val db = LoginStartActivity.db
+    private val db = SplashActivity.db
     private val imgIdx:Int = (0..7).random()
     private val imgLi = arrayListOf(R.drawable.blue, R.drawable.green, R.drawable.mint
         , R.drawable.orange, R.drawable.pink, R.drawable.purple, R.drawable.sky

@@ -3,6 +3,7 @@ package kr.co.yeeunlee.own.project1.mywriting
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Timestamp
@@ -16,8 +17,7 @@ import retrofit2.Response
 import java.lang.Exception
 
 class FirebaseRepository(private val context: Context) {
-    private val db = LoginStartActivity.db
-    private val userEmail = LoginStartActivity.mAuth.currentUser?.email.toString()
+    private val db = SplashActivity.db
     private var userName:String? = null
 
     private fun makeToast(exception: Exception){
@@ -34,32 +34,42 @@ class FirebaseRepository(private val context: Context) {
             .show()
     }
 
-    suspend fun getUserNameSnapshot():String{
+    suspend fun getNameImgSnapshot():Pair<String?, Int?>{
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         var name:String? = null
+        var profileImg: Int? = null
         coroutineScope {
             db.collection("user").document(userEmail)
                 .get().addOnSuccessListener {
                     name = it.get("name").toString()
+                    if ( null != it.get("profileImg"))
+                        profileImg = it.get("profileImg").toString().toInt()
+                    else profileImg = null
                 }
                 .addOnFailureListener { makeToast(it) }
         }.await()
-        return name.toString()
+        return Pair(name, profileImg)
     }
 
-    suspend fun getUserProfileImgSnapshot():Int{
-        var name:Int? = null
-        coroutineScope {
-            db.collection("user").document(userEmail)
-                .get().addOnSuccessListener {
-                    name = it.get("profileImg").toString().toInt()
-                    Log.d("이름 오류 잡기", name.toString())
-                }
-                .addOnFailureListener { makeToast(it) }
-        }.await()
-        return name.toString().toInt()
-    }
+//    suspend fun getUserProfileImgSnapshot():Int{
+//        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
+//        var name:Int? = null
+//        coroutineScope {
+//            Log.d("이메일 오류 잡기", SplashActivity.mAuth.currentUser?.email.toString())
+//            db.collection("user").document(userEmail)
+//                .get().addOnSuccessListener {
+//                    if (null == it.get("profileImg"))
+//                        name = null
+//                    else name = it.get("profileImg").toString().toInt()
+//                    Log.d("이름 오류 잡기", name.toString())
+//                }
+//                .addOnFailureListener { makeToast(it) }
+//        }.await()
+//        return name?:0
+//    }
 
     suspend fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>) {
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         coroutineScope {    // 비동기가 하나라도 순서에 구애 받아야하면 무조건 코루틴을 넣어주자
             db.collection("user").document(userEmail)
                 .get().addOnSuccessListener {
@@ -78,12 +88,14 @@ class FirebaseRepository(private val context: Context) {
     }
 
     fun setUserStatusMsg(newStatus:String){
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         db.collection("user").document(userEmail)
             .update("statusMsg", newStatus).addOnFailureListener { makeToast(it) }
     }
 
     suspend fun setNoteAdd(textEditNote: String, type:Int, post:Note?=null): DocumentSnapshot {
-        val dcmRef= LoginStartActivity.db.collection("user").document(userEmail)
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
+        val dcmRef= db.collection("user").document(userEmail)
         var resultRef:DocumentSnapshot? = null
 
         coroutineScope {
@@ -118,7 +130,8 @@ class FirebaseRepository(private val context: Context) {
     }
 
     suspend fun setNoteModify(textEditNote: String, order: String){
-        val dcmRef= LoginStartActivity.db.collection("user").document(userEmail)
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
+        val dcmRef= db.collection("user").document(userEmail)
 
         coroutineScope {
             dcmRef.collection("note").document(order).update("text", textEditNote)
@@ -129,6 +142,7 @@ class FirebaseRepository(private val context: Context) {
 
     suspend fun getStorageBottleLi(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
                          , __stgBtSnapLi:ArrayList<BottleList>, zeroBottle:MutableLiveData<Boolean>){
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         __stgBtSnapLi.clear()
         coroutineScope {
             db.collection("user").document(userEmail)
@@ -156,6 +170,7 @@ class FirebaseRepository(private val context: Context) {
     }
 
     suspend fun getOpnNoteSnapshot(index: Int) : DocumentSnapshot{
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         var resultRef:DocumentSnapshot? = null
         coroutineScope {
             db.collection("user").document(userEmail)
@@ -167,6 +182,7 @@ class FirebaseRepository(private val context: Context) {
     }
 
     suspend fun setToken(): String{
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         var token:String = ""
         coroutineScope {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
@@ -205,6 +221,7 @@ class FirebaseRepository(private val context: Context) {
     }
 
     suspend fun setPushAlarm(setVaild:Boolean){
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         if (setVaild == false){
             coroutineScope {
                 db.collection("user").document(userEmail).update("token","false")
@@ -220,6 +237,7 @@ class FirebaseRepository(private val context: Context) {
 
     suspend fun setPostNoteAdd(
         receiver: String, textEditNote: String, type: Int, profileImg:Int, vaild:MutableLiveData<Boolean>){
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         var dcmRef:DocumentReference? = null
         var userName:String = ""
 
@@ -256,6 +274,7 @@ class FirebaseRepository(private val context: Context) {
     }
 
     suspend fun deletePostNote(note:Note){
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         val dcmRef:DocumentReference = db.collection("user").document(userEmail)
         coroutineScope {
             dcmRef.collection("postbox").document(note.time.toString()).delete()
@@ -272,6 +291,7 @@ class FirebaseRepository(private val context: Context) {
     }
 
     fun getPostSnapshot(__checkPost: ArrayList<Note> ,_checkPost: MutableLiveData<ArrayList<Note>>){
+        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         db.collection("user").document(userEmail).collection("postbox")
             .orderBy("time", Query.Direction.ASCENDING).addSnapshotListener { querySnapshot, _ ->
                 if (querySnapshot == null) return@addSnapshotListener
