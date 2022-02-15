@@ -116,7 +116,7 @@
             android:layout_width="@dimen/width_write"
             android:layout_height="@dimen/height_write"
             android:layout_marginBottom="@dimen/margin_b_write"
-            android:background="@drawable/btn_write_home"
+            android:background="@drawable/btn_pressed_write"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

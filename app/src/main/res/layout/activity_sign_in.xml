@@ -241,7 +241,7 @@
         android:id="@+id/btnComplete"
         android:layout_width="@dimen/width_btn_signin"
         android:layout_height="@dimen/height_btn_signin"
-        android:background="@drawable/btn_signin_back"
+        android:background="@drawable/btn_pressed_lss"
         android:fontFamily="@font/font_info"
         android:paddingBottom="@dimen/padding_b_btn2"
         android:text="가입하기"
