@@ -247,4 +247,7 @@ class MainActivity : AppCompatActivity() {
         infoIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(infoIntent)
     }
+
+    fun getUserName(): String = intent.getStringExtra(LoginStartActivity.NAME_TAG)?:"오류"
+    fun getProfileImg(): Int = intent.getIntExtra(LoginStartActivity.PROFILE_IMG_TAG, 3)
 }

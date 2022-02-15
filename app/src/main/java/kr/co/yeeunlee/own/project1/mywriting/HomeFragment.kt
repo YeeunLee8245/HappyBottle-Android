@@ -63,6 +63,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         // LiveDate의 value가 it으로 들어감
         homeViewModel.userSnapshot.observe(viewLifecycleOwner){
             initUserView(it)
@@ -78,9 +79,8 @@ class HomeFragment : Fragment() {
 
         }
         binding.btnInstruction.setOnClickListener { openInfoActivity() }
-//        homeViewModel.noteSnapshot.observe(viewLifecycleOwner){
-//            initBottleView(it)  // 데이터 변경시 보틀 상태 데이터와 UI 업데이트
-//        }
+        binding.txtName.text = (activity as MainActivity).getUserName()
+        binding.imgUser.setImageResource(MainActivity.profileImgLi[(activity as MainActivity).getProfileImg()])
     }
 
     private fun initUserView(snapshot: DocumentSnapshot){
@@ -102,9 +102,7 @@ class HomeFragment : Fragment() {
             txtStatus.setText(snapshot["statusMsg"].toString())
             textBottle.setBackgroundResource(imgBottle[sumBottle])
             textBottle.text = strMemo
-            txtName.text = snapshot["name"].toString()
-            imgUser.setImageResource(MainActivity.profileImgLi[snapshot["profileImg"].toString().toInt()])
-            }
+        }
 
         Log.d("bottle",num.toString())
     }
