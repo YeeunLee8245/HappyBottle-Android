@@ -26,7 +26,6 @@ class SendAdapter(private var postLi: ArrayList<Note>)
             with(holder){
                 txtFromName.text = item.name
                 val arr = item.text.split('\n')
-                Log.d("나누기", arr.toString())
                 txtPreview.text = arr[0]
                 circleImg.setImageResource(MainActivity.profileImgLi[item.profileImg])
                 itemView.setOnClickListener {

@@ -1,6 +1,8 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -15,7 +17,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,23 +35,14 @@ class LoginStartActivity : AppCompatActivity() {
     private val db = SplashActivity.db
     private val mAuth = SplashActivity.mAuth
 
-    // 회원가입 Intent 결과, 무조건 전역으로 생성(아니면 에러)
-    private val getSignInResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        // 액티비티 반환 결과
-        Log.d("인증메일 받음0","${it.toString()}")
-        if(it.resultCode == Activity.RESULT_OK){
-
-        }
-    }
     // google용 Intent 결과
     private val getgoogleResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
         try {
             val account = task.getResult(ApiException::class.java)!!
-            Log.e("구글 계정 정보1",account.email!!)
             firebaseAuthWithGoogle(account.idToken!!)
         } catch (e:ApiException){
-            Log.e("구글 로그인 실패","signInResult:failed code=" + e.getStatusCode())
+            makeErrorAlter(e)
         }
     }
 
@@ -94,8 +86,6 @@ class LoginStartActivity : AppCompatActivity() {
                                 CoroutineScope(Dispatchers.Main).launch {
                                     val fireRepo = FirebaseRepository(this@LoginStartActivity)
                                     val userData = fireRepo.getNameImgSnapshot()
-                                    Log.d("계정 오류잡기1", mAuth.currentUser?.email.toString()+"  "+email)
-                                    Log.d("계정 오류잡기2", userData.toString())
                                     intentMain.putExtra(NAME_TAG, userData.get("name").toString())
                                     intentMain.putExtra(PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
                                     startActivity(intentMain)
@@ -129,7 +119,6 @@ class LoginStartActivity : AppCompatActivity() {
             .addOnCompleteListener(this) {task ->
                 val newUser = task.getResult().additionalUserInfo?.isNewUser
                 if (true == newUser) {
-                    Log.d("첫 계정", "${newUser}")
                     // 닉네임 생성 다이얼로그 띄우기, 계정 삭제 후 닉네임 생성 성공시에만 계정 등록
                     mAuth.currentUser!!.delete()
                     mAuth.signOut()
@@ -143,7 +132,6 @@ class LoginStartActivity : AppCompatActivity() {
                             val fireRepo = FirebaseRepository(this@LoginStartActivity)
                             mAuth.signInWithCredential(credential) // 비동기 주의
                                 .addOnSuccessListener {
-                                    Log.d("name",name+"${mAuth.currentUser?.email}")
                                     CoroutineScope(Dispatchers.Default).launch {
                                         val token:String = fireRepo.setToken()
                                         user = User(
@@ -153,9 +141,7 @@ class LoginStartActivity : AppCompatActivity() {
                                             .set(user)
                                             .addOnCompleteListener {
                                                 CoroutineScope(Dispatchers.Main).launch {
-                                                    Log.d("db성공", user.name.toString())
                                                     val userData = fireRepo.getNameImgSnapshot()
-                                                    Log.d("계정 오류잡기2", userData.toString())
                                                     intentMain.putExtra(NAME_TAG, userData.get("name").toString())
                                                     intentMain.putExtra(PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
                                                     intentMain.putExtra("INFO_TAG", INFO_TAG)
@@ -194,6 +180,20 @@ class LoginStartActivity : AppCompatActivity() {
                     }
                 }
             }
+    }
+
+    private fun makeErrorAlter(e:Exception){
+        AlertDialog.Builder(this)
+            .setTitle("서버 오류입니다.")
+            .setMessage(" 관리자에게 문의해주세요. 오류코드:$e")
+            .setCancelable(false)
+            .setPositiveButton("확인", object : DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, idx: Int) {
+                    dialog!!.dismiss()
+                }
+            })
+            .create()
+            .show()
     }
 
     private fun setScreen(){

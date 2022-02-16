@@ -11,16 +11,9 @@ import okhttp3.internal.wait
 class HomeViewModel(): ViewModel(){
     private var _userSnapshot:MutableLiveData<DocumentSnapshot> = MutableLiveData<DocumentSnapshot>()
     val userSnapshot: LiveData<DocumentSnapshot> = _userSnapshot
-//    private var _noteSnapshot:MutableLiveData<DocumentSnapshot> = MutableLiveData<DocumentSnapshot>()
-//    val noteSnapshot: LiveData<DocumentSnapshot> = _noteSnapshot
-
-    init {
-        //getUserSnapshot()   // 프로필, 보틀 정보
-        //getBottleSnapshot()
-    }
 
     fun getUserSnapshot(context: Context) = viewModelScope.launch {
-        val firebaseRepo: FirebaseRepository = FirebaseRepository(context)
+        val firebaseRepo = FirebaseRepository(context)
         firebaseRepo.getUserSnapshot(_userSnapshot)
     }
 

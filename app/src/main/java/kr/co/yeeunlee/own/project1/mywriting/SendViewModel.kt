@@ -22,12 +22,12 @@ class SendViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun sendNotification(context: Context, notification:NotificationBody) = viewModelScope.launch {
-        val firebaseRepo: FirebaseRepository = FirebaseRepository(context)
+        val firebaseRepo = FirebaseRepository(context)
         firebaseRepo.sendNotification(_myResponce, notification)
     }
 
     fun getPostSnapshot(context: Context) = viewModelScope.launch{
-        val firebaseRepo: FirebaseRepository = FirebaseRepository(context)
+        val firebaseRepo = FirebaseRepository(context)
         firebaseRepo.getPostSnapshot(__checkPost,_checkPost)
     }
 }

@@ -70,7 +70,6 @@ class NameLayoutDialog() : DialogFragment() {
         }
 
         btnNameComplete.setOnClickListener {
-            //Log.d("닉네임",editLayoutName.editText?.text.toString())
             // 닉네임 중복 확인, 중복 아닐 때만 onClick 과 dismiss 수행
             if (limitName == true) {
                 onClickListener.onClicked(editName.text.toString())
@@ -79,9 +78,6 @@ class NameLayoutDialog() : DialogFragment() {
                 editName.error = "별명 중복확인을 해주세요."
             }
         }
-
-        //val edit_name = dialog.findViewById<EditText>(R.id.name_edit)
-
         dialog?.window!!.setLayout(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT
@@ -119,7 +115,6 @@ class NameLayoutDialog() : DialogFragment() {
                 else{
                     limitName = false
                     editName.error = "특수문자, 공백 제외 7 글자 이하"
-                    Log.d("중복","들어옴")
                 }
             }
         }

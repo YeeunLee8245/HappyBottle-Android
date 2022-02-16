@@ -3,8 +3,6 @@ package kr.co.yeeunlee.own.project1.mywriting
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -50,17 +48,15 @@ class SplashActivity : AppCompatActivity() {
         intentStart.addCategory(Intent.CATEGORY_LAUNCHER)
         intentStart.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         val account = mAuth.currentUser
-        Log.e("기존 계정정보","${mAuth.currentUser?.email}")
         if (account != null) {
             CoroutineScope(Dispatchers.Main).launch {
                 val userData = fireRepo.getNameImgSnapshot()
                 fireRepo.setToken()
-                Log.d("계정 오류잡기2", userData.toString())
                 intentMain.putExtra(LoginStartActivity.NAME_TAG, userData.get("name").toString())
                 intentMain.putExtra(LoginStartActivity.PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
                 Toast.makeText(
                     this@SplashActivity,
-                    "구글 계정 로그인 성공${account.email}",
+                    "로그인 성공: ${account.email}",
                     Toast.LENGTH_SHORT
                 ).show()
                 startActivity(intentMain)

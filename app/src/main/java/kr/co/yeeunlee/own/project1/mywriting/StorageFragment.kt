@@ -7,14 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentStorageBinding
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ItemStorageRecyclerBinding
 
@@ -37,11 +33,7 @@ class StorageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = FragmentStorageBinding.inflate(inflater, container, false)
-        // viewModel 초기화와 동시에 bottle 업데이트 한 번 됨
-        //initBtnBottle() // 저금통 생성 & 저금통을 누르면
-        //storageViewModel.oneMore()
         return binding.root
     }
 
@@ -73,12 +65,6 @@ class StorageFragment : Fragment() {
         }
     }
 
-
-//    private fun initBtnBottle(){
-//        val firebaseRepository = FirebaseRepository()
-//        firebaseRepository.getStorageBottle()
-//    }
-
     inner class StorageAdapter(private var dataLi: ArrayList<BottleList>):
         RecyclerView.Adapter<StorageAdapter.ViewHolder>(){
 
@@ -92,14 +78,11 @@ class StorageFragment : Fragment() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            Log.d("보틀 수3", parent.toString())
             val view = ItemStorageRecyclerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             return ViewHolder(view)
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            Log.d("보틀 수4", dataLi!!.toString())
-
             dataLi!!.get(position).let { item ->
                 with(holder){
                     if (item.first == null){
