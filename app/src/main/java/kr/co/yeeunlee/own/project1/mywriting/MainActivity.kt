@@ -89,7 +89,6 @@ class MainActivity : AppCompatActivity() {
                         if (idx == 0){
                             CoroutineScope(Dispatchers.Main).launch {
                                 dialog!!.dismiss()
-                                Log.d("계정 삭제", SplashActivity.mAuth.currentUser.toString())
                                 SplashActivity.mAuth.currentUser!!.delete()
                                 userDelete()   // 데베 데이터 삭제 TODO("로딩창 넣어야할듯")
                             }
@@ -103,13 +102,11 @@ class MainActivity : AppCompatActivity() {
         binding.switchBell.setOnCheckedChangeListener { _, isChecked ->
             val fireRepo = FirebaseRepository(this)
             if (isChecked){
-                Log.d("스위치","사용")
                 CoroutineScope(Dispatchers.Main).launch {
                     fireRepo.setPushAlarm(true)
                     fireRepo.setToken()
                 }
             }else {
-                Log.d("스위치", "미사용")
                 CoroutineScope(Dispatchers.Main).launch {
                     fireRepo.setPushAlarm(false)
                 }
@@ -123,7 +120,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         valueService = intent.getStringExtra("service")
-        Log.d("서비스 프래그먼트", valueService.toString())
         if (valueService != null){
             changeFragment(SEND_TAG, sendFragment)
             valueService = null
@@ -168,7 +164,6 @@ class MainActivity : AppCompatActivity() {
         if (!binding.drawerSetting.isDrawerOpen(Gravity.RIGHT)){
             binding.switchBell.isChecked = if (userToken == "false") false else true
             binding.drawerSetting.openDrawer(Gravity.RIGHT)
-            Log.d("슬라이드",binding.drawerSetting.toString())
         }else
             binding.drawerSetting.closeDrawer(Gravity.RIGHT)
     }
@@ -186,10 +181,9 @@ class MainActivity : AppCompatActivity() {
         val userEmail = mAuth.currentUser!!.email.toString()
         coroutineScope {
             val userName = getUserName()
-            Log.d("사용자 이름", userName)
             db.collection("check").document("name")
                 .update("name", FieldValue.arrayRemove(userName))
-                .addOnFailureListener { Log.d("실패", "사용자 이름") }
+                .addOnFailureListener {e -> makeErrorAlter(e)}
         }.await()
 
         coroutineScope {
@@ -198,7 +192,7 @@ class MainActivity : AppCompatActivity() {
                     it.documents.forEach {
                         db.runBatch { batch ->
                             batch.delete(it.reference)
-                        }.addOnFailureListener { Log.d("에러1", it.toString()) }
+                        }.addOnFailureListener {e -> makeErrorAlter(e)}
                     }
                 }
             db.collection("user").document(userEmail)
@@ -206,7 +200,7 @@ class MainActivity : AppCompatActivity() {
                     it.documents.forEach {
                         db.runBatch { batch ->
                             batch.delete(it.reference)
-                        }.addOnFailureListener { Log.d("에러2", it.toString()) }
+                        }.addOnFailureListener { e -> makeErrorAlter(e) }
                     }
                 }
         }.await()
@@ -215,10 +209,9 @@ class MainActivity : AppCompatActivity() {
             db.collection("user").document(userEmail)    // 비동기 주의
                 .delete()
                 .addOnCompleteListener {
-                    Log.d("db삭제성공", "DocumentSnapshot successfully deleted!")
                     logout()
                 }
-                .addOnFailureListener { e -> Log.w("db삭제실패", "Error deleting document", e) }
+                .addOnFailureListener { e -> makeErrorAlter(e) }
         }.await()
 
     }
@@ -237,6 +230,20 @@ class MainActivity : AppCompatActivity() {
                     }else if (idx == 1){
                         finish()
                     }
+                }
+            })
+            .create()
+            .show()
+    }
+
+    private fun makeErrorAlter(e:Exception){
+        AlertDialog.Builder(this)
+            .setTitle("서버 오류입니다.")
+            .setMessage(" 관리자에게 문의해주세요. 오류코드:$e")
+            .setCancelable(false)
+            .setPositiveButton("확인", object : DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, idx: Int) {
+                    dialog!!.dismiss()
                 }
             })
             .create()

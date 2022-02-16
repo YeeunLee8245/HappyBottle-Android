@@ -26,11 +26,6 @@ class SendReadDialogFragment(val note: Note, val mId:Int, val checkPost: LiveDat
     private var _binding: FragmentSendReadDialogBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -98,8 +93,6 @@ class SendReadDialogFragment(val note: Note, val mId:Int, val checkPost: LiveDat
             fireRepo.deletePostNote(note)
             dismiss()
         }
-        Log.d("보내기 size, mId", checkPost.value!!.size.toString()+"  $mId")
-
     }
 
     private fun deletePost(){

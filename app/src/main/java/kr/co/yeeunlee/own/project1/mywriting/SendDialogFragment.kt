@@ -53,7 +53,6 @@ class SendDialogFragment(val userName: String): DialogFragment() {
             if(vaild == true){
                 if(text != ""){
                     val receiver = binding.editReceiver.text.toString()
-                    Log.d("타입",CustomConstraintLayout.type.toString())
                     sendOnBtnClickListener.SendOnBtnClicked(receiver, text, CustomConstraintLayout.type)
                     dismiss()
                 }else Toast.makeText(context, "내용을 입력해주세요.", Toast.LENGTH_SHORT).show()
@@ -86,7 +85,6 @@ class SendDialogFragment(val userName: String): DialogFragment() {
         db.collection("check").document("name").get()
             .addOnSuccessListener { document ->
                 val li = document.get("name") as List<String>
-                Log.d("별명", receiver)
 
                 if ((receiver != "") and (li.contains(receiver) == false) ) {
                     editReceiver.error = "존재하지 않는 사용자입니다."
@@ -104,9 +102,8 @@ class SendDialogFragment(val userName: String): DialogFragment() {
                     imm.hideSoftInputFromWindow(binding.editNote.windowToken, 0)
                     binding.editNote.clearFocus()
                 }
-                Log.d("별명 valid", "$receiver $vaild")
             }
-            .addOnFailureListener { Log.d("별명 찾기 실패", "${it}") }
+            .addOnFailureListener { e -> makeErrorAlter(e) }
     }
 
     interface SendOnBtnClickListener
@@ -125,13 +122,10 @@ class SendDialogFragment(val userName: String): DialogFragment() {
         }
 
         override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            Log.d("초기화 글자 개수", s.toString().length.toString())
             binding.textWordWrite.setText((binding.editNote.length()-5).toString()+"/200")
-            Log.d("초기화 문자",s.toString())
             var str = s.toString()
             if (str != "") {
                 if (str.substring(str.length-1) == "\n") {
-                    Log.d("초기화 문자2", "true")
                     val newLine = str.filter { c -> c == '\n'}.count()
                     if (newLine < 5){
                         binding.editNote.setText(previousStr+'\n')
@@ -142,9 +136,21 @@ class SendDialogFragment(val userName: String): DialogFragment() {
         }
 
         override fun afterTextChanged(s: Editable?) {
-            Log.d("초기화 개행 개수", binding.editNote.lineCount.toString())
-
         }
 
+    }
+
+    private fun makeErrorAlter(e:Exception){
+        AlertDialog.Builder(activity)
+            .setTitle("서버 오류입니다.")
+            .setMessage(" 관리자에게 문의해주세요. 오류코드:$e")
+            .setCancelable(false)
+            .setPositiveButton("확인", object : DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, idx: Int) {
+                    dialog!!.dismiss()
+                }
+            })
+            .create()
+            .show()
     }
 }

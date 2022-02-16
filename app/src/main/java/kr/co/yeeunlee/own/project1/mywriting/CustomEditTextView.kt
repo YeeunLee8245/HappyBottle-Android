@@ -4,13 +4,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
-import android.text.Editable
-import android.text.Selection.setSelection
-import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
 import androidx.appcompat.widget.AppCompatEditText
-import androidx.core.content.ContextCompat
 
 
 class CustomEditTextView @JvmOverloads constructor(
@@ -28,8 +24,6 @@ class CustomEditTextView @JvmOverloads constructor(
         mRect = Rect()
         mPaint = Paint()
         mPaint.setStyle(Paint.Style.STROKE)
-//        if (CustomConstraintLayout.vaildLine == true)
-//            setBackgroundResource(R.drawable.lines)
     }
 
     override fun onDraw(canvas: Canvas) {

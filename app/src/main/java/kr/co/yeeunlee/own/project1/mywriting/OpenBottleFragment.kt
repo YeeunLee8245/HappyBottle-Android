@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.*
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentOpenBottleBinding
@@ -22,7 +21,6 @@ class OpenBottleFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setFragmentResultListener("requestKey"){ requestKey, bundle ->
             orderLast = bundle.getInt("bundleKey")
-            Log.d("번들 키 값", orderLast.toString())
         }
     }
 
@@ -30,7 +28,6 @@ class OpenBottleFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = FragmentOpenBottleBinding.inflate(inflater, container, false)
         initBtnRead()
         return binding.root

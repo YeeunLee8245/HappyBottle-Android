@@ -14,17 +14,11 @@ class StorageViewModel:ViewModel() {
 
     init {
         _stgBottleLi.value = __stgBottleLi
-        //getStorageBottleLi()
     }
 
     fun getStorageBottleLi(context: Context, zeroBottle:MutableLiveData<Boolean>) = viewModelScope.launch {
-        val firebaseRepo: FirebaseRepository = FirebaseRepository(context)
+        val firebaseRepo = FirebaseRepository(context)
         firebaseRepo.getStorageBottleLi(_stgBottleLi, __stgBottleLi, zeroBottle)
-    }
-
-    fun add(bottleList: BottleList){
-        __stgBottleLi.add(bottleList)
-        _stgBottleLi.value = __stgBottleLi
     }
 
     fun getSize(): Int{

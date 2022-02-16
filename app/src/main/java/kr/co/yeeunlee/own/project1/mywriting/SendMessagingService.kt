@@ -5,17 +5,14 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import kotlin.random.Random
 
 class SendMessagingService: FirebaseMessagingService()  {
 
@@ -33,7 +30,6 @@ class SendMessagingService: FirebaseMessagingService()  {
             sendNotification(remoteMessage.notification?.title,
                 remoteMessage.notification?.body!!)
         }
-
         // 알림 비허용: user 토큰을 없애자.
     }
 

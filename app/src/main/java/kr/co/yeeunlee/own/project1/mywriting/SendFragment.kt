@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,16 +27,11 @@ class SendFragment : Fragment() {
     init {
         vaild.value = false
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = FragmentSendBinding.inflate(inflater, container, false)
 
         initBtnSend() // 도착한 쪽지 터치
@@ -49,7 +43,6 @@ class SendFragment : Fragment() {
 
         val sendAdapter:SendAdapter = SendAdapter(sendViewModel.checkPost.value!!)
 
-        Log.d("Recreate","재배치")
         vaild.observe(viewLifecycleOwner){
             checkVaild(it)
         }
@@ -67,8 +60,6 @@ class SendFragment : Fragment() {
             override fun onItemClick(v: View, position: Int) {
                 val checkPost = sendViewModel.checkPost
                 deletePosition = position
-
-                Log.d("보내기 아이디",(checkPost.value!!.size - position).toString())
                 val dialog = SendReadDialogFragment(checkPost.value!![position]
                     , (checkPost.value!!.size - position), checkPost, this@SendFragment)
                 activity?.supportFragmentManager?.let { fragmentManager ->
@@ -124,12 +115,7 @@ class SendFragment : Fragment() {
         Log.d("result",result.toString())
         if (result == false)
             return
-
         Toast.makeText(context, "전송 완료!", Toast.LENGTH_SHORT).show()
-        //TODO("서비스 추가하기(상대방에게 푸시 알림 전송)")
-
-
-
     }
 
     override fun onPause() {

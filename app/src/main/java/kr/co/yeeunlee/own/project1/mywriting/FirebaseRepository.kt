@@ -3,13 +3,11 @@ package kr.co.yeeunlee.own.project1.mywriting
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
-import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.*
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.CoroutineScope
 import okhttp3.ResponseBody
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
@@ -36,8 +34,6 @@ class FirebaseRepository(private val context: Context) {
 
     suspend fun getNameImgSnapshot():DocumentSnapshot{
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
-        var name:String? = null
-        var profileImg: Int? = null
         var snapshot:DocumentSnapshot? = null
         coroutineScope {
             db.collection("user").document(userEmail)
@@ -54,11 +50,9 @@ class FirebaseRepository(private val context: Context) {
         db.collection("user").document(userEmail)   // 변경이 있으면 다시 업뎃
                 .addSnapshotListener(MetadataChanges.INCLUDE){snapshot, e ->
                     // 동시에 네 번 동작되는 이유: 쓰기 보류 중, 쓰기 보류 중 아님 상태를 연속으로 두 번 알림(field, note)
-                    Log.d("옵저버 변경", snapshot?.get("name").toString())
                     if (snapshot?.get("name") == null)  // 탈퇴할 때 에러방지
                         return@addSnapshotListener
                     _userSnapshot.value = snapshot
-                    Log.d("메타데이터 변경", snapshot.toString())
             }
     }
 
@@ -114,7 +108,7 @@ class FirebaseRepository(private val context: Context) {
         }.await()
 
     }
-////////////////////
+
     fun getStorageBottleLi(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
                          , __stgBtSnapLi:ArrayList<BottleList>, zeroBottle:MutableLiveData<Boolean>){
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
@@ -123,13 +117,10 @@ class FirebaseRepository(private val context: Context) {
                 // 동시에 두 번 동작되는 이유: 쓰기 보류 중, 쓰기 보류 중 아님 상태를 연속으로 알림
                 __stgBtSnapLi.clear()
                 val numBottle: Int = snapshot!!.get("numNote").toString().toInt() / 30
-                Log.d("저장소 옵저버 변경", snapshot.get("name").toString())
                 zeroBottle.value = numBottle == 0
                 if (zeroBottle.value == true) return@addSnapshotListener
 
-                Log.d("보틀 수", numBottle.toString())
                 for ( i in numBottle downTo (1) step(3)){   // 선반 하나에 보틀 3개
-                    Log.d("보틀 수1", i.toString())
                     if ((i - 2) >= 1){
                         __stgBtSnapLi.add(BottleList(i*30, (i-1)*30, (i-2)*30))
                     }
@@ -140,9 +131,7 @@ class FirebaseRepository(private val context: Context) {
                         __stgBtSnapLi.add(BottleList(i*30, null, null))
                     }
                 }
-                //Log.d("보틀 수2", __stgBtSnapLi[0].toString())
                 _stgBtSnapLi.value = __stgBtSnapLi
-                Log.d("저장소 메타데이터 변경", snapshot.toString())
             }
     }
 
@@ -177,7 +166,6 @@ class FirebaseRepository(private val context: Context) {
                         Log.d("서비스 토큰", "푸시 알림 거부")
                         return@addSnapshotListener
                     }else if (document["token"].toString() != token) {
-                        Log.d("서비스 토큰 변경", "토큰 변경")
                         // 이 부분을 await으로 주었더니 정상 작동이 안된 이유는 addSnapshotListener가 사용되는 메서드 역시 비동기이기 때문.
                         // addSnapshotListener은 데베가 업데이트 되는대로 여러번 실행될 수 있기 때문에 await이 사용될 수 없다.
                         // await은 단일 결과만 기다리기 때문에 addSnapshotListener의 메서드와 패러다임이 맞지 않다고 한다.
@@ -277,14 +265,12 @@ class FirebaseRepository(private val context: Context) {
                 querySnapshot.documentChanges.forEachIndexed { i, dcm ->
                     if (dcm.type == DocumentChange.Type.ADDED) {
                         var post = dcm.document.toObject(Note::class.java)
-                        Log.d("데이터 변경", post.toString())
                         __checkPost.add(0, post)
                         _checkPost.value = __checkPost
                     }
                     if (SendFragment.deletePosition != null) {
                         if (dcm.type == DocumentChange.Type.REMOVED) {
                             dcm.document.get("time").toString()
-                            //Log.d("데이터 삭제", "${deletenote}")
                             __checkPost.removeAt(SendFragment.deletePosition!!)
                             SendFragment.deletePosition = null
                             _checkPost.value = __checkPost

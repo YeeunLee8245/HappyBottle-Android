@@ -1,18 +1,9 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
-import android.content.Context
-import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
-import android.util.DisplayMetrics
-import android.util.Log
-import android.util.TypedValue
-import android.view.View
-import android.view.WindowManager
 import androidx.viewpager2.widget.ViewPager2
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityInfoViewpagerBinding
-import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityMainBinding
 
 class InfoViewpagerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInfoViewpagerBinding
@@ -23,11 +14,6 @@ class InfoViewpagerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityInfoViewpagerBinding.inflate(layoutInflater)
-
-        val widthPix: Int = Resources.getSystem().displayMetrics.widthPixels
-        val heightPix: Int = Resources.getSystem().displayMetrics.heightPixels
-        val density: Float = Resources.getSystem().displayMetrics.density
-        Log.d("화면 크기","$widthPix, $heightPix, $density")
         setContentView(binding.root)
 
         binding.viewPagerInfo.adapter = ViewPagerAdapter(infoArr)

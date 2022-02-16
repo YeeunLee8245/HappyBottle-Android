@@ -26,11 +26,6 @@ class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: 
     private val binding get() = _binding!!
     private val orderLast = orderStart + 29
     private var currentOrder:Int = currentSnapshot.id.toInt()
-    //private lateinit var readOnBtnClickListener:
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -89,7 +84,6 @@ class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: 
 
     private fun completeText(){
         val fireRepo = FirebaseRepository(activity!!)
-        Log.d("수정","완료")
         // 키보드 들어가게 하는 부분
         val imm = this.context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.disableEditNote.windowToken, 0)
@@ -111,7 +105,6 @@ class ReadDialogFragment(var currentSnapshot: DocumentSnapshot, val orderStart: 
         val sdf = SimpleDateFormat("yyyy년\nMM월 dd일 씀", Locale.KOREA)
         val netDate = Date(milliseconds)
         val date = sdf.format(netDate).toString()
-        Log.d("수정 날짜", date)
         return date
     }
 

@@ -40,10 +40,8 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("액티비티",activity.toString())
         CoroutineScope(Dispatchers.Main).launch {
             homeViewModel.getUserSnapshot(activity!!)
-            Log.d("바뀌나요","확인")
         }
     }
 
@@ -99,8 +97,6 @@ class HomeFragment : Fragment() {
             textBottle.setBackgroundResource(imgBottle[sumBottle])
             textBottle.text = strMemo
         }
-
-        Log.d("bottle",num.toString())
     }
 
     private fun initBtnWrite(){ // 닉네임과 프로필 사진을 최초에 한 번만 초기화하면 안된다. 프래그먼트는 화면이 바뀔 때마다 다시 초기화되어 생성된다.

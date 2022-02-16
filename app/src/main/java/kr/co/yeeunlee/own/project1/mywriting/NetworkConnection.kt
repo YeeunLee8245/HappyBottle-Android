@@ -10,13 +10,11 @@ import android.net.NetworkInfo
 import android.net.NetworkRequest
 import android.os.Build
 import android.util.Log
-import androidx.core.content.getSystemService
 import androidx.lifecycle.LiveData
 import java.lang.Exception
 
 class NetworkConnection(private val context: Context) : LiveData<Boolean>() {
     private lateinit var connectivityManager: ConnectivityManager
-//    private lateinit var connectivityManager2: ConnectivityManager
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     override fun onActive() {

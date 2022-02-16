@@ -52,7 +52,6 @@ class SignInActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        Log.d("백버튼","들어옴")
         val intentLogin = Intent(this,LoginStartActivity::class.java)
         intentLogin.action = android.content.Intent.ACTION_MAIN
         intentLogin.addCategory(android.content.Intent.CATEGORY_LAUNCHER)
@@ -74,7 +73,6 @@ class SignInActivity : AppCompatActivity() {
         nameListener = db.collection("check").document("name").addSnapshotListener { document, error ->
             val li = document!!.get("name") as List<String>
             map["name"] = false
-            //.d("별명",name.toString())
             if ((li.contains(name) == false) and (name != "") ) {
                 map["name"] = true
                 binding.editName.error = null
@@ -84,8 +82,6 @@ class SignInActivity : AppCompatActivity() {
                 binding.editName.error="별명을 입력해주세요"
             else // valid == false
                 binding.editName.error="이미 존재하는 별명입니다."
-            //Log.d("별명 valid","$name ${map["name"]}")
-            Log.d("별명 등록 실패","${error}")
         }
     }
 
@@ -96,16 +92,12 @@ class SignInActivity : AppCompatActivity() {
             binding.editEmail.error = null
             emailListener = db.collection("user").document(email).addSnapshotListener { document, error ->
                 // 중복
-                //Log.d("이메일 리스너", "${document!!.exists()}")
-                //Log.d("이메일 리스너", "${error}")
                 if (document!!.exists()) {
                     map["email"] = false
                     binding.editEmail.error = "이미 가입된 이메일 입니다."
                     completeElse()
                 } else {
-                    //Log.d("이메일 리스너", "${map}")
                     map["email"] = true
-                    //Log.d("이메일 리스너", "${map}")
                     completeElse()
                 }
             }
@@ -127,13 +119,8 @@ class SignInActivity : AppCompatActivity() {
             binding.editPWCheck.text.toString()
         )
 
-        //Log.d("인증메일전송", "$map")
         val result = map.filterValues { it == true }
-        //Log.d("인증메일전송0", "${result.size}")
-        if (result.size == 3) {
-            // 모두 true일 때 인증 이메일 전송
-            //Log.d("인증메일전송1", "$map")
-            // start로 액티비티 전환 후 finish
+        if (result.size == 3) { // 모두 true일 때 인증 가입 완료
             val inputName = binding.editName.text.toString()
             val inputEmail = binding.editEmail.text.toString()
             val inputPassword = binding.editPW.text.toString()
@@ -142,7 +129,6 @@ class SignInActivity : AppCompatActivity() {
             val user = User(
                 inputName, inputEmail, true, inputPassword,
                 0, 0,"", imgIdx)
-            Log.d("인증메일전송2", "$user")
             completeSignin(user)
         }
     }
@@ -195,15 +181,12 @@ class SignInActivity : AppCompatActivity() {
     private fun completeSignin(loginUser: User){
         emailListener.remove()
         nameListener.remove()
-        Log.d("인증메일 받음","$loginUser")
         //TODO("회원가입 성공, 계정 정보를 통해 앱 메인 접속")
         mAuth.createUserWithEmailAndPassword(loginUser.email, loginUser.password!!) // 이메일 계정 등록/로그인
             .addOnCompleteListener{ task ->
-                Log.d("사용자 이메일로 계정 등록1", "${mAuth.currentUser!!.email}")
                 loginUser.password = null
                 CoroutineScope(Dispatchers.Main).launch { // 코루틴 플로우 뒤에 동작되어야 하는 건 반드시 스코프 괄호 안에 적자.
                     FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
-                        Log.d("인증메일 받음2","$loginUser")
                         loginUser.token = token
                         db.collection("user").document(loginUser.email)
                             .set(loginUser)
@@ -213,7 +196,6 @@ class SignInActivity : AppCompatActivity() {
                                     .update("name", FieldValue.arrayUnion(loginUser.name))
                                     .addOnSuccessListener {
                                         binding.editName.error = null
-                                        Log.d("db성공", loginUser.name.toString())
                                         val intentMain = Intent(this@SignInActivity,MainActivity::class.java)
                                         intentMain.action = Intent.ACTION_MAIN
                                         intentMain.addCategory(Intent.CATEGORY_LAUNCHER)

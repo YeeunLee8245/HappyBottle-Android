@@ -16,9 +16,6 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kr.co.yeeunlee.own.project1.mywriting.databinding.DialogFragmentWriteBinding
 
 class WriteDialogFragment: DialogFragment() {
@@ -96,13 +93,10 @@ class WriteDialogFragment: DialogFragment() {
         }
 
         override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            Log.d("초기화 글자 개수", s.toString().length.toString())
             binding.textWordWrite.setText((binding.editNote.length()-5).toString()+"/200")
-            Log.d("초기화 문자",s.toString())
             var str = s.toString()
             if (str != "") {
                 if (str.substring(str.length-1) == "\n") {
-                    Log.d("초기화 문자2", "true")
                     val newLine = str.filter { c -> c == '\n'}.count()
                     if (newLine < 5){
                         binding.editNote.setText(previousStr+'\n')
@@ -113,8 +107,6 @@ class WriteDialogFragment: DialogFragment() {
         }
 
         override fun afterTextChanged(s: Editable?) {
-            Log.d("초기화 개행 개수", binding.editNote.lineCount.toString())
-
         }
 
     }
