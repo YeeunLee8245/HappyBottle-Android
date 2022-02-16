@@ -41,6 +41,10 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("액티비티",activity.toString())
+        CoroutineScope(Dispatchers.Main).launch {
+            homeViewModel.getUserSnapshot(activity!!)
+            Log.d("바뀌나요","확인")
+        }
     }
 
     override fun onCreateView(
@@ -51,14 +55,6 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater,container,false)
         initBtnWrite()
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        CoroutineScope(Dispatchers.Main).launch {
-            homeViewModel.getUserSnapshot(activity!!)
-            Log.d("바뀌나요","확인")
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

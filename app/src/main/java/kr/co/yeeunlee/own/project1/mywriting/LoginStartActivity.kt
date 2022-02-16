@@ -128,9 +128,10 @@ class LoginStartActivity : AppCompatActivity() {
                                 CoroutineScope(Dispatchers.Main).launch {
                                     val fireRepo = FirebaseRepository(this@LoginStartActivity)
                                     val userData = fireRepo.getNameImgSnapshot()
-                                    Log.d("계정 오류잡기", mAuth.currentUser?.email.toString()+"  "+email)
-                                    intentMain.putExtra(NAME_TAG, userData.first)
-                                    intentMain.putExtra(PROFILE_IMG_TAG, userData.second)
+                                    Log.d("계정 오류잡기1", mAuth.currentUser?.email.toString()+"  "+email)
+                                    Log.d("계정 오류잡기2", userData.toString())
+                                    intentMain.putExtra(NAME_TAG, userData.get("name").toString())
+                                    intentMain.putExtra(PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
                                     startActivity(intentMain)
                                     finish()
                                 }
@@ -188,9 +189,10 @@ class LoginStartActivity : AppCompatActivity() {
                                                 CoroutineScope(Dispatchers.Main).launch {
                                                     Log.d("db성공", user.name.toString())
                                                     val userData = fireRepo.getNameImgSnapshot()
+                                                    Log.d("계정 오류잡기2", userData.toString())
+                                                    intentMain.putExtra(NAME_TAG, userData.get("name").toString())
+                                                    intentMain.putExtra(PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
                                                     intentMain.putExtra("INFO_TAG", INFO_TAG)
-                                                    intentMain.putExtra(NAME_TAG, userData.first)
-                                                    intentMain.putExtra(PROFILE_IMG_TAG, userData.second)
                                                     startActivity(intentMain)   // 정보 액티비티 추가
                                                     finish()
                                                 }
@@ -217,8 +219,9 @@ class LoginStartActivity : AppCompatActivity() {
                         CoroutineScope(Dispatchers.Main).launch {
                             val fireRepo = FirebaseRepository(this@LoginStartActivity)
                             val userData = fireRepo.getNameImgSnapshot()
-                            intentMain.putExtra(NAME_TAG, userData.first)
-                            intentMain.putExtra(PROFILE_IMG_TAG, userData.second)
+                            Log.d("계정 오류잡기2", userData.toString())
+                            intentMain.putExtra(NAME_TAG, userData.get("name").toString())
+                            intentMain.putExtra(PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
                             startActivity(intentMain)
                             finish()    // 로그인 시작창은 스택에서 삭제
                         }

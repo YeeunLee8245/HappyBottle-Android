@@ -55,8 +55,9 @@ class SplashActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.Main).launch {
                 val userData = fireRepo.getNameImgSnapshot()
                 fireRepo.setToken()
-                intentMain.putExtra(LoginStartActivity.NAME_TAG, userData.first)
-                intentMain.putExtra(LoginStartActivity.PROFILE_IMG_TAG, userData.second)
+                Log.d("계정 오류잡기2", userData.toString())
+                intentMain.putExtra(LoginStartActivity.NAME_TAG, userData.get("name").toString())
+                intentMain.putExtra(LoginStartActivity.PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
                 Toast.makeText(
                     this@SplashActivity,
                     "구글 계정 로그인 성공${account.email}",
