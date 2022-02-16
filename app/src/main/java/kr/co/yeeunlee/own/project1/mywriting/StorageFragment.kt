@@ -28,6 +28,11 @@ class StorageFragment : Fragment() {
         , R.drawable.bottle_darkblue)
     private var zeroBottle:MutableLiveData<Boolean> = MutableLiveData()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        storageViewModel.getStorageBottleLi(activity!!, zeroBottle)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,11 +43,6 @@ class StorageFragment : Fragment() {
         //initBtnBottle() // 저금통 생성 & 저금통을 누르면
         //storageViewModel.oneMore()
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        storageViewModel.getStorageBottleLi(activity!!, zeroBottle)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -34,57 +34,32 @@ class FirebaseRepository(private val context: Context) {
             .show()
     }
 
-    suspend fun getNameImgSnapshot():Pair<String?, Int?>{
+    suspend fun getNameImgSnapshot():DocumentSnapshot{
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         var name:String? = null
         var profileImg: Int? = null
+        var snapshot:DocumentSnapshot? = null
         coroutineScope {
             db.collection("user").document(userEmail)
-                .get().addOnSuccessListener {
-                    name = it.get("name").toString()
-                    if ( null != it.get("profileImg"))
-                        profileImg = it.get("profileImg").toString().toInt()
-                    else profileImg = null
+                .get().addOnSuccessListener {   // 왜 get이 자꾸 null로 반환될까?
+                    snapshot = it
                 }
                 .addOnFailureListener { makeToast(it) }
         }.await()
-        return Pair(name, profileImg)
+        return snapshot!!
     }
 
-//    suspend fun getUserProfileImgSnapshot():Int{
-//        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
-//        var name:Int? = null
-//        coroutineScope {
-//            Log.d("이메일 오류 잡기", SplashActivity.mAuth.currentUser?.email.toString())
-//            db.collection("user").document(userEmail)
-//                .get().addOnSuccessListener {
-//                    if (null == it.get("profileImg"))
-//                        name = null
-//                    else name = it.get("profileImg").toString().toInt()
-//                    Log.d("이름 오류 잡기", name.toString())
-//                }
-//                .addOnFailureListener { makeToast(it) }
-//        }.await()
-//        return name?:0
-//    }
-
-    suspend fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>) {
+    fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>) {
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
-        coroutineScope {    // 비동기가 하나라도 순서에 구애 받아야하면 무조건 코루틴을 넣어주자
-            db.collection("user").document(userEmail)
-                .get().addOnSuccessListener {
-                    _userSnapshot.value = it
-                    db.collection("user").document(userEmail)   // 변경이 있으면 다시 업뎃
-                        .addSnapshotListener(MetadataChanges.INCLUDE){snapshot, e ->
-                            Log.d("옵저버 변경", snapshot?.get("name").toString())
-                            if (snapshot?.get("name") == null)  // 탈퇴할 때 에러방지
-                                return@addSnapshotListener
-                            _userSnapshot.value = snapshot
-                            Log.d("메타데이터 변경", snapshot.toString())
-                        }
-                }
-                .addOnFailureListener { makeToast(it) }
-        }.await()
+        db.collection("user").document(userEmail)   // 변경이 있으면 다시 업뎃
+                .addSnapshotListener(MetadataChanges.INCLUDE){snapshot, e ->
+                    // 동시에 네 번 동작되는 이유: 쓰기 보류 중, 쓰기 보류 중 아님 상태를 연속으로 두 번 알림(field, note)
+                    Log.d("옵저버 변경", snapshot?.get("name").toString())
+                    if (snapshot?.get("name") == null)  // 탈퇴할 때 에러방지
+                        return@addSnapshotListener
+                    _userSnapshot.value = snapshot
+                    Log.d("메타데이터 변경", snapshot.toString())
+            }
     }
 
     fun setUserStatusMsg(newStatus:String){
@@ -139,12 +114,13 @@ class FirebaseRepository(private val context: Context) {
         }.await()
 
     }
-
-    suspend fun getStorageBottleLi(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
+////////////////////
+    fun getStorageBottleLi(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
                          , __stgBtSnapLi:ArrayList<BottleList>, zeroBottle:MutableLiveData<Boolean>){
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         db.collection("user").document(userEmail)
             .addSnapshotListener(MetadataChanges.INCLUDE){snapshot, e ->
+                // 동시에 두 번 동작되는 이유: 쓰기 보류 중, 쓰기 보류 중 아님 상태를 연속으로 알림
                 __stgBtSnapLi.clear()
                 val numBottle: Int = snapshot!!.get("numNote").toString().toInt() / 30
                 Log.d("저장소 옵저버 변경", snapshot.get("name").toString())
