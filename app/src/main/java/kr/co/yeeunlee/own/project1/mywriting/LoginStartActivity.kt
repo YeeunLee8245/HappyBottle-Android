@@ -12,14 +12,9 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,37 +39,7 @@ class LoginStartActivity : AppCompatActivity() {
         // 액티비티 반환 결과
         Log.d("인증메일 받음0","${it.toString()}")
         if(it.resultCode == Activity.RESULT_OK){
-            user = it.data?.getParcelableExtra("user")!!
-            Log.d("인증메일 받음","$user")
-            //TODO("회원가입 성공, 계정 정보를 통해 앱 메인 접속")
-            mAuth.createUserWithEmailAndPassword(user.email, user.password!!) // 이메일 계정 등록/로그인
-                .addOnCompleteListener{ task ->
-                    Log.d("사용자 이메일로 계정 등록1", "${mAuth.currentUser!!.email}")
-                    user.password = null
-                    CoroutineScope(Dispatchers.Main).launch { // 코루틴 플로우 뒤에 동작되어야 하는 건 반드시 스코프 괄호 안에 적자.
-                        FirebaseMessaging.getInstance().token.addOnSuccessListener {token ->
-                            Log.d("인증메일 받음2","$user")
-                            user.token = token
-                            db.collection("user").document(user.email)
-                                .set(user)
-                                .addOnCompleteListener {
-                                    db.collection("check").document("name")
-                                        .update("name",FieldValue.arrayUnion(user.name))
-                                        .addOnSuccessListener {
-                                            Log.d("db성공", user.name.toString())
-                                            intentMain.putExtra("INFO_TAG", INFO_TAG)
-                                            intentMain.putExtra(NAME_TAG, user.name)
-                                            intentMain.putExtra(PROFILE_IMG_TAG, user.profileImg)
-                                            startActivity(intentMain)   // 정보 액티비티 추가
-                                            finish()
 
-                                        }
-                                }
-                        }   // 실패했을 때 동작 넣어주기
-
-                    }
-
-                }
         }
     }
     // google용 Intent 결과
@@ -108,7 +73,8 @@ class LoginStartActivity : AppCompatActivity() {
             signInIntent.action = Intent.ACTION_MAIN
             signInIntent.addCategory(Intent.CATEGORY_LAUNCHER)
             signInIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            getSignInResult.launch(signInIntent)
+            startActivity(signInIntent)
+            finish()
         }
         binding.btnGoogleSign.setOnClickListener { signIn() }
     }

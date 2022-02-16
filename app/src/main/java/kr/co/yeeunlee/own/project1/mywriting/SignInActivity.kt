@@ -1,6 +1,8 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +11,9 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,15 +22,17 @@ import java.util.regex.Pattern
 
 class SignInActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignInBinding
+    private val mAuth = SplashActivity.mAuth
     private val db = SplashActivity.db
     private val imgIdx:Int = (0..7).random()
     private val imgLi = arrayListOf(R.drawable.blue, R.drawable.green, R.drawable.mint
         , R.drawable.orange, R.drawable.pink, R.drawable.purple, R.drawable.sky
         , R.drawable.yellow)
+    private lateinit var emailListener:ListenerRegistration
+    private lateinit var nameListener:ListenerRegistration
     private var map = hashMapOf<String,Boolean>("email" to false, "name" to false,
         "password" to false)
     private var limitName:Boolean = false
-    private lateinit var user:User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +50,17 @@ class SignInActivity : AppCompatActivity() {
         binding.editName.addTextChangedListener(listnerEditName)
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Log.d("백버튼","들어옴")
+        val intentLogin = Intent(this,LoginStartActivity::class.java)
+        intentLogin.action = android.content.Intent.ACTION_MAIN
+        intentLogin.addCategory(android.content.Intent.CATEGORY_LAUNCHER)
+        intentLogin.flags = android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(intentLogin)
+        finish()
+    }
+
     private fun duplicateName (name: String){
         // 키보드 내리고 포커스 없애기
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -53,23 +71,22 @@ class SignInActivity : AppCompatActivity() {
             binding.editName.error = "특수문자, 공백 제외 7 글자 이하"
             return
         }
-        db.collection("check").document("name").get()
-            .addOnSuccessListener { document ->
-                val li = document.get("name") as List<String>
-                map["name"] = false
-                //.d("별명",name.toString())
-                if ((li.contains(name) == false) and (name != "") ) {
-                    map["name"] = true
-                    binding.editName.error = null
-                    Toast.makeText(this,"가능한 별명입니다.", Toast.LENGTH_SHORT).show()
-                }
-                else if (name == "")
-                    binding.editName.error="별명을 입력해주세요"
-                else // valid == false
-                    binding.editName.error="이미 존재하는 별명입니다."
-                //Log.d("별명 valid","$name ${map["name"]}")
+        nameListener = db.collection("check").document("name").addSnapshotListener { document, error ->
+            val li = document!!.get("name") as List<String>
+            map["name"] = false
+            //.d("별명",name.toString())
+            if ((li.contains(name) == false) and (name != "") ) {
+                map["name"] = true
+                binding.editName.error = null
+                Toast.makeText(this,"가능한 별명입니다.", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener { Log.d("별명 등록 실패","${it}") }
+            else if (name == "")
+                binding.editName.error="별명을 입력해주세요"
+            else // valid == false
+                binding.editName.error="이미 존재하는 별명입니다."
+            //Log.d("별명 valid","$name ${map["name"]}")
+            Log.d("별명 등록 실패","${error}")
+        }
     }
 
     private fun completeCheck(email:String):Boolean {
@@ -77,7 +94,7 @@ class SignInActivity : AppCompatActivity() {
         var pattern = android.util.Patterns.EMAIL_ADDRESS
         if (pattern.matcher(email).matches()) { // 정규 이메일 맞음
             binding.editEmail.error = null
-            db.collection("user").document(email).addSnapshotListener { document, error ->
+            emailListener = db.collection("user").document(email).addSnapshotListener { document, error ->
                 // 중복
                 //Log.d("이메일 리스너", "${document!!.exists()}")
                 //Log.d("이메일 리스너", "${error}")
@@ -122,14 +139,11 @@ class SignInActivity : AppCompatActivity() {
             val inputPassword = binding.editPW.text.toString()
             val intentStart = Intent(this, LoginStartActivity::class.java)
             //val token: String = fireRepo.setToken()
-            user = User(
+            val user = User(
                 inputName, inputEmail, true, inputPassword,
                 0, 0,"", imgIdx)
             Log.d("인증메일전송2", "$user")
-            intentStart.putExtra("user", user)
-
-            setResult(RESULT_OK, intentStart)
-            finish()
+            completeSignin(user)
         }
     }
 
@@ -176,5 +190,58 @@ class SignInActivity : AppCompatActivity() {
 
         override fun afterTextChanged(s: Editable?) {
         }
+    }
+
+    private fun completeSignin(loginUser: User){
+        emailListener.remove()
+        nameListener.remove()
+        Log.d("인증메일 받음","$loginUser")
+        //TODO("회원가입 성공, 계정 정보를 통해 앱 메인 접속")
+        mAuth.createUserWithEmailAndPassword(loginUser.email, loginUser.password!!) // 이메일 계정 등록/로그인
+            .addOnCompleteListener{ task ->
+                Log.d("사용자 이메일로 계정 등록1", "${mAuth.currentUser!!.email}")
+                loginUser.password = null
+                CoroutineScope(Dispatchers.Main).launch { // 코루틴 플로우 뒤에 동작되어야 하는 건 반드시 스코프 괄호 안에 적자.
+                    FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+                        Log.d("인증메일 받음2","$loginUser")
+                        loginUser.token = token
+                        db.collection("user").document(loginUser.email)
+                            .set(loginUser)
+                            .addOnCompleteListener {
+                                binding.editEmail.error = null
+                                db.collection("check").document("name")
+                                    .update("name", FieldValue.arrayUnion(loginUser.name))
+                                    .addOnSuccessListener {
+                                        binding.editName.error = null
+                                        Log.d("db성공", loginUser.name.toString())
+                                        val intentMain = Intent(this@SignInActivity,MainActivity::class.java)
+                                        intentMain.action = Intent.ACTION_MAIN
+                                        intentMain.addCategory(Intent.CATEGORY_LAUNCHER)
+                                        intentMain.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                        intentMain.putExtra("INFO_TAG", LoginStartActivity.INFO_TAG)
+                                        intentMain.putExtra(LoginStartActivity.NAME_TAG, loginUser.name)
+                                        intentMain.putExtra(LoginStartActivity.PROFILE_IMG_TAG, loginUser.profileImg)
+                                        startActivity(intentMain)   // 정보 액티비티 추가
+                                        finish()
+
+                                    }
+                            }.addOnFailureListener {
+                                AlertDialog.Builder(this@SignInActivity)
+                                    .setTitle("서버 오류입니다.")
+                                    .setMessage(" 관리자에게 문의해주세요. 오류코드:$it")
+                                    .setCancelable(false)
+                                    .setPositiveButton("확인", object : DialogInterface.OnClickListener{
+                                        override fun onClick(dialog: DialogInterface?, idx: Int) {
+                                            dialog!!.dismiss()
+                                        }
+                                    })
+                                    .create()
+                                    .show()
+                            }
+                    }
+
+                }
+
+            }
     }
 }
