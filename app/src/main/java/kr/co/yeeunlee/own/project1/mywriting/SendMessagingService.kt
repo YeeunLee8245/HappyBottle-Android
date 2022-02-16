@@ -38,7 +38,7 @@ class SendMessagingService: FirebaseMessagingService()  {
         val profileImgLi = arrayListOf(R.drawable.blue, R.drawable.green, R.drawable.mint,
             R.drawable.orange, R.drawable.pink, R.drawable.purple, R.drawable.sky, R.drawable.yellow)
         // 팝업 클릭시 이동할 액티비티
-        val intentSend = Intent(this, MainActivity::class.java)
+        val intentSend = Intent(this, SplashActivity::class.java)
         intentSend.putExtra("service", "service")
         intentSend.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복생성 방지
         val pendingIntent = PendingIntent.getActivity(this, 0, intentSend,
@@ -69,7 +69,7 @@ class SendMessagingService: FirebaseMessagingService()  {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // Android 8(Oreo) 버전 예외처리
             val channel = NotificationChannel("service","알림 메시지",
-            NotificationManager.IMPORTANCE_LOW) // 소리 없앰
+                NotificationManager.IMPORTANCE_LOW) // 소리 없앰
             notificationManager.createNotificationChannel(channel)
         }
         notificationManager.notify(0, notificationBuilder.build())

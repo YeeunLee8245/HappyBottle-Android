@@ -52,6 +52,9 @@ class SplashActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.Main).launch {
                 val userData = fireRepo.getNameImgSnapshot()
                 fireRepo.setToken()
+                if (intent.getStringExtra("service") != null){
+                    intentMain.putExtra("service", "service")
+                }
                 intentMain.putExtra(LoginStartActivity.NAME_TAG, userData.get("name").toString())
                 intentMain.putExtra(LoginStartActivity.PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
                 Toast.makeText(

@@ -40,8 +40,11 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("액티비티값", activity.toString()+"  "+context.toString())
         CoroutineScope(Dispatchers.Main).launch {
-            homeViewModel.getUserSnapshot(activity!!)
+            homeViewModel
+                .getUserSnapshot(
+                )
         }
     }
 
