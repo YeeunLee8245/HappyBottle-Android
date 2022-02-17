@@ -19,13 +19,18 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentSendBinding
 class SendFragment : Fragment() {
     private lateinit var binding: FragmentSendBinding
     private var vaild = MutableLiveData<Boolean>()
-    private val sendViewModel: SendViewModel by viewModels<SendViewModel>()
+    private val sendViewModel: SendViewModel by viewModels<SendViewModel>() // 첫 생성 이후로는 생명주기가 액티비티 따라가는 것으로 추정
     // 전역 부분에 뷰모델에 접근하는 코드 넣으면 안됨(뷰모델은 프래그먼트가 detached된 상태에서 접근 불가)
     companion object{
         var deletePosition: Int? = null
     }
     init {
         vaild.value = false
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sendViewModel.getPostSnapshot()
     }
 
     override fun onCreateView(
@@ -72,11 +77,8 @@ class SendFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        sendViewModel.getPostSnapshot()
         vaild.value = false
-
     }
-
 
     private fun initBtnSend(){
         binding.btnSend.setOnClickListener {

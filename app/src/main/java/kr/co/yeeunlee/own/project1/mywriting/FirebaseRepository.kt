@@ -256,10 +256,13 @@ class FirebaseRepository(private val context: Context) {
         myResponce.value = RetrofitInstance.api.sendNotification(notification)
     }
 
-    fun getPostSnapshot(__checkPost: ArrayList<Note> ,_checkPost: MutableLiveData<ArrayList<Note>>){
+    fun getPostSnapshot(__checkPost: ArrayList<Note> ,_checkPost: MutableLiveData<ArrayList<Note>>)
+    :ListenerRegistration?{
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
-        db.collection("user").document(userEmail).collection("postbox")
+        var listenerRgst:ListenerRegistration? = null
+        listenerRgst = db.collection("user").document(userEmail).collection("postbox")
             .orderBy("time", Query.Direction.ASCENDING).addSnapshotListener { querySnapshot, _ ->
+                Log.d("하나만 수행", "하나만")
                 if (querySnapshot == null) return@addSnapshotListener
                 if (__checkPost.size == querySnapshot.size())   // 업데이트 중복 방지
                     return@addSnapshotListener
@@ -279,6 +282,7 @@ class FirebaseRepository(private val context: Context) {
                     }
                 }
             }
+        return listenerRgst
     }
 
     suspend fun getToken(receiver: String): String{
