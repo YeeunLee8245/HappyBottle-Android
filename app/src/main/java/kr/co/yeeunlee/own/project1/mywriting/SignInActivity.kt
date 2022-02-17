@@ -28,11 +28,14 @@ class SignInActivity : AppCompatActivity() {
     private val imgLi = arrayListOf(R.drawable.blue, R.drawable.green, R.drawable.mint
         , R.drawable.orange, R.drawable.pink, R.drawable.purple, R.drawable.sky
         , R.drawable.yellow)
-    private lateinit var emailListener:ListenerRegistration
-    private lateinit var nameListener:ListenerRegistration
+    private val nameListenerLi:ArrayList<ListenerRegistration> = ArrayList<ListenerRegistration>()
+    private val emailListenerLi:ArrayList<ListenerRegistration> = ArrayList<ListenerRegistration>()
     private var map = hashMapOf<String,Boolean>("email" to false, "name" to false,
         "password" to false)
     private var limitName:Boolean = false
+    private var limitText:Boolean = false
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,38 +63,64 @@ class SignInActivity : AppCompatActivity() {
         finish()
     }
 
+    override fun onDestroy() {
+        emailListenerLi.forEach { it.remove() }
+        nameListenerLi.forEach { it.remove() }
+        super.onDestroy()
+    }
+
     private fun duplicateName (name: String){
         // 키보드 내리고 포커스 없애기
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.editName.windowToken,0)
         binding.editName.clearFocus()
 
-        if (limitName == false){
-            binding.editName.error = "특수문자, 공백 제외 7 글자 이하"
-            return
-        }
+//        if (limitName == false){
+//            binding.editName.error = "특수문자, 공백 제외 7 글자 이하"
+//            return
+//        }
+        var nameListener:ListenerRegistration? = null
         nameListener = db.collection("check").document("name").addSnapshotListener { document, error ->
+            nameListenerLi.add(nameListener!!)
             val li = document!!.get("name") as List<String>
             map["name"] = false
-            if ((li.contains(name) == false) and (name != "") ) {
+            if ((li.contains(name) == false) and (name != "") and (limitText == true)) {
                 map["name"] = true
                 binding.editName.error = null
                 Toast.makeText(this,"가능한 별명입니다.", Toast.LENGTH_SHORT).show()
             }
             else if (name == "")
                 binding.editName.error="별명을 입력해주세요"
+            else if (limitText == false)
+                binding.editName.error="특수문자, 공백 제외 7 글자 이하"
             else // valid == false
                 binding.editName.error="이미 존재하는 별명입니다."
+            if (error != null){
+                AlertDialog.Builder(this)
+                    .setTitle("서버 오류입니다.")
+                    .setMessage(" 관리자에게 문의해주세요. 오류코드:$error")
+                    .setCancelable(false)
+                    .setPositiveButton("확인", object : DialogInterface.OnClickListener{
+                        override fun onClick(dialog: DialogInterface?, idx: Int) {
+                            dialog!!.dismiss()
+                        }
+                    })
+                    .create()
+                    .show()
+            }
         }
     }
 
-    private fun completeCheck(email:String):Boolean {
+    private fun completeCheck(email:String){
+        map["email"] = false
         // 이메일 중복 확인
         var pattern = android.util.Patterns.EMAIL_ADDRESS
         if (pattern.matcher(email).matches()) { // 정규 이메일 맞음
             binding.editEmail.error = null
+            var emailListener:ListenerRegistration? = null
             emailListener = db.collection("user").document(email).addSnapshotListener { document, error ->
                 // 중복
+                emailListenerLi.add(emailListener!!)
                 if (document!!.exists()) {
                     map["email"] = false
                     binding.editEmail.error = "이미 가입된 이메일 입니다."
@@ -106,8 +135,6 @@ class SignInActivity : AppCompatActivity() {
             binding.editEmail.error = "올바른 이메일 형식을 입력해주세요."
             completeElse()
         }
-
-        return true
     }
 
     private fun completeElse(){
@@ -164,23 +191,29 @@ class SignInActivity : AppCompatActivity() {
         override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
             if (s != null){
                 if (pattern.matcher(s.toString()).matches()) {   // 한글, 영어, 숫자만 있을 때
-                    limitName = true
+                    limitText = true
                     binding.editName.error = null
                 }
                 else{
-                    limitName = false
+                    limitText = false
                     binding.editName.error = "특수문자, 공백 제외 7 글자 이하"
                 }
             }
         }
 
         override fun afterTextChanged(s: Editable?) {
+            if ( map["name"] == true) {  // 다시 타자치면 리셋
+                limitName = false
+                map["name"] = false
+            }
         }
     }
 
     private fun completeSignin(loginUser: User){
-        emailListener.remove()
-        nameListener.remove()
+        emailListenerLi.forEach { it.remove() }
+        nameListenerLi.forEach { it.remove() }
+        emailListenerLi.clear()
+        nameListenerLi.clear()
         //TODO("회원가입 성공, 계정 정보를 통해 앱 메인 접속")
         mAuth.createUserWithEmailAndPassword(loginUser.email, loginUser.password!!) // 이메일 계정 등록/로그인
             .addOnCompleteListener{ task ->
