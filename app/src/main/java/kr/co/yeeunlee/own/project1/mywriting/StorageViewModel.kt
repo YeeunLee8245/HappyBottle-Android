@@ -3,9 +3,11 @@ package kr.co.yeeunlee.own.project1.mywriting
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.*
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.launch
 
 class StorageViewModel(application: Application): AndroidViewModel(application) {
+    private var listenerRgst: ListenerRegistration? = null
     private var __stgBottleLi = ArrayList<BottleList>()
     private var _stgBottleLi: MutableLiveData<ArrayList<BottleList>> = MutableLiveData<ArrayList<BottleList>>()
     val stgBtSnapLi:LiveData<ArrayList<BottleList>> = _stgBottleLi
@@ -17,12 +19,11 @@ class StorageViewModel(application: Application): AndroidViewModel(application) 
 
     fun getStorageBottleLi(zeroBottle:MutableLiveData<Boolean>) = viewModelScope.launch {
         val firebaseRepo = FirebaseRepository(mapplication)
-        firebaseRepo.getStorageBottleLi(_stgBottleLi, __stgBottleLi, zeroBottle)
+        if (listenerRgst == null)
+            listenerRgst = firebaseRepo.getStorageBottleLi(_stgBottleLi, __stgBottleLi, zeroBottle)
     }
 
     fun getSize(): Int{
         return __stgBottleLi.size
     }
 }
-
-data class BottleList(var first: Int? = null, var second: Int? = null, var third: Int? = null)

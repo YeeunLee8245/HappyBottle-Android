@@ -31,6 +31,9 @@ data class User(var name:String, val email:String, val vaildPassWord:Boolean
 data class Note(val name: String="", val text: String="", val time: Timestamp= Timestamp.now()
                 , val check: Boolean=false, val type: Int=0, var post:Boolean=false, val profileImg: Int=-1)
 
+// 앱에서의 저금통 데이터
+data class BottleList(var first: Int? = null, var second: Int? = null, var third: Int? = null)
+
 // 푸시알림 전송 데이터
 data class MessageDTO(var fromName: String? = null, var toName: String? = null,
 var text: String? = null, var timestamp: Long? = null)
