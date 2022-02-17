@@ -110,11 +110,14 @@ class FirebaseRepository(private val context: Context) {
     }
 
     fun getStorageBottleLi(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
-                         , __stgBtSnapLi:ArrayList<BottleList>, zeroBottle:MutableLiveData<Boolean>){
+                         , __stgBtSnapLi:ArrayList<BottleList>, zeroBottle:MutableLiveData<Boolean>)
+    :ListenerRegistration{
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
-        db.collection("user").document(userEmail)
+        var listenerRgst:ListenerRegistration? = null
+        listenerRgst = db.collection("user").document(userEmail)
             .addSnapshotListener(MetadataChanges.INCLUDE){snapshot, e ->
-                // 동시에 두 번 동작되는 이유: 쓰기 보류 중, 쓰기 보류 중 아님 상태를 연속으로 알림
+                // 동시에 두 번 동작되는 이유: 화면이 뜰 때마다 리스너를 생성해서.
+                Log.d("하나만 수행", "하나만")
                 __stgBtSnapLi.clear()
                 val numBottle: Int = snapshot!!.get("numNote").toString().toInt() / 30
                 zeroBottle.value = numBottle == 0
@@ -133,6 +136,7 @@ class FirebaseRepository(private val context: Context) {
                 }
                 _stgBtSnapLi.value = __stgBtSnapLi
             }
+        return listenerRgst
     }
 
     suspend fun getOpnNoteSnapshot(index: Int) : DocumentSnapshot{
@@ -262,7 +266,6 @@ class FirebaseRepository(private val context: Context) {
         var listenerRgst:ListenerRegistration? = null
         listenerRgst = db.collection("user").document(userEmail).collection("postbox")
             .orderBy("time", Query.Direction.ASCENDING).addSnapshotListener { querySnapshot, _ ->
-                Log.d("하나만 수행", "하나만")
                 if (querySnapshot == null) return@addSnapshotListener
                 if (__checkPost.size == querySnapshot.size())   // 업데이트 중복 방지
                     return@addSnapshotListener
