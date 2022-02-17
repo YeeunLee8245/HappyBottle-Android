@@ -105,7 +105,7 @@
         android:layout_width="24dp"
         android:layout_height="40dp"
         android:layout_marginRight="3dp"
-        android:background="@drawable/btn_left"
+        android:background="@drawable/btn_pressed_la"
         app:layout_constraintBottom_toBottomOf="@+id/customLayout"
         app:layout_constraintEnd_toStartOf="@+id/customLayout"
         app:layout_constraintTop_toTopOf="@+id/customLayout" />
@@ -115,7 +115,7 @@
         android:layout_width="24dp"
         android:layout_height="40dp"
         android:layout_marginLeft="3dp"
-        android:background="@drawable/btn_right"
+        android:background="@drawable/btn_pressed_ra"
         app:layout_constraintBottom_toBottomOf="@+id/customLayout"
         app:layout_constraintStart_toEndOf="@+id/customLayout"
         app:layout_constraintTop_toTopOf="@+id/customLayout" />
