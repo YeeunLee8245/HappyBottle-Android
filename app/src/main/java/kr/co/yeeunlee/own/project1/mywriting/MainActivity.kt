@@ -69,42 +69,10 @@ class MainActivity : AppCompatActivity() {
         binding.btnSend.setOnClickListener { changeFragment(SEND_TAG, sendFragment) }
         binding.btnClose.setOnClickListener { changeDrawer("close") }
         binding.btnLogout.setOnClickListener { // 로그아웃
-            AlertDialog.Builder(this)
-                .setTitle("로그아웃하시겠습니까?")
-                .setCancelable(false)
-                .setItems(arrayOf("로그아웃하기","취소"), object : DialogInterface.OnClickListener{
-                    override fun onClick(dialog: DialogInterface?, idx: Int) {
-                        dialog!!.dismiss()
-                        if (idx == 0)
-                            logout()
-                    }
-                })
-                .create()
-                .show()
-
+            btnLogout()
         }
         binding.btnBan.setOnClickListener { // 탈퇴
-            AlertDialog.Builder(this)
-                .setTitle("서버에 있는 계정의 모든 데이터가 삭제됩니다.")
-                .setCancelable(false)
-                .setItems(arrayOf("탈퇴하기","취소"), object : DialogInterface.OnClickListener{
-                    override fun onClick(dialog: DialogInterface?, idx: Int) {
-                        if (idx == 0){
-                            val intentSplash = Intent(this@MainActivity, SplashActivity::class.java)
-                            intentSplash.putExtra(DELETE_TAG,DELETE_TAG)
-                            intentSplash.putExtra(USER_NAME, getUserName())
-                            intentSplash.action = Intent.ACTION_MAIN
-                            intentSplash.addCategory(Intent.CATEGORY_LAUNCHER)
-                            intentSplash.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            dialog!!.dismiss()
-                            startActivity(intentSplash)
-                            finish()
-                        }else if (idx == 1)
-                            dialog!!.dismiss()
-                    }
-                })
-                .create()
-                .show()
+            btnDelete()
         }
         binding.switchBell.setOnCheckedChangeListener { _, isChecked ->
             val fireRepo = FirebaseRepository(this)
@@ -120,11 +88,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.btnOpinion.setOnClickListener { // 의견 보내기
-            val dialog = OpinionDialogFragment(OPINION_TAG)
-            this.supportFragmentManager.let { fragmentManager ->
-                dialog.show(fragmentManager, "opinion")
-            }
+            btnOpinion()
         }
+
+        binding.btnLogoutSub.setOnClickListener { btnLogout() }
+        binding.btnOpinionSub.setOnClickListener { btnOpinion() }
+        binding.btnBanSub.setOnClickListener { btnDelete() }
 
         valueService = intent.getStringExtra("service")
         if (valueService != null){
@@ -208,6 +177,52 @@ class MainActivity : AppCompatActivity() {
         val infoIntent = Intent(this, InfoViewpagerActivity::class.java)
         infoIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(infoIntent)
+    }
+
+    private fun btnLogout(){
+        AlertDialog.Builder(this)
+            .setTitle("로그아웃하시겠습니까?")
+            .setCancelable(false)
+            .setItems(arrayOf("로그아웃하기","취소"), object : DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, idx: Int) {
+                    dialog!!.dismiss()
+                    if (idx == 0)
+                        logout()
+                }
+            })
+            .create()
+            .show()
+    }
+
+    private fun btnOpinion(){
+        val dialog = OpinionDialogFragment(OPINION_TAG)
+        this.supportFragmentManager.let { fragmentManager ->
+            dialog.show(fragmentManager, "opinion")
+        }
+    }
+
+    private fun btnDelete(){
+        AlertDialog.Builder(this)
+            .setTitle("서버에 있는 계정의 모든 데이터가 삭제됩니다.")
+            .setCancelable(false)
+            .setItems(arrayOf("탈퇴하기","취소"), object : DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, idx: Int) {
+                    if (idx == 0){
+                        val intentSplash = Intent(this@MainActivity, SplashActivity::class.java)
+                        intentSplash.putExtra(DELETE_TAG,DELETE_TAG)
+                        intentSplash.putExtra(USER_NAME, getUserName())
+                        intentSplash.action = Intent.ACTION_MAIN
+                        intentSplash.addCategory(Intent.CATEGORY_LAUNCHER)
+                        intentSplash.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        dialog!!.dismiss()
+                        startActivity(intentSplash)
+                        finish()
+                    }else if (idx == 1)
+                        dialog!!.dismiss()
+                }
+            })
+            .create()
+            .show()
     }
 
     fun getUserName(): String = intent.getStringExtra(LoginStartActivity.NAME_TAG)?:"오류"

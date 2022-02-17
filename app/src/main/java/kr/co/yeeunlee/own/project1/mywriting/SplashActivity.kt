@@ -69,7 +69,8 @@ class SplashActivity : AppCompatActivity() {
         else if (account != null) {
             CoroutineScope(Dispatchers.Main).launch {
                 val userData = fireRepo.getNameImgSnapshot()
-                fireRepo.setToken()
+                Log.d("로그인 정보", account.toString()+"  "+account.email.toString())
+                fireRepo.setToken(10)
                 if (intent.getStringExtra("service") != null){
                     intentMain.putExtra("service", "service")
                 }
@@ -94,6 +95,7 @@ class SplashActivity : AppCompatActivity() {
     private suspend fun userDelete() {
         val userEmail = mAuth.currentUser!!.email.toString()
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
+
         coroutineScope {
             val userName = intent.getStringExtra(MainActivity.USER_NAME)
             db.collection("check").document("name")
@@ -123,19 +125,24 @@ class SplashActivity : AppCompatActivity() {
         coroutineScope {
             db.collection("user").document(userEmail)    // 비동기 주의
                 .delete()
-                .addOnCompleteListener {
-                    googleSignInClient.signOut().addOnSuccessListener {
-                        val intentStart = Intent(this@SplashActivity,LoginStartActivity::class.java)
-                        intentStart.action = Intent.ACTION_MAIN
-                        intentStart.addCategory(Intent.CATEGORY_LAUNCHER)
-                        intentStart.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        startActivity(intentStart)
-                        finish()
-                        Toast.makeText(this@SplashActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()
-                    }
-                        .addOnFailureListener { e -> makeErrorAlter(e) }
-                }
                 .addOnFailureListener { e -> makeErrorAlter(e) }
+        }.await()
+
+        coroutineScope {
+            Log.d("로그아웃","1")
+            googleSignInClient.signOut().addOnSuccessListener {
+                Log.d("로그아웃","2")
+                val intentStart = Intent(this@SplashActivity,LoginStartActivity::class.java)
+                intentStart.action = Intent.ACTION_MAIN
+                intentStart.addCategory(Intent.CATEGORY_LAUNCHER)
+                intentStart.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intentStart)
+                finish()
+                Toast.makeText(this@SplashActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()
+            }
+                .addOnFailureListener { e ->
+                    Log.d("로그아웃","3"+e.toString())
+                    makeErrorAlter(e) }
         }.await()
 
     }

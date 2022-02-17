@@ -89,7 +89,7 @@ class LoginStartActivity : AppCompatActivity() {
                                 CoroutineScope(Dispatchers.Main).launch {
                                     val fireRepo = FirebaseRepository(this@LoginStartActivity)
                                     val userData = fireRepo.getNameImgSnapshot()
-                                    fireRepo.setToken()
+                                    fireRepo.setToken(3)
                                     intentMain.putExtra(NAME_TAG, userData.get("name").toString())
                                     intentMain.putExtra(PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
                                     startActivity(intentMain)
@@ -137,7 +137,7 @@ class LoginStartActivity : AppCompatActivity() {
                             mAuth.signInWithCredential(credential) // 비동기 주의
                                 .addOnSuccessListener {
                                     CoroutineScope(Dispatchers.Default).launch {
-                                        val token:String = fireRepo.setToken()
+                                        val token:String = fireRepo.setToken(2)
                                         user = User(
                                             name, mAuth.currentUser!!.email!!, false,
                                             null, 0, 0, token, (0..7).random())
@@ -175,7 +175,7 @@ class LoginStartActivity : AppCompatActivity() {
                         CoroutineScope(Dispatchers.Main).launch {
                             val fireRepo = FirebaseRepository(this@LoginStartActivity)
                             val userData = fireRepo.getNameImgSnapshot()
-                            fireRepo.setToken()
+                            fireRepo.setToken(1)
                             Log.d("계정 오류잡기2", userData.toString())
                             intentMain.putExtra(NAME_TAG, userData.get("name").toString())
                             intentMain.putExtra(PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
