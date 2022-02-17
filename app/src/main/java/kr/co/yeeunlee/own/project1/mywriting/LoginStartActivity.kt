@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -76,13 +77,15 @@ class LoginStartActivity : AppCompatActivity() {
             binding.editEmail.error = "이메일을 입력해주세요."
         }
         else{
-            db.collection("user").document(email).addSnapshotListener { document, error ->
+            var userListener:ListenerRegistration? = null
+            userListener = db.collection("user").document(email).addSnapshotListener { document, error ->
                 if (document!!.exists() == true) {
                     if (password == ""){
                         binding.editPW.error = "비밀번호를 입력해주세요."
                     }else{
                         mAuth.signInWithEmailAndPassword(email, password)
                             .addOnSuccessListener {
+                                userListener!!.remove()
                                 CoroutineScope(Dispatchers.Main).launch {
                                     val fireRepo = FirebaseRepository(this@LoginStartActivity)
                                     val userData = fireRepo.getNameImgSnapshot()
