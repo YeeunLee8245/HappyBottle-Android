@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyWriting</string>
+    <string name="app_name">행복 저금통</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
