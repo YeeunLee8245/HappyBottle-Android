@@ -1,20 +1,27 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {
     companion object{
@@ -29,12 +36,14 @@ class SplashActivity : AppCompatActivity() {
         isPersistenceEnabled = true
         setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED).build()
     }
+    private lateinit var binding: ActivitySplashBinding
     init {
         db.firestoreSettings = settings // 캐시와 오프라인 지속성 설정
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setContentView(R.layout.activity_splash)
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         super.onCreate(savedInstanceState)
 
         val fireRepo = FirebaseRepository(this)
@@ -47,8 +56,17 @@ class SplashActivity : AppCompatActivity() {
         intentStart.action = Intent.ACTION_MAIN
         intentStart.addCategory(Intent.CATEGORY_LAUNCHER)
         intentStart.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+
         val account = mAuth.currentUser
-        if (account != null) {
+
+        if (intent.getStringExtra(MainActivity.DELETE_TAG) != null){
+            CoroutineScope(Dispatchers.Main).launch {
+                binding.text.text = "데이터 삭제 중입니다.\n잠시만 기다려주세요."
+                mAuth.currentUser!!.delete()
+                userDelete()
+            }
+        }
+        else if (account != null) {
             CoroutineScope(Dispatchers.Main).launch {
                 val userData = fireRepo.getNameImgSnapshot()
                 fireRepo.setToken()
@@ -71,5 +89,68 @@ class SplashActivity : AppCompatActivity() {
             Toast.makeText(this@SplashActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()
         }
 
+    }
+
+    private suspend fun userDelete() {
+        val userEmail = mAuth.currentUser!!.email.toString()
+        val googleSignInClient = GoogleSignIn.getClient(this, gso)
+        coroutineScope {
+            val userName = intent.getStringExtra(MainActivity.USER_NAME)
+            db.collection("check").document("name")
+                .update("name", FieldValue.arrayRemove(userName))
+                .addOnFailureListener {e -> makeErrorAlter(e)}
+        }.await()
+
+        coroutineScope {
+            db.collection("user").document(userEmail)
+                .collection("note").get().addOnSuccessListener {
+                    it.documents.forEach {
+                        db.runBatch { batch ->
+                            batch.delete(it.reference)
+                        }.addOnFailureListener {e -> makeErrorAlter(e)}
+                    }
+                }
+            db.collection("user").document(userEmail)
+                .collection("postbox").get().addOnSuccessListener {
+                    it.documents.forEach {
+                        db.runBatch { batch ->
+                            batch.delete(it.reference)
+                        }.addOnFailureListener { e -> makeErrorAlter(e) }
+                    }
+                }
+        }.await()
+
+        coroutineScope {
+            db.collection("user").document(userEmail)    // 비동기 주의
+                .delete()
+                .addOnCompleteListener {
+                    googleSignInClient.signOut().addOnSuccessListener {
+                        val intentStart = Intent(this@SplashActivity,LoginStartActivity::class.java)
+                        intentStart.action = Intent.ACTION_MAIN
+                        intentStart.addCategory(Intent.CATEGORY_LAUNCHER)
+                        intentStart.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        startActivity(intentStart)
+                        finish()
+                        Toast.makeText(this@SplashActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()
+                    }
+                        .addOnFailureListener { e -> makeErrorAlter(e) }
+                }
+                .addOnFailureListener { e -> makeErrorAlter(e) }
+        }.await()
+
+    }
+
+    private fun makeErrorAlter(e:Exception){
+        AlertDialog.Builder(this)
+            .setTitle("서버 오류입니다.")
+            .setMessage(" 관리자에게 문의해주세요. 오류코드:$e")
+            .setCancelable(false)
+            .setPositiveButton("확인", object : DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, idx: Int) {
+                    dialog!!.dismiss()
+                }
+            })
+            .create()
+            .show()
     }
 }

@@ -86,6 +86,7 @@ class LoginStartActivity : AppCompatActivity() {
                                 CoroutineScope(Dispatchers.Main).launch {
                                     val fireRepo = FirebaseRepository(this@LoginStartActivity)
                                     val userData = fireRepo.getNameImgSnapshot()
+                                    fireRepo.setToken()
                                     intentMain.putExtra(NAME_TAG, userData.get("name").toString())
                                     intentMain.putExtra(PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
                                     startActivity(intentMain)
@@ -167,10 +168,11 @@ class LoginStartActivity : AppCompatActivity() {
                         Toast.makeText(this, "Sorry auth failed.", Toast.LENGTH_SHORT)
                             .show()
                         Log.e("구글 로그인 실패 계정 정보","${mAuth.currentUser}")
-                    }else {
+                    }else { // 기존 구글 계정 있을시
                         CoroutineScope(Dispatchers.Main).launch {
                             val fireRepo = FirebaseRepository(this@LoginStartActivity)
                             val userData = fireRepo.getNameImgSnapshot()
+                            fireRepo.setToken()
                             Log.d("계정 오류잡기2", userData.toString())
                             intentMain.putExtra(NAME_TAG, userData.get("name").toString())
                             intentMain.putExtra(PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
