@@ -21,6 +21,9 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     companion object{
+        const val MAIN_TAG = "MainContext"
+        const val DELETE_TAG = "DeleteUser"
+        const val USER_NAME = "UserName"
         const val HOME_TAG = "HomeFragment"
         const val STORAGE_TAG = "StorageFragment"
         const val SEND_TAG = "SendFragment"
@@ -87,11 +90,15 @@ class MainActivity : AppCompatActivity() {
                 .setItems(arrayOf("탈퇴하기","취소"), object : DialogInterface.OnClickListener{
                     override fun onClick(dialog: DialogInterface?, idx: Int) {
                         if (idx == 0){
-                            CoroutineScope(Dispatchers.Main).launch {
-                                dialog!!.dismiss()
-                                SplashActivity.mAuth.currentUser!!.delete()
-                                userDelete()   // 데베 데이터 삭제 TODO("로딩창 넣어야할듯")
-                            }
+                            val intentSplash = Intent(this@MainActivity, SplashActivity::class.java)
+                            intentSplash.putExtra(DELETE_TAG,DELETE_TAG)
+                            intentSplash.putExtra(USER_NAME, getUserName())
+                            intentSplash.action = Intent.ACTION_MAIN
+                            intentSplash.addCategory(Intent.CATEGORY_LAUNCHER)
+                            intentSplash.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            dialog!!.dismiss()
+                            startActivity(intentSplash)
+                            finish()
                         }else if (idx == 1)
                             dialog!!.dismiss()
                     }
@@ -177,45 +184,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun userDelete() {
-        val userEmail = mAuth.currentUser!!.email.toString()
-        coroutineScope {
-            val userName = getUserName()
-            db.collection("check").document("name")
-                .update("name", FieldValue.arrayRemove(userName))
-                .addOnFailureListener {e -> makeErrorAlter(e)}
-        }.await()
-
-        coroutineScope {
-            db.collection("user").document(userEmail)
-                .collection("note").get().addOnSuccessListener {
-                    it.documents.forEach {
-                        db.runBatch { batch ->
-                            batch.delete(it.reference)
-                        }.addOnFailureListener {e -> makeErrorAlter(e)}
-                    }
-                }
-            db.collection("user").document(userEmail)
-                .collection("postbox").get().addOnSuccessListener {
-                    it.documents.forEach {
-                        db.runBatch { batch ->
-                            batch.delete(it.reference)
-                        }.addOnFailureListener { e -> makeErrorAlter(e) }
-                    }
-                }
-        }.await()
-
-        coroutineScope {
-            db.collection("user").document(userEmail)    // 비동기 주의
-                .delete()
-                .addOnCompleteListener {
-                    logout()
-                }
-                .addOnFailureListener { e -> makeErrorAlter(e) }
-        }.await()
-
-    }
-
     private fun makeAlterDialog() {
         AlertDialog.Builder(this)
             .setTitle("인터넷 연결을 확인할 수 없습니다...")
@@ -230,20 +198,6 @@ class MainActivity : AppCompatActivity() {
                     }else if (idx == 1){
                         finish()
                     }
-                }
-            })
-            .create()
-            .show()
-    }
-
-    private fun makeErrorAlter(e:Exception){
-        AlertDialog.Builder(this)
-            .setTitle("서버 오류입니다.")
-            .setMessage(" 관리자에게 문의해주세요. 오류코드:$e")
-            .setCancelable(false)
-            .setPositiveButton("확인", object : DialogInterface.OnClickListener{
-                override fun onClick(dialog: DialogInterface?, idx: Int) {
-                    dialog!!.dismiss()
                 }
             })
             .create()

@@ -157,14 +157,14 @@ class FirebaseRepository(private val context: Context) {
                     return@addOnCompleteListener
                 }
                 token = task.result
-                db.collection("user").document(userEmail).addSnapshotListener{document, _->
+                db.collection("user").document(userEmail).get().addOnSuccessListener{document ->
                     userName = document!!.get("name").toString()    // 사용자 이름 초기화
                     Log.d("서비스 토큰 변경", userName+token)
-                    if (document == null) return@addSnapshotListener
+                    if (document == null) return@addOnSuccessListener
 
                     if (document["token"].toString() == "false") {
                         Log.d("서비스 토큰", "푸시 알림 거부")
-                        return@addSnapshotListener
+                        return@addOnSuccessListener
                     }else if (document["token"].toString() != token) {
                         // 이 부분을 await으로 주었더니 정상 작동이 안된 이유는 addSnapshotListener가 사용되는 메서드 역시 비동기이기 때문.
                         // addSnapshotListener은 데베가 업데이트 되는대로 여러번 실행될 수 있기 때문에 await이 사용될 수 없다.
@@ -173,7 +173,7 @@ class FirebaseRepository(private val context: Context) {
                             Log.d("서비스 토큰 변경success", "정상 작동")
                         }
 //                            .addOnFailureListener { makeToast(it) }
-                        return@addSnapshotListener
+                        return@addOnSuccessListener
                     }
                 }
 
