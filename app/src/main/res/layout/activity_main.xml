@@ -97,6 +97,15 @@
             android:background="@drawable/icon_logout"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+        <Button
+            android:id="@+id/btn_logout_sub"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:background="@null"
+            app:layout_constraintLeft_toRightOf="@+id/btn_logout"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_logout"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_logout" />
         <TextView
             android:id="@+id/btn_bell"
             android:layout_width="105.3dp"
@@ -153,6 +162,15 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_bell"/>
         <Button
+            android:id="@+id/btn_opinion_sub"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:background="@null"
+            app:layout_constraintLeft_toRightOf="@+id/btn_opinion"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_opinion"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_opinion" />
+        <Button
             android:id="@+id/btn_ban"
             android:layout_width="174.9dp"
             android:layout_height="45dp"
@@ -161,6 +179,15 @@
             android:background="@drawable/icon_ban"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_opinion"/>
+        <Button
+            android:id="@+id/btn_ban_sub"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:background="@null"
+            app:layout_constraintLeft_toRightOf="@+id/btn_ban"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_ban"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_ban" />
 
         <Button
             android:id="@+id/btn_close"

@@ -147,8 +147,8 @@ class FirebaseRepository(private val context: Context) {
         return resultRef!!
     }
 
-    suspend fun setToken(): String{
-        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
+    suspend fun setToken(i:Int = 100): String{
+        val userEmail = SplashActivity.mAuth.currentUser?.email.toString()
         var token:String = ""
         coroutineScope {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
@@ -157,6 +157,7 @@ class FirebaseRepository(private val context: Context) {
                     return@addOnCompleteListener
                 }
                 token = task.result
+                Log.d("어디로", i.toString()+"  "+userEmail)
                 db.collection("user").document(userEmail).get().addOnSuccessListener{document ->
                     userName = document!!.get("name").toString()    // 사용자 이름 초기화
                     Log.d("서비스 토큰 변경", userName+token)
