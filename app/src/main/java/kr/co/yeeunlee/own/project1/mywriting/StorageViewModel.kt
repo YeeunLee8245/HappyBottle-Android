@@ -1,23 +1,22 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
+import android.app.Application
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 
-class StorageViewModel:ViewModel() {
+class StorageViewModel(application: Application): AndroidViewModel(application) {
     private var __stgBottleLi = ArrayList<BottleList>()
     private var _stgBottleLi: MutableLiveData<ArrayList<BottleList>> = MutableLiveData<ArrayList<BottleList>>()
     val stgBtSnapLi:LiveData<ArrayList<BottleList>> = _stgBottleLi
+    val mapplication = application
 
     init {
         _stgBottleLi.value = __stgBottleLi
     }
 
-    fun getStorageBottleLi(context: Context, zeroBottle:MutableLiveData<Boolean>) = viewModelScope.launch {
-        val firebaseRepo = FirebaseRepository(context)
+    fun getStorageBottleLi(zeroBottle:MutableLiveData<Boolean>) = viewModelScope.launch {
+        val firebaseRepo = FirebaseRepository(mapplication)
         firebaseRepo.getStorageBottleLi(_stgBottleLi, __stgBottleLi, zeroBottle)
     }
 

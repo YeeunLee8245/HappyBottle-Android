@@ -72,7 +72,7 @@ class SendFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        sendViewModel.getPostSnapshot(activity!!)
+        sendViewModel.getPostSnapshot()
         vaild.value = false
 
     }
@@ -99,7 +99,7 @@ class SendFragment : Fragment() {
                         val data = NotificationBody.NotificationData(getString(R.string.app_name),
                             name.toString(), textEditNote, profileImg)
                         val body = NotificationBody(token, data)
-                        sendViewModel.sendNotification(activity!!, body)
+                        sendViewModel.sendNotification(body)
                     }
                 }
             })

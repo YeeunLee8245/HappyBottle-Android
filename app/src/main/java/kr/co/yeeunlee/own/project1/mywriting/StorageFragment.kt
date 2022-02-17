@@ -26,7 +26,7 @@ class StorageFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        storageViewModel.getStorageBottleLi(activity!!, zeroBottle)
+        storageViewModel.getStorageBottleLi(zeroBottle)
     }
 
     override fun onCreateView(
