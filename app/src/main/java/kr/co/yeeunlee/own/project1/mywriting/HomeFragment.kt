@@ -37,10 +37,12 @@ class HomeFragment : Fragment() {
         R.drawable.bottle_27,R.drawable.bottle_28,R.drawable.bottle_29,R.drawable.bottle_30)
     private var userToken:String = "false"
     private var vaildModify:Boolean = false
+    private var attachVaild:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("하나액티비티값", activity.toString()+"  "+context.toString())
+        attachVaild = true
         homeViewModel.getUserSnapshot()
     }
 
@@ -158,5 +160,9 @@ class HomeFragment : Fragment() {
         startActivity(infoIntent)
     }
 
-    fun getListener(): ListenerRegistration? = homeViewModel.getListener()
+    fun getListener():ListenerRegistration? {
+        if (attachVaild == true)
+            return homeViewModel.getListener()
+        return null
+    }
 }

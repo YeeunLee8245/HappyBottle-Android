@@ -22,6 +22,7 @@ import java.util.regex.Pattern
 
 class SignInActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignInBinding
+    private lateinit var connection: NetworkConnection
     private val mAuth = SplashActivity.mAuth
     private val db = SplashActivity.db
     private val imgIdx:Int = (0..7).random()
@@ -42,6 +43,13 @@ class SignInActivity : AppCompatActivity() {
         binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        connection = NetworkConnection(applicationContext)
+        connection.observe(this){ isConnected ->
+            if (isConnected){
+            }else{
+                makeAlterDialog()
+            }
+        }
         binding.imageProfil.setImageResource(imgLi[imgIdx])
         binding.btnNameDupli.setOnClickListener {
             var name = binding.editName.text
@@ -64,6 +72,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        connection.unregister()
         emailListenerLi.forEach { it.remove() }
         nameListenerLi.forEach { it.remove() }
         super.onDestroy()
@@ -258,5 +267,25 @@ class SignInActivity : AppCompatActivity() {
                 }
 
             }
+    }
+
+    private fun makeAlterDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("인터넷 연결을 확인할 수 없습니다...")
+            .setCancelable(false)
+            .setItems(arrayOf("재접속","종료"), object : DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, idx: Int) {
+                    if (idx == 0){
+                        dialog!!.dismiss()
+                        if (connection.value == false){ // 미연결시 다시 연결
+                            makeAlterDialog()
+                        }
+                    }else if (idx == 1){
+                        finish()
+                    }
+                }
+            })
+            .create()
+            .show()
     }
 }
