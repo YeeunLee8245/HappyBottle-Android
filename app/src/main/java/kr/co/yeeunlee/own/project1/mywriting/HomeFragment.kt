@@ -99,7 +99,7 @@ class HomeFragment : Fragment() {
         binding.apply {
             userToken = snapshot["token"].toString()
             txtStatus.setText(snapshot["statusMsg"].toString())
-            textBottle.setBackgroundResource(imgBottle[sumBottle])
+            imgViewBottle.setImageResource(imgBottle[sumBottle])
             textBottle.text = strMemo
         }
     }

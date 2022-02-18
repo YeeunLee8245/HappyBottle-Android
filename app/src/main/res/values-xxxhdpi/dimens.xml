@@ -24,7 +24,7 @@
     <dimen name="padding_t_bottle">130dp</dimen>
     <dimen name="width_write">95dp</dimen>
     <dimen name="height_write">96dp</dimen>
-    <dimen name="margin_b_write">30dp</dimen>
+    <dimen name="margin_b_write">40dp</dimen>
 
     <!--   4. 정보 화면     -->
     <dimen name="width_img_info">360dp</dimen>
