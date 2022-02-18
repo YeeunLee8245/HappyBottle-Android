@@ -125,7 +125,7 @@
                 android:layout_alignBottom="@id/imgViewBottle"
                 android:gravity="center"
                 android:fontFamily="@font/font_info"
-                android:paddingTop="@dimen/padding_t_bottle"
+                android:paddingTop="50dp"
                 android:text="0/30"
                 android:textAlignment="center"
                 android:textColor="#0F4A0A"

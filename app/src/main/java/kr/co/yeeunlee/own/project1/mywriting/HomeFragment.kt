@@ -41,7 +41,6 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("하나액티비티값", activity.toString()+"  "+context.toString())
         attachVaild = true
         homeViewModel.getUserSnapshot()
     }
