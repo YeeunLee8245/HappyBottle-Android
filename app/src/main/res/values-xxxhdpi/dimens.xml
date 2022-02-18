@@ -19,10 +19,6 @@
     <dimen name="margin_l_btn">10dp</dimen>
     <dimen name="padding_b_btn2">5dp</dimen>
 
-    <!--   3. 홈 화면     -->
-    <!--    <dimen name="width_boxProfile">dp</dimen>-->
-    <!--    <dimen name="height_boxProfile">dp</dimen>-->
-    <!--    <dimen name="maring_t_boxProfile">dp</dimen>-->
     <dimen name="width_bottle">200dp</dimen>
     <dimen name="height_bottle">284dp</dimen>
     <dimen name="padding_t_bottle">130dp</dimen>
@@ -31,8 +27,8 @@
     <dimen name="margin_b_write">30dp</dimen>
 
     <!--   4. 정보 화면     -->
-<!--    <dimen name="width_img_info">360dp</dimen>-->
-<!--    <dimen name="height_img_info">712.7dp</dimen>-->
+    <dimen name="width_img_info">360dp</dimen>
+    <dimen name="height_img_info">712.7dp</dimen>
 
 
 </resources>

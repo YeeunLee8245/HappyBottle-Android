@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="Widget.Theme.MyWriting.ButtonBar.Fullscreen" parent="">
+    <style name="Widget.Theme.MyWriting.ButtonBar.Fullscreen" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
