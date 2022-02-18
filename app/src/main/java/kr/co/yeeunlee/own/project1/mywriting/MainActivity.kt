@@ -21,7 +21,6 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     companion object{
-        const val MAIN_TAG = "MainContext"
         const val DELETE_TAG = "DeleteUser"
         const val USER_NAME = "UserName"
         const val HOME_TAG = "HomeFragment"
@@ -40,20 +39,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var connection: NetworkConnection
     private var valueService: String? = null
-    private var mAuth = SplashActivity.mAuth
-    private val db = SplashActivity.db
     private val homeFragment = HomeFragment()
     private val storageFragment = StorageFragment()
     private val sendFragment = SendFragment()
     private val tagMap = mapOf(HOME_TAG to R.color.home_background, STORAGE_TAG to R.color.storage_background
     , SEND_TAG to R.color.open_bottle_background, OPEN_TAG to R.color.open_bottle_background) // mapof는 변경 불가능(hashmap은 가능)
-    var currentTag:String = ""
+    var currentTag:String = HOME_TAG
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val tran = supportFragmentManager.beginTransaction()
+        tran.replace(R.id.fragment, homeFragment)
+        tran.commit()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         connection = NetworkConnection(applicationContext)
         connection.observe(this){ isConnected ->
             if (isConnected){
@@ -63,7 +62,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         googleSignInClient = GoogleSignIn.getClient(this, SplashActivity.gso)
-        changeFragment(HOME_TAG, homeFragment)
         binding.btnHome.setOnClickListener { changeFragment(HOME_TAG, homeFragment)}
         binding.btnStorage.setOnClickListener { changeFragment(STORAGE_TAG, storageFragment) }
         binding.btnSend.setOnClickListener { changeFragment(SEND_TAG, sendFragment) }
@@ -107,19 +105,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         connection.unregister()
+        homeFragment.getListener()?.remove()
+        storageFragment.getListener()?.remove()
+        sendFragment.getListener()?.remove()
         super.onDestroy()
     }
 
     private fun changeFragment(fragmentTag: String, fragment: Fragment){
         val tran = supportFragmentManager.beginTransaction()
 
-        if (currentTag == "") {
-            currentTag = fragmentTag
-            tran.add(R.id.fragment,fragment )
-            return
-        }
-
         if (currentTag != fragmentTag){
+            tran.addToBackStack(null)
             currentTag = fragmentTag
             tagMap[currentTag]!!.let { binding.constraintLayoutBack.setBackgroundResource(it) }
             tran.replace(R.id.fragment, fragment)

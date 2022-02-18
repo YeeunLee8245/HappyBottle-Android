@@ -36,4 +36,5 @@ class SendViewModel(application: Application): AndroidViewModel(application) {
             listenerRgst = firebaseRepo.getPostSnapshot(__checkPost,_checkPost)
     }
 
+    fun getListener():ListenerRegistration? = listenerRgst
 }

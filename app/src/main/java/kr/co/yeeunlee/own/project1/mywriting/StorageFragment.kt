@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.ListenerRegistration
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentStorageBinding
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ItemStorageRecyclerBinding
 
@@ -64,6 +65,8 @@ class StorageFragment : Fragment() {
             binding.textStorage.isEnabled = false
         }
     }
+
+    fun getListener(): ListenerRegistration? = storageViewModel.getListener()
 
     inner class StorageAdapter(private var dataLi: ArrayList<BottleList>):
         RecyclerView.Adapter<StorageAdapter.ViewHolder>(){

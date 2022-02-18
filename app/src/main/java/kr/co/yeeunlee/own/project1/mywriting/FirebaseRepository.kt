@@ -45,15 +45,19 @@ class FirebaseRepository(private val context: Context) {
         return snapshot!!
     }
 
-    fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>) {
+    fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>): ListenerRegistration {
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
-        db.collection("user").document(userEmail)   // 변경이 있으면 다시 업뎃
+        var listenerRgst:ListenerRegistration? = null
+        listenerRgst = db.collection("user").document(userEmail)   // 변경이 있으면 다시 업뎃
                 .addSnapshotListener(MetadataChanges.INCLUDE){snapshot, e ->
-                    // 동시에 네 번 동작되는 이유: 쓰기 보류 중, 쓰기 보류 중 아님 상태를 연속으로 두 번 알림(field, note)
+                    Log.d("하나만 수행", "하나만")
+                    // 동시에 두 번 동작되는 이유: 쓰기 보류 중, 쓰기 보류 중 아님 상태를 연속으로 두 번 알림(field, note)
+                    // < 다큐먼트 안에 컬렉션도 있어서인듯..
                     if (snapshot?.get("name") == null)  // 탈퇴할 때 에러방지
                         return@addSnapshotListener
                     _userSnapshot.value = snapshot
             }
+        return listenerRgst
     }
 
     fun setUserStatusMsg(newStatus:String){
@@ -117,7 +121,6 @@ class FirebaseRepository(private val context: Context) {
         listenerRgst = db.collection("user").document(userEmail)
             .addSnapshotListener(MetadataChanges.INCLUDE){snapshot, e ->
                 // 동시에 두 번 동작되는 이유: 화면이 뜰 때마다 리스너를 생성해서.
-                Log.d("하나만 수행", "하나만")
                 __stgBtSnapLi.clear()
                 val numBottle: Int = snapshot!!.get("numNote").toString().toInt() / 30
                 zeroBottle.value = numBottle == 0
@@ -270,7 +273,7 @@ class FirebaseRepository(private val context: Context) {
                 if (__checkPost.size == querySnapshot.size())   // 업데이트 중복 방지
                     return@addSnapshotListener
                 querySnapshot.documentChanges.forEachIndexed { i, dcm ->
-                    if (dcm.type == DocumentChange.Type.ADDED) {
+                    if (dcm.type == DocumentChange.Type.ADDED) {    // firestore에 미리 들어있던 문서들도 처음에 ADD 타입으로 추가된다.
                         var post = dcm.document.toObject(Note::class.java)
                         __checkPost.add(0, post)
                         _checkPost.value = __checkPost

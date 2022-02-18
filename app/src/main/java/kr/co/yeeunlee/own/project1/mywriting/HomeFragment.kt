@@ -10,8 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,8 +24,8 @@ class HomeFragment : Fragment() {
     companion object{
         const val FILL_TAG = "fillBottleDialog"
     }
-    private lateinit var binding: FragmentHomeBinding
-    private lateinit var googleSignInClient: GoogleSignInClient
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by viewModels<HomeViewModel>()
     private val imgBottle = arrayListOf(R.drawable.bottle_0,R.drawable.bottle_1,R.drawable.bottle_2,
         R.drawable.bottle_3,R.drawable.bottle_4,R.drawable.bottle_5,R.drawable.bottle_6,
@@ -33,27 +35,20 @@ class HomeFragment : Fragment() {
         R.drawable.bottle_19,R.drawable.bottle_20,R.drawable.bottle_21,R.drawable.bottle_22,
         R.drawable.bottle_23,R.drawable.bottle_24,R.drawable.bottle_25,R.drawable.bottle_26,
         R.drawable.bottle_27,R.drawable.bottle_28,R.drawable.bottle_29,R.drawable.bottle_30)
-    private var initVaild:Boolean = false
-    private var userName:String? = null
     private var userToken:String = "false"
     private var vaildModify:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("액티비티값", activity.toString()+"  "+context.toString())
-        CoroutineScope(Dispatchers.Main).launch {
-            homeViewModel
-                .getUserSnapshot(
-                )
-        }
+        Log.d("하나액티비티값", activity.toString()+"  "+context.toString())
+        homeViewModel.getUserSnapshot()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        binding = FragmentHomeBinding.inflate(inflater,container,false)
+        _binding = FragmentHomeBinding.inflate(inflater,container,false)
         initBtnWrite()
         return binding.root
     }
@@ -78,6 +73,11 @@ class HomeFragment : Fragment() {
         binding.btnInstruction.setOnClickListener { openInfoActivity() }
         binding.txtName.text = (activity as MainActivity).getUserName()
         binding.imgUser.setImageResource(MainActivity.profileImgLi[(activity as MainActivity).getProfileImg()])
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 
     private fun initUserView(snapshot: DocumentSnapshot){
@@ -127,7 +127,6 @@ class HomeFragment : Fragment() {
                 if (null == fragmentManager.findFragmentByTag("writeNote")) // 중복 생성 방지
                     dialog.show(fragmentManager, "writeNote")
             }
-            //firebaseRepo.setNoteAdd(newNote)
         }
 
     }
@@ -158,4 +157,6 @@ class HomeFragment : Fragment() {
         infoIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(infoIntent)
     }
+
+    fun getListener(): ListenerRegistration? = homeViewModel.getListener()
 }
