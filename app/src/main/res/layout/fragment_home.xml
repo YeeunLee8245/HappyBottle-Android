@@ -21,6 +21,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/boxProfile" />
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideBT"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="170dp"/>
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/boxProfile"
@@ -95,31 +102,54 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/boxProfile" />
 
-        <TextView
-            android:id="@+id/textBottle"
-            android:layout_width="@dimen/width_bottle"
-            android:layout_height="@dimen/height_bottle"
-            android:background="@drawable/bottle_0"
-            android:fontFamily="@font/font_info"
-            android:paddingTop="@dimen/padding_t_bottle"
-            android:text="0/30"
-            android:textAlignment="center"
-            android:textColor="#0F4A0A"
-            android:textSize="80dp"
-            app:layout_constraintBottom_toTopOf="@+id/btnWrite"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/boxProfile" />
+        <RelativeLayout
+            android:id="@+id/relative"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/guideBB"
+            app:layout_constraintTop_toTopOf="@+id/guideBT">
+            <ImageView
+                android:id="@+id/imgViewBottle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bottle_0" />
+            <TextView
+                android:id="@+id/textBottle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/imgViewBottle"
+                android:layout_alignTop="@id/imgViewBottle"
+                android:layout_alignRight="@id/imgViewBottle"
+                android:layout_alignBottom="@id/imgViewBottle"
+                android:gravity="center"
+                android:fontFamily="@font/font_info"
+                android:paddingTop="@dimen/padding_t_bottle"
+                android:text="0/30"
+                android:textAlignment="center"
+                android:textColor="#0F4A0A"
+                android:textSize="80dp"/>
+
+        </RelativeLayout>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideBB"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="156dp"/>
+
 
         <Button
             android:id="@+id/btnWrite"
             android:layout_width="@dimen/width_write"
             android:layout_height="@dimen/height_write"
-            android:layout_marginBottom="@dimen/margin_b_write"
+            android:layout_marginBottom="40dp"
             android:background="@drawable/btn_pressed_write"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
