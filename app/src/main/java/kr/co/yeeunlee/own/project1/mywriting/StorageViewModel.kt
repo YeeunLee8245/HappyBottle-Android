@@ -26,4 +26,6 @@ class StorageViewModel(application: Application): AndroidViewModel(application) 
     fun getSize(): Int{
         return __stgBottleLi.size
     }
+
+    fun getListener():ListenerRegistration? = listenerRgst
 }

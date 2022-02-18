@@ -24,7 +24,6 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment"
-            android:name="kr.co.yeeunlee.own.project1.mywriting.HomeFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
