@@ -62,7 +62,6 @@ class SplashActivity : AppCompatActivity() {
         if (intent.getStringExtra(MainActivity.DELETE_TAG) != null){
             CoroutineScope(Dispatchers.Main).launch {
                 binding.text.text = "데이터 삭제 중입니다.\n잠시만 기다려주세요."
-                mAuth.currentUser!!.delete()
                 userDelete()
             }
         }
@@ -127,6 +126,8 @@ class SplashActivity : AppCompatActivity() {
                 .delete()
                 .addOnFailureListener { e -> makeErrorAlter(e) }
         }.await()
+
+        mAuth.currentUser!!.delete().await()    // 계정 삭제
 
         coroutineScope {
             Log.d("로그아웃","1")
