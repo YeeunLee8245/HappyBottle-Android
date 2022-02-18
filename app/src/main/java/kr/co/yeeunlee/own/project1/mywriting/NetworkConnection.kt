@@ -16,6 +16,7 @@ import java.lang.Exception
 class NetworkConnection(private val context: Context) : LiveData<Boolean>() {
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
+    private val connectCallback = connectivityManagerCallback()
 
     override fun onActive() {
         super.onActive()
@@ -26,7 +27,7 @@ class NetworkConnection(private val context: Context) : LiveData<Boolean>() {
                 val builder = NetworkRequest.Builder()
                 connectivityManager = context.getSystemService(
                     Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                connectivityManager.registerNetworkCallback(builder.build(), connectivityManagerCallback())
+                connectivityManager.registerNetworkCallback(builder.build(), connectCallback)
             }
             else ->
             {
@@ -44,7 +45,7 @@ class NetworkConnection(private val context: Context) : LiveData<Boolean>() {
             connectivityManager = context.getSystemService(
                 Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             try {
-                connectivityManager.unregisterNetworkCallback(connectivityManagerCallback())
+                connectivityManager.unregisterNetworkCallback(connectCallback)
             }catch (e: Exception){
                 Log.d("콜백해제", "예외 발생")
             }

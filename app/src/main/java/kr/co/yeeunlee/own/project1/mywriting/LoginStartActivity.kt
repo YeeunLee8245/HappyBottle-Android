@@ -32,6 +32,7 @@ class LoginStartActivity : AppCompatActivity() {
     private lateinit var binding:ActivityLoginStartBinding
     private lateinit var intentMain:Intent
     private lateinit var user: User
+    private lateinit var connection: NetworkConnection
     private val gso = SplashActivity.gso
     private val db = SplashActivity.db
     private val mAuth = SplashActivity.mAuth
@@ -53,6 +54,13 @@ class LoginStartActivity : AppCompatActivity() {
         setContentView(binding.root)
         setScreen()
 
+        connection = NetworkConnection(applicationContext)
+        connection.observe(this){ isConnected ->
+            if (isConnected){
+            }else{
+                makeAlterDialog()
+            }
+        }
         intentMain = Intent(this,MainActivity::class.java)
         intentMain.action = Intent.ACTION_MAIN
         intentMain.addCategory(Intent.CATEGORY_LAUNCHER)
@@ -70,6 +78,11 @@ class LoginStartActivity : AppCompatActivity() {
             finish()
         }
         binding.btnGoogleSign.setOnClickListener { signIn() }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        connection.unregister()
     }
 
     private fun logIn(email: String, password: String){
@@ -195,6 +208,26 @@ class LoginStartActivity : AppCompatActivity() {
             .setPositiveButton("확인", object : DialogInterface.OnClickListener{
                 override fun onClick(dialog: DialogInterface?, idx: Int) {
                     dialog!!.dismiss()
+                }
+            })
+            .create()
+            .show()
+    }
+
+    private fun makeAlterDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("인터넷 연결을 확인할 수 없습니다...")
+            .setCancelable(false)
+            .setItems(arrayOf("재접속","종료"), object : DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, idx: Int) {
+                    if (idx == 0){
+                        dialog!!.dismiss()
+                        if (connection.value == false){ // 미연결시 다시 연결
+                            makeAlterDialog()
+                        }
+                    }else if (idx == 1){
+                        finish()
+                    }
                 }
             })
             .create()

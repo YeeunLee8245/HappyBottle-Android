@@ -24,10 +24,12 @@ class StorageFragment : Fragment() {
         , R.drawable.bottle_sky, R.drawable.bottle_red, R.drawable.bottle_pink
         , R.drawable.bottle_darkblue)
     private var zeroBottle:MutableLiveData<Boolean> = MutableLiveData()
+    private var attachVaild:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         storageViewModel.getStorageBottleLi(zeroBottle)
+        attachVaild = true
     }
 
     override fun onCreateView(
@@ -66,7 +68,11 @@ class StorageFragment : Fragment() {
         }
     }
 
-    fun getListener(): ListenerRegistration? = storageViewModel.getListener()
+    fun getListener():ListenerRegistration? {
+        if (attachVaild == true)
+            return storageViewModel.getListener()
+        return null
+    }
 
     inner class StorageAdapter(private var dataLi: ArrayList<BottleList>):
         RecyclerView.Adapter<StorageAdapter.ViewHolder>(){

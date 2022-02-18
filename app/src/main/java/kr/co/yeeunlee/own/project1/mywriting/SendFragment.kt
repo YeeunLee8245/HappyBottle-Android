@@ -21,6 +21,7 @@ class SendFragment : Fragment() {
     private lateinit var binding: FragmentSendBinding
     private var vaild = MutableLiveData<Boolean>()
     private val sendViewModel: SendViewModel by viewModels<SendViewModel>() // 첫 생성 이후로는 생명주기가 액티비티 따라가는 것으로 추정
+    private var attachVaild:Boolean = false
     // 전역 부분에 뷰모델에 접근하는 코드 넣으면 안됨(뷰모델은 프래그먼트가 detached된 상태에서 접근 불가)
     companion object{
         var deletePosition: Int? = null
@@ -31,6 +32,7 @@ class SendFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        attachVaild = true
         sendViewModel.getPostSnapshot()
     }
 
@@ -126,5 +128,9 @@ class SendFragment : Fragment() {
         vaild.value = false
     }
 
-    fun getListener(): ListenerRegistration? = sendViewModel.getListener()
+    fun getListener():ListenerRegistration? {
+        if (attachVaild == true)
+            return sendViewModel.getListener()
+        return null
+    }
 }
