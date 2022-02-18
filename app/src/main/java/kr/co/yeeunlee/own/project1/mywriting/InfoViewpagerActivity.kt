@@ -7,9 +7,9 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityInfoViewpagerBi
 
 class InfoViewpagerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInfoViewpagerBinding
-    private val infoArr = arrayListOf(R.drawable.info1, R.drawable.info2, R.drawable.info3,
-        R.drawable.info4, R.drawable.info5, R.drawable.info6, R.drawable.info7, R.drawable.info8,
-        R.drawable.info9, R.drawable.info10, R.drawable.info11, R.drawable.info12)
+    private val infoArr = arrayListOf(R.drawable.info2, R.drawable.info4, R.drawable.info5,
+        R.drawable.info6, R.drawable.info8, R.drawable.info9, R.drawable.info10,
+        R.drawable.info11, R.drawable.info12)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
