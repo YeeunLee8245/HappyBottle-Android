@@ -48,8 +48,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val tran = supportFragmentManager.beginTransaction()
-        tran.replace(R.id.fragment, homeFragment)
+        tran.add(R.id.fragment, homeFragment)
         tran.commit()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -115,7 +116,6 @@ class MainActivity : AppCompatActivity() {
         val tran = supportFragmentManager.beginTransaction()
 
         if (currentTag != fragmentTag){
-            tran.addToBackStack(null)
             currentTag = fragmentTag
             tagMap[currentTag]!!.let { binding.constraintLayoutBack.setBackgroundResource(it) }
             tran.replace(R.id.fragment, fragment)
@@ -127,7 +127,6 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.setFragmentResult("requestKey"
             ,  bundleOf("bundleKey" to index))
         supportFragmentManager.beginTransaction().replace(R.id.fragment, OpenBottleFragment())
-            .addToBackStack(null)
             .commit()
         currentTag = OPEN_TAG
     }
