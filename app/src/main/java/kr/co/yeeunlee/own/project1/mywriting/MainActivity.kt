@@ -112,6 +112,19 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    override fun onBackPressed() {
+        if (currentTag == OPEN_TAG){
+            var tran = supportFragmentManager.beginTransaction()
+            tagMap[STORAGE_TAG]!!.let { binding.constraintLayoutBack.setBackgroundResource(it) }
+            tran.replace(R.id.fragment, storageFragment)
+            tran.commit()
+            currentTag = STORAGE_TAG
+        }
+        else {
+            finish()
+        }
+    }
+
     private fun changeFragment(fragmentTag: String, fragment: Fragment){
         val tran = supportFragmentManager.beginTransaction()
 
