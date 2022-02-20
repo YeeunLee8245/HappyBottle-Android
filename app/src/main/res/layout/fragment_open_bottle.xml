@@ -78,7 +78,6 @@
                     android:id="@+id/btn6"
                     android:layout_width="90dp"
                     android:layout_height="109dp"
-                    android:enabled="false"
                     android:background="@drawable/mail_lightgreen"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -111,7 +110,6 @@
                     android:id="@+id/btn9"
                     android:layout_width="90dp"
                     android:layout_height="109dp"
-                    android:enabled="false"
                     android:background="@drawable/mail_deepblue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -144,7 +142,6 @@
                     android:id="@+id/btn12"
                     android:layout_width="90dp"
                     android:layout_height="109dp"
-                    android:enabled="false"
                     android:background="@drawable/mail_pink"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
