@@ -44,9 +44,7 @@ class LoginStartActivity : AppCompatActivity() {
         try {
             val account = task.getResult(ApiException::class.java)!!
             firebaseAuthWithGoogle(account.idToken!!)
-        } catch (e:ApiException){
-            makeErrorAlter(e)
-        }
+        } catch (e:ApiException){}
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
