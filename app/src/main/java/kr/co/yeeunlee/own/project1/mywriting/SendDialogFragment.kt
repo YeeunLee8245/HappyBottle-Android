@@ -40,6 +40,7 @@ class SendDialogFragment(val userName: String): DialogFragment() {
         dialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.show()
 
+        binding.editReceiver.addTextChangedListener(listerName)
         binding.editNote.addTextChangedListener(listener1)
 
         binding.btnPush.setOnClickListener {
@@ -138,6 +139,19 @@ class SendDialogFragment(val userName: String): DialogFragment() {
         override fun afterTextChanged(s: Editable?) {
         }
 
+    }
+
+    val listerName = object: TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun afterTextChanged(p0: Editable?) {
+            if (vaild == true)
+                vaild = false
+        }
     }
 
     private fun makeErrorAlter(e:Exception){
