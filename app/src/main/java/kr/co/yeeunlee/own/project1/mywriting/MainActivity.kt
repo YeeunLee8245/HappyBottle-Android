@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var connection: NetworkConnection
     private var valueService: String? = null
+    private var waitTime = 0L // 백버튼 2번 시간 간격
     private val homeFragment = HomeFragment()
     private val storageFragment = StorageFragment()
     private val sendFragment = SendFragment()
@@ -120,9 +122,11 @@ class MainActivity : AppCompatActivity() {
             tran.commit()
             currentTag = STORAGE_TAG
         }
-        else {
+        else if (System.currentTimeMillis() - waitTime >= 1500){    // 1.5초
+            waitTime = System.currentTimeMillis()
+            Toast.makeText(this,"뒤로가기 버튼을 한번 더 누르면 종료됩니다.",Toast.LENGTH_SHORT).show()
+        }else
             finish()
-        }
     }
 
     private fun changeFragment(fragmentTag: String, fragment: Fragment){
