@@ -12,15 +12,15 @@ android {
         applicationId "kr.co.yeeunlee.own.project1.mywriting"
         minSdkVersion 23
         targetSdkVersion 31
-        versionCode 4
-        versionName "1.0.2"
+        versionCode 13
+        versionName "1.0.11"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
