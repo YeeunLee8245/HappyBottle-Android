@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.util.Log
+import androidx.annotation.Keep
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.*
@@ -259,10 +260,12 @@ class FirebaseRepository(private val context: Context) {
         }.await()
     }
 
+    @Keep
     suspend fun sendNotification(myResponce: MutableLiveData<Response<ResponseBody>>,notification: NotificationBody){
         myResponce.value = RetrofitInstance.api.sendNotification(notification)
     }
 
+    @Keep
     fun getPostSnapshot(__checkPost: ArrayList<Note> ,_checkPost: MutableLiveData<ArrayList<Note>>)
     :ListenerRegistration?{
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""

@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.Keep
 import androidx.recyclerview.widget.RecyclerView
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ItemSendRecyclerBinding
 
@@ -27,6 +28,7 @@ class SendAdapter(private var postLi: ArrayList<Note>)
                 txtFromName.text = item.name
                 val arr = item.text.replace("\n","")
                 txtPreview.text = arr
+                Log.d("인덱스 오류", item.profileImg.toString())
                 circleImg.setImageResource(MainActivity.profileImgLi[item.profileImg])
                 itemView.setOnClickListener {
                     itemClickListener.onItemClick(it, position)

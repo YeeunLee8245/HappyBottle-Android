@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.Keep
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentSendBinding
 
-
+@Keep
 class SendFragment : Fragment() {
     private lateinit var binding: FragmentSendBinding
     private var vaild = MutableLiveData<Boolean>()

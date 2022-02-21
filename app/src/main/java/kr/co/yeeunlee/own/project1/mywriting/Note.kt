@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Parcelable
+import androidx.annotation.Keep
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.parcelize.Parcelize
@@ -28,6 +29,7 @@ data class User(var name:String, val email:String, val vaildPassWord:Boolean
     , val profileImg:Int , var statusMsg: String = "되새기고 싶은 한 마디") : Parcelable
 
 // 글 등록
+@Keep
 data class Note(val name: String="", val text: String="", val time: Timestamp= Timestamp.now()
                 , val check: Boolean=false, val type: Int=0, var post:Boolean=false, val profileImg: Int=-1)
 
@@ -41,6 +43,7 @@ var text: String? = null, var timestamp: Long? = null)
 data class NotificationBody(val to: String, val data: NotificationData){
     data class NotificationData(val title: String, val name: String, val message: String, val profileImg: Int)
 }
+
 
 interface FcmInterface{ // 푸시 메시지를 서버로 보냄
     @POST("fcm/send")
