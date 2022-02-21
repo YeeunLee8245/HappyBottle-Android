@@ -25,8 +25,8 @@ class SendAdapter(private var postLi: ArrayList<Note>)
         postLi!!.get(position).let { item ->
             with(holder){
                 txtFromName.text = item.name
-                val arr = item.text.split('\n')
-                txtPreview.text = arr[0]
+                val arr = item.text.replace("\n","")
+                txtPreview.text = arr
                 circleImg.setImageResource(MainActivity.profileImgLi[item.profileImg])
                 itemView.setOnClickListener {
                     itemClickListener.onItemClick(it, position)
