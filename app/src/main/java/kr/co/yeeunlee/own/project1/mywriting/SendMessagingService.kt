@@ -81,7 +81,7 @@ class SendMessagingService: FirebaseMessagingService()  {
         intentSend.putExtra("service", "service")
         intentSend.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복생성 방지
         val pendingIntent = PendingIntent.getActivity(this, 0, intentSend,
-            PendingIntent.FLAG_ONE_SHOT) // 일회성
+            PendingIntent.FLAG_IMMUTABLE) // 일회성
         val notificationBuilder = NotificationCompat.Builder(this,"service")
             .setContentTitle(title)
             .setContentText(message)
