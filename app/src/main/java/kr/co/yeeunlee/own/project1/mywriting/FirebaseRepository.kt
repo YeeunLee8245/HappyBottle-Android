@@ -99,7 +99,7 @@ class FirebaseRepository(private val context: Context) {
             }
                 .addOnFailureListener { makeToast(it) }
         }.await()
-
+        // TODO("널포인트 익셉션")
         return resultRef!!
     }
 
