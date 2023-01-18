@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -77,11 +78,17 @@ class LoginStartActivity : AppCompatActivity() {
             finish()
         }
         binding.btnGoogleSign.setOnClickListener { signIn() }
+        binding.textPrivateUrl.setOnClickListener { moveToPrivateUrl() }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         connection.unregister()
+    }
+
+    private fun moveToPrivateUrl() {
+        val i = Intent(Intent.ACTION_VIEW, Uri.parse("https://yeeunlee8245.github.io/etchappy_bank_privacy_policy/"));
+        startActivity(i);
     }
 
     private fun logIn(email: String, password: String){
