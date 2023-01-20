@@ -25,10 +25,7 @@ import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {
     companion object{
-        val gso: GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("702537519034-81ob9l15coeebj4kgu1cakoub43555aa.apps.googleusercontent.com")
-            .requestEmail()
-            .build()
+        lateinit var gso: GoogleSignInOptions
         val mAuth: FirebaseAuth = Firebase.auth
         val db = Firebase.firestore
     }
@@ -42,6 +39,9 @@ class SplashActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(resources.getString(R.string.google_sign_request_token))
+            .requestEmail()
+            .build()
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
         super.onCreate(savedInstanceState)

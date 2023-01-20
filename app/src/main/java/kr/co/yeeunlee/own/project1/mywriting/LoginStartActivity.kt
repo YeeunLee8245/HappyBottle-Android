@@ -23,6 +23,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kr.co.yeeunlee.own.project1.mywriting.SplashActivity.Companion.gso
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
 
 class LoginStartActivity : AppCompatActivity() {
@@ -35,7 +36,6 @@ class LoginStartActivity : AppCompatActivity() {
     private lateinit var intentMain:Intent
     private lateinit var user: User
     private lateinit var connection: NetworkConnection
-    private val gso = SplashActivity.gso
     private val db = SplashActivity.db
     private val mAuth = SplashActivity.mAuth
 
