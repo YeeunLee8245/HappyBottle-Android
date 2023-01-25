@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivitySignInBinding
 import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
+import kr.co.yeeunlee.own.project1.mywriting.utils.AlertUtil
 import java.util.regex.Pattern
 
 class SignInActivity : AppCompatActivity() {
@@ -45,10 +46,7 @@ class SignInActivity : AppCompatActivity() {
 
         connection = NetworkConnection(applicationContext)
         connection.observe(this){ isConnected ->
-            if (isConnected){
-            }else{
-                makeAlterDialog()
-            }
+            checkNetwork()
         }
         binding.imageProfil.setImageResource(imgLi[imgIdx])
         binding.btnNameDupli.setOnClickListener {
@@ -250,17 +248,24 @@ class SignInActivity : AppCompatActivity() {
 
                                     }
                             }.addOnFailureListener {
-                                AlertDialog.Builder(this@SignInActivity)
-                                    .setTitle("서버 오류입니다.")
-                                    .setMessage(" 관리자에게 문의해주세요. 오류코드:$it")
-                                    .setCancelable(false)
-                                    .setPositiveButton("확인", object : DialogInterface.OnClickListener{
-                                        override fun onClick(dialog: DialogInterface?, idx: Int) {
-                                            dialog!!.dismiss()
-                                        }
-                                    })
-                                    .create()
-                                    .show()
+                                AlertUtil.showPositiveDialog(
+                                    this@SignInActivity,
+                                    R.string.network_error_title,
+                                    R.string.network_error_msg,
+                                    R.string.confirm,
+                                    null
+                                )
+//                                AlertDialog.Builder(this@SignInActivity)
+//                                    .setTitle("서버 오류입니다.")
+//                                    .setMessage(" 관리자에게 문의해주세요. 오류코드:$it")
+//                                    .setCancelable(false)
+//                                    .setPositiveButton("확인", object : DialogInterface.OnClickListener{
+//                                        override fun onClick(dialog: DialogInterface?, idx: Int) {
+//                                            dialog!!.dismiss()
+//                                        }
+//                                    })
+//                                    .create()
+//                                    .show()
                             }
                     }
 
@@ -269,23 +274,37 @@ class SignInActivity : AppCompatActivity() {
             }
     }
 
+    private fun checkNetwork() {
+        if (connection.value == false) {
+            makeAlterDialog()
+        }
+    }
+
     private fun makeAlterDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("인터넷 연결을 확인할 수 없습니다...")
-            .setCancelable(false)
-            .setItems(arrayOf("재접속","종료"), object : DialogInterface.OnClickListener{
-                override fun onClick(dialog: DialogInterface?, idx: Int) {
-                    if (idx == 0){
-                        dialog!!.dismiss()
-                        if (connection.value == false){ // 미연결시 다시 연결
-                            makeAlterDialog()
-                        }
-                    }else if (idx == 1){
-                        finish()
-                    }
-                }
-            })
-            .create()
-            .show()
+        AlertUtil.showItemsDialog(
+            this,
+            R.string.internet_error_title,
+            R.string.network_retry,
+            R.string.network_finish,
+            ::checkNetwork,
+            null
+        )
+//        AlertDialog.Builder(this)
+//            .setTitle("인터넷 연결을 확인할 수 없습니다...")
+//            .setCancelable(false)
+//            .setItems(arrayOf("재접속","종료"), object : DialogInterface.OnClickListener{
+//                override fun onClick(dialog: DialogInterface?, idx: Int) {
+//                    if (idx == 0){
+//                        dialog!!.dismiss()
+//                        if (connection.value == false){ // 미연결시 다시 연결
+//                            makeAlterDialog()
+//                        }
+//                    }else if (idx == 1){
+//                        finish()
+//                    }
+//                }
+//            })
+//            .create()
+//            .show()
     }
 }
