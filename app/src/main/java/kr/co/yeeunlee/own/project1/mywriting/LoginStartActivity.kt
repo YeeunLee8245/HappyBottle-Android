@@ -1,6 +1,5 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -14,7 +13,6 @@ import android.view.WindowInsetsController
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
@@ -23,8 +21,10 @@ import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kr.co.yeeunlee.own.project1.mywriting.SplashActivity.Companion.gso
+import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity.Companion.gso
+import kr.co.yeeunlee.own.project1.mywriting.data.FirebaseRepository
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
+import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
 
 class LoginStartActivity : AppCompatActivity() {
     companion object {

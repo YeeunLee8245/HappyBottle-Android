@@ -1,4 +1,4 @@
-package kr.co.yeeunlee.own.project1.mywriting
+package kr.co.yeeunlee.own.project1.mywriting.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -13,6 +13,9 @@ import androidx.core.app.Person
 import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kr.co.yeeunlee.own.project1.mywriting.MainActivity
+import kr.co.yeeunlee.own.project1.mywriting.R
+import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
 
 class SendMessagingService: FirebaseMessagingService()  {
 
@@ -35,8 +38,10 @@ class SendMessagingService: FirebaseMessagingService()  {
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun sendMessageNotification(title: String, name: String, message: String, profileImg: Int){
-        val profileImgLi = arrayListOf(R.drawable.blue, R.drawable.green, R.drawable.mint,
-            R.drawable.orange, R.drawable.pink, R.drawable.purple, R.drawable.sky, R.drawable.yellow)
+        val profileImgLi = arrayListOf(
+            R.drawable.blue, R.drawable.green, R.drawable.mint,
+            R.drawable.orange, R.drawable.pink, R.drawable.purple, R.drawable.sky, R.drawable.yellow
+        )
         // 팝업 클릭시 이동할 액티비티
         val intentSend = Intent(this, SplashActivity::class.java)
         intentSend.putExtra("service", "service")

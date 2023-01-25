@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kr.co.yeeunlee.own.project1.mywriting.data.FirebaseRepository
 import kr.co.yeeunlee.own.project1.mywriting.databinding.DialogFragmentReadBinding
 import java.text.SimpleDateFormat
 import java.util.*

@@ -1,10 +1,10 @@
 package kr.co.yeeunlee.own.project1.mywriting
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.*
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.launch
+import kr.co.yeeunlee.own.project1.mywriting.data.FirebaseRepository
 
 class StorageViewModel(application: Application): AndroidViewModel(application) {
     private var listenerRgst: ListenerRegistration? = null

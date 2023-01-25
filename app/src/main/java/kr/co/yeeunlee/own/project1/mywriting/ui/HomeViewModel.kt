@@ -1,13 +1,10 @@
-package kr.co.yeeunlee.own.project1.mywriting
+package kr.co.yeeunlee.own.project1.mywriting.ui
 
 import android.app.Application
-import android.content.Context
-import android.util.Log
 import androidx.lifecycle.*
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
-import kotlinx.coroutines.launch
-import okhttp3.internal.wait
+import kr.co.yeeunlee.own.project1.mywriting.data.FirebaseRepository
 
 class HomeViewModel(application: Application): AndroidViewModel(application){
     private var listenerRgst:ListenerRegistration? = null

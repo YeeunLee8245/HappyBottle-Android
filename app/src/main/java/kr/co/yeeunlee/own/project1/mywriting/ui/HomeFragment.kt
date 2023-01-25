@@ -1,22 +1,21 @@
-package kr.co.yeeunlee.own.project1.mywriting
+package kr.co.yeeunlee.own.project1.mywriting.ui
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kr.co.yeeunlee.own.project1.mywriting.*
+import kr.co.yeeunlee.own.project1.mywriting.data.FirebaseRepository
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentHomeBinding
 
 
@@ -27,14 +26,16 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by viewModels<HomeViewModel>()
-    private val imgBottle = arrayListOf(R.drawable.bottle_0,R.drawable.bottle_1,R.drawable.bottle_2,
-        R.drawable.bottle_3,R.drawable.bottle_4,R.drawable.bottle_5,R.drawable.bottle_6,
-        R.drawable.bottle_7,R.drawable.bottle_8,R.drawable.bottle_9,R.drawable.bottle_10,
-        R.drawable.bottle_11,R.drawable.bottle_12,R.drawable.bottle_13,R.drawable.bottle_14,
-        R.drawable.bottle_15,R.drawable.bottle_16,R.drawable.bottle_17,R.drawable.bottle_18,
-        R.drawable.bottle_19,R.drawable.bottle_20,R.drawable.bottle_21,R.drawable.bottle_22,
-        R.drawable.bottle_23,R.drawable.bottle_24,R.drawable.bottle_25,R.drawable.bottle_26,
-        R.drawable.bottle_27,R.drawable.bottle_28,R.drawable.bottle_29,R.drawable.bottle_30)
+    private val imgBottle = arrayListOf(
+        R.drawable.bottle_0, R.drawable.bottle_1, R.drawable.bottle_2,
+        R.drawable.bottle_3, R.drawable.bottle_4, R.drawable.bottle_5, R.drawable.bottle_6,
+        R.drawable.bottle_7, R.drawable.bottle_8, R.drawable.bottle_9, R.drawable.bottle_10,
+        R.drawable.bottle_11, R.drawable.bottle_12, R.drawable.bottle_13, R.drawable.bottle_14,
+        R.drawable.bottle_15, R.drawable.bottle_16, R.drawable.bottle_17, R.drawable.bottle_18,
+        R.drawable.bottle_19, R.drawable.bottle_20, R.drawable.bottle_21, R.drawable.bottle_22,
+        R.drawable.bottle_23, R.drawable.bottle_24, R.drawable.bottle_25, R.drawable.bottle_26,
+        R.drawable.bottle_27, R.drawable.bottle_28, R.drawable.bottle_29, R.drawable.bottle_30
+    )
     private var userToken:String = "false"
     private var vaildModify:Boolean = false
     private var attachVaild:Boolean = false
@@ -108,7 +109,7 @@ class HomeFragment : Fragment() {
             val dialog = WriteDialogFragment()
             val firebaseRepo: FirebaseRepository = FirebaseRepository(activity!!)
             //TODO("다이얼로그 프래그먼트 생성,onClickListener로 정보 넘기기")
-            dialog.setButtonClickListener(object : WriteDialogFragment.OnButtonClickListener{
+            dialog.setButtonClickListener(object : WriteDialogFragment.OnButtonClickListener {
                 override fun onButtonClicked(textEditNote: String, type:Int) {
                     CoroutineScope(Dispatchers.Main).launch {
                         // 보틀 업데이트

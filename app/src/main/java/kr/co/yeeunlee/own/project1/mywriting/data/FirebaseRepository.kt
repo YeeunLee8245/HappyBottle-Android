@@ -1,4 +1,4 @@
-package kr.co.yeeunlee.own.project1.mywriting
+package kr.co.yeeunlee.own.project1.mywriting.data
 
 import android.app.AlertDialog
 import android.content.Context
@@ -12,6 +12,8 @@ import com.google.firebase.messaging.FirebaseMessaging
 import okhttp3.ResponseBody
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
+import kr.co.yeeunlee.own.project1.mywriting.*
+import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
 import retrofit2.Response
 import java.lang.Exception
 
@@ -67,7 +69,7 @@ class FirebaseRepository(private val context: Context) {
             .update("statusMsg", newStatus).addOnFailureListener { makeToast(it) }
     }
 
-    suspend fun setNoteAdd(textEditNote: String, type:Int, post:Note?=null): DocumentSnapshot {
+    suspend fun setNoteAdd(textEditNote: String, type:Int, post: Note?=null): DocumentSnapshot {
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         val dcmRef= db.collection("user").document(userEmail)
         var resultRef:DocumentSnapshot? = null
@@ -76,8 +78,10 @@ class FirebaseRepository(private val context: Context) {
             dcmRef.get().addOnSuccessListener {
                 if (post == null) {
                     dcmRef.collection("note").document("${(it.get("numNote") as Long) +1}")
-                        .set(Note(it.get("name") as String, textEditNote, Timestamp.now()
-                            ,true, type, false, -1))
+                        .set(
+                            Note(it.get("name") as String, textEditNote, Timestamp.now()
+                            ,true, type, false, -1)
+                        )
                         .addOnFailureListener { makeToast(it) }
                 }
                 else{
@@ -115,7 +119,7 @@ class FirebaseRepository(private val context: Context) {
     }
 
     fun getStorageBottleLi(_stgBtSnapLi:MutableLiveData<ArrayList<BottleList>>
-                         , __stgBtSnapLi:ArrayList<BottleList>, zeroBottle:MutableLiveData<Boolean>)
+                           , __stgBtSnapLi:ArrayList<BottleList>, zeroBottle:MutableLiveData<Boolean>)
     :ListenerRegistration{
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         var listenerRgst:ListenerRegistration? = null
@@ -247,7 +251,7 @@ class FirebaseRepository(private val context: Context) {
         }.await()
     }
 
-    suspend fun deletePostNote(note:Note){
+    suspend fun deletePostNote(note: Note){
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         val dcmRef:DocumentReference = db.collection("user").document(userEmail)
         coroutineScope {
@@ -266,7 +270,7 @@ class FirebaseRepository(private val context: Context) {
     }
 
     @Keep
-    fun getPostSnapshot(__checkPost: ArrayList<Note> ,_checkPost: MutableLiveData<ArrayList<Note>>)
+    fun getPostSnapshot(__checkPost: ArrayList<Note>, _checkPost: MutableLiveData<ArrayList<Note>>)
     :ListenerRegistration?{
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         var listenerRgst:ListenerRegistration? = null

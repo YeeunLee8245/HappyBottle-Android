@@ -8,7 +8,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import kr.co.yeeunlee.own.project1.mywriting.databinding.DialogFragmentSendBinding
+import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
 
 class SendDialogFragment(val userName: String): DialogFragment() {
     private var _binding: DialogFragmentSendBinding? = null

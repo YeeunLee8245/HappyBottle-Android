@@ -1,4 +1,4 @@
-package kr.co.yeeunlee.own.project1.mywriting
+package kr.co.yeeunlee.own.project1.mywriting.ui
 
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -21,6 +21,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kr.co.yeeunlee.own.project1.mywriting.LoginStartActivity
+import kr.co.yeeunlee.own.project1.mywriting.MainActivity
+import kr.co.yeeunlee.own.project1.mywriting.R
+import kr.co.yeeunlee.own.project1.mywriting.data.FirebaseRepository
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {
@@ -39,7 +43,9 @@ class SplashActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(resources.getString(R.string.google_sign_request_token))
+        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(resources.getString(
+            R.string.google_sign_request_token
+        ))
             .requestEmail()
             .build()
         binding = ActivitySplashBinding.inflate(layoutInflater)
@@ -47,12 +53,12 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val fireRepo = FirebaseRepository(this)
-        val intentMain = Intent(this,MainActivity::class.java)
+        val intentMain = Intent(this, MainActivity::class.java)
         intentMain.action = Intent.ACTION_MAIN
         intentMain.addCategory(Intent.CATEGORY_LAUNCHER)
         intentMain.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
 
-        val intentStart = Intent(this,LoginStartActivity::class.java)
+        val intentStart = Intent(this, LoginStartActivity::class.java)
         intentStart.action = Intent.ACTION_MAIN
         intentStart.addCategory(Intent.CATEGORY_LAUNCHER)
         intentStart.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -133,7 +139,7 @@ class SplashActivity : AppCompatActivity() {
             Log.d("로그아웃","1")
             googleSignInClient.signOut().addOnSuccessListener {
                 Log.d("로그아웃","2")
-                val intentStart = Intent(this@SplashActivity,LoginStartActivity::class.java)
+                val intentStart = Intent(this@SplashActivity, LoginStartActivity::class.java)
                 intentStart.action = Intent.ACTION_MAIN
                 intentStart.addCategory(Intent.CATEGORY_LAUNCHER)
                 intentStart.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP

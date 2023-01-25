@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import kr.co.yeeunlee.own.project1.mywriting.databinding.DialogNameLayoutBinding
+import kr.co.yeeunlee.own.project1.mywriting.ui.HomeFragment
 
 
 class OpinionDialogFragment(val typeDialog:String) : DialogFragment() {
