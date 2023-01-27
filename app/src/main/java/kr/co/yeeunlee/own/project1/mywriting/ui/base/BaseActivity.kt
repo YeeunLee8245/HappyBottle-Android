@@ -11,7 +11,7 @@ import kr.co.yeeunlee.own.project1.mywriting.utils.LoadingDialogUtil
 
 abstract class BaseActivity <VB : ViewDataBinding, VM : BaseViewModel> : AppCompatActivity(),
     BaseContractView {
-    protected lateinit var mDataBinding: VB
+    protected lateinit var mViewBinding: VB
     abstract val mViewModel: VM
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,10 +21,10 @@ abstract class BaseActivity <VB : ViewDataBinding, VM : BaseViewModel> : AppComp
         } catch (e: IllegalStateException) {
             e.printStackTrace()
         }
-        mDataBinding = DataBindingUtil.setContentView(this, getLayoutRes())
+        mViewBinding = DataBindingUtil.setContentView(this, getLayoutRes())
         // LiveData 관찰을 위한 세팅.
 
-        mDataBinding.lifecycleOwner = this
+        mViewBinding.lifecycleOwner = this
 
         mViewModel.apply {
             isLoading.observe(this@BaseActivity) {
@@ -52,7 +52,7 @@ abstract class BaseActivity <VB : ViewDataBinding, VM : BaseViewModel> : AppComp
 //    }
 
     override fun loadErrorMessage(e: Throwable) {
-        ErrorUtil.showErrorMessage(this@BaseActivity, null) {}
+        ErrorUtil.showErrorMessage(this@BaseActivity, e.message) {}
     }
 
     override fun onBackPressed() {

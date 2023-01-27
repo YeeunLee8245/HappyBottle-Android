@@ -33,12 +33,12 @@ class SplashActivity : AppCompatActivity() {
         val mAuth: FirebaseAuth = Firebase.auth
         val db = Firebase.firestore
     }
-    private val settings = firestoreSettings {
+    private val settings = firestoreSettings { //
         isPersistenceEnabled = true
         setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED).build()
     }
     private lateinit var binding: ActivitySplashBinding
-    init {
+    init {//
         db.firestoreSettings = settings // 캐시와 오프라인 지속성 설정
     }
 

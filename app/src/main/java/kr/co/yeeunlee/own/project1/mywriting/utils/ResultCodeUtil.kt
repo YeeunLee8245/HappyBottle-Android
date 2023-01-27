@@ -4,9 +4,6 @@ import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import kr.co.yeeunlee.own.project1.mywriting.R
 
-/**
- * Created by KimBH on 2022/07/12.
- */
 class ResultCodeUtil {
 
     companion object {
@@ -21,7 +18,7 @@ class ResultCodeUtil {
 //            }
 //        }
 
-        private fun showAlert(context: Context, message: String, function: () -> Unit) {
+        private fun showAlert(context: Context, message: String, function: () -> Unit) { // TODO: 수정(필요한 곳 찾기)
             AlertDialog.Builder(context)
                 .setMessage(message)
                 .setCancelable(false)
@@ -31,6 +28,10 @@ class ResultCodeUtil {
                 }
                 .show()
                 .setCanceledOnTouchOutside(false)
+        }
+
+        private fun showToast(context: Context, message: String?) { // TODO: 쪽지 보내기 전송 완료 시와 모든 Toast 메시지
+            ToastUtil.showToast(context, message)
         }
     }
 }

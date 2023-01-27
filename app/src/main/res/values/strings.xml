@@ -17,6 +17,7 @@
     <string name="private_url">개인정보처리방침</string>
 
     <string name="confirm">확인</string>
+    <string name="complete_send">전송 완료!</string>
 
     <string name="network_retry">재시도</string>
     <string name="network_finish">종료</string>
