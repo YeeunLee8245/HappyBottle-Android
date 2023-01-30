@@ -35,7 +35,7 @@ class FirebaseRepository(private val context: Context) {
             .show()
     }
 
-    suspend fun getNameImgSnapshot():DocumentSnapshot{
+    suspend fun getNameImgSnapshot():DocumentSnapshot{ // class UserLiveData
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         var snapshot:DocumentSnapshot? = null
         coroutineScope {
@@ -48,7 +48,7 @@ class FirebaseRepository(private val context: Context) {
         return snapshot!!
     }
 
-    fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>): ListenerRegistration {
+    fun getUserSnapshot(_userSnapshot:MutableLiveData<DocumentSnapshot>): ListenerRegistration { // class UserLiveData
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         var listenerRgst:ListenerRegistration? = null
         listenerRgst = db.collection("user").document(userEmail)   // 변경이 있으면 다시 업뎃
@@ -63,7 +63,7 @@ class FirebaseRepository(private val context: Context) {
         return listenerRgst
     }
 
-    fun setUserStatusMsg(newStatus:String){
+    fun setUserStatusMsg(newStatus:String){ // class UserLiveData
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
         db.collection("user").document(userEmail)
             .update("statusMsg", newStatus).addOnFailureListener { makeToast(it) }
@@ -159,7 +159,7 @@ class FirebaseRepository(private val context: Context) {
         return resultRef!!
     }
 
-    suspend fun setToken(i:Int = 100): String{
+    suspend fun setToken(i:Int = 100): String{ // class UserLiveData
         val userEmail = SplashActivity.mAuth.currentUser?.email.toString()
         var token:String = ""
         coroutineScope {
@@ -298,7 +298,7 @@ class FirebaseRepository(private val context: Context) {
         return listenerRgst
     }
 
-    suspend fun getToken(receiver: String): String{
+    suspend fun getToken(receiver: String): String{ // class UserLiveData
         var token: String? = null
         coroutineScope {
             db.collection("user").whereEqualTo("name", receiver)
