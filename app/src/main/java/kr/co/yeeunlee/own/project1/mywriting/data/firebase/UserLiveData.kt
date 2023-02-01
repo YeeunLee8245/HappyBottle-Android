@@ -25,8 +25,9 @@ class UserLiveData : LiveData<Pair<User?, AuthenticationState>>() {
 
     private var uiScope: CoroutineScope? = null
 
-    private val firebaseAuth by lazy { Firebase.auth }
-    private val dbRefUser by lazy { Firebase.firestore.collection("user") }
+    private val firebaseAuth by lazy { FirebaseSettings.getAuthentication() }
+    private val firebaseFireStore = FirebaseSettings.getFirestore()
+    private val dbRefUser by lazy { firebaseFireStore.collection("user") }
 
     private val authStateListener = FirebaseAuth.AuthStateListener { firebasAuth ->
         firebasAuth.currentUser?.email?.let { email ->
@@ -77,6 +78,17 @@ class UserLiveData : LiveData<Pair<User?, AuthenticationState>>() {
             return null
         }
         return token
+    }
+
+    fun createNewUser(user: User) {
+        user.email?.let { email ->
+            if (user.name == null) return
+            this.value = Pair(user, AuthenticationState.Authenticated(email))
+            uiScope?.launch {
+                updateUserToken(email)
+            }
+        }
+
     }
 
     suspend fun getNameImgSnapshot(
