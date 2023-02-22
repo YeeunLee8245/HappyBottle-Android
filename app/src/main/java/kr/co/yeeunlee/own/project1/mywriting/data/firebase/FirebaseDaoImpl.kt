@@ -36,13 +36,13 @@ class FirebaseDaoImpl { // Query를 통해 DB(Firebase)를 다루는 객체
             }
     }
 
-    fun setUser(    // TODO: 닉네임 생성, 회원가입 완료 과정에서 호출
+    fun setNewUser(    // TODO: 닉네임 생성, 회원가입 완료 과정에서 호출
         username: String,
         userEmail: String,
         callback: (userStatus: NetworkState) -> Unit
     ) {
         val user = User()
-        callback(NetworkState.Loading)
+        callback(NetworkState.Loaded)
         user.email = userEmail
         user.name = username
         dbRefCheck.document("name")
