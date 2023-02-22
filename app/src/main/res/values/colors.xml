@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="backColor">#A5DBE5</color>
+    <color name="splash_background">#A5DBE5</color>
     <color name="editColor">#FFE483</color>
     <color name="editLineColor">#FFC778</color>
     <color name="completeBtnColor">#F2DE79</color>

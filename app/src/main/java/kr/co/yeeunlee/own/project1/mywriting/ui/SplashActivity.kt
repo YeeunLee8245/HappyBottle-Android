@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -28,29 +30,35 @@ import kr.co.yeeunlee.own.project1.mywriting.data.FirebaseRepository
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {
+    // pre(start)
     companion object{
         lateinit var gso: GoogleSignInOptions
         val mAuth: FirebaseAuth = Firebase.auth
         val db = Firebase.firestore
     }
-    private val settings = firestoreSettings { //
+    private val settings = firestoreSettings {
         isPersistenceEnabled = true
         setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED).build()
     }
     private lateinit var binding: ActivitySplashBinding
-    init {//
+    init {
         db.firestoreSettings = settings // 캐시와 오프라인 지속성 설정
     }
+    // pre(end)
+    private lateinit var splashScreen: SplashScreen
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        splashScreen = installSplashScreen()
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_splash)
+
+        // pre(start~end)
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(resources.getString(
             R.string.google_sign_request_token
         ))
             .requestEmail()
             .build()
         binding = ActivitySplashBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        super.onCreate(savedInstanceState)
 
         val fireRepo = FirebaseRepository(this)
         val intentMain = Intent(this, MainActivity::class.java)
@@ -94,7 +102,6 @@ class SplashActivity : AppCompatActivity() {
             finish()
             Toast.makeText(this@SplashActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private suspend fun userDelete() {

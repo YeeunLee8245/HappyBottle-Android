@@ -13,11 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyWriting">
         <activity
-            android:name=".BaseActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.SplashActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".InfoViewpagerActivity" />
-        <activity android:name=".LoginStartActivity"></activity>
+        <activity android:name=".LoginStartActivity"/>
         <activity android:name=".SignInActivity" />
         <activity android:name=".MainActivity" />
 
