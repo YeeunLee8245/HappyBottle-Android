@@ -19,7 +19,7 @@
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splash</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_app_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.MyWriting</item>
     </style>
 </resources>

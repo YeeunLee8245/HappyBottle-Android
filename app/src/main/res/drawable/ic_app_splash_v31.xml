@@ -7,8 +7,8 @@
     </item>
     <item
         android:drawable="@drawable/icon_app"
-        android:bottom="80dp"
-        android:left="80dp"
-        android:right="80dp"
-        android:top="80dp"/>
+        android:bottom="30dp"
+        android:left="30dp"
+        android:right="30dp"
+        android:top="30dp"/>
 </layer-list>
