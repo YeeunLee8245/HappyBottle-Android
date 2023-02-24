@@ -1,20 +1,30 @@
 package kr.co.yeeunlee.own.project1.mywriting.data.firebase
 
+import android.content.Intent
+import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.Transformations
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.firestore.FieldValue
+import kr.co.yeeunlee.own.project1.mywriting.LoginStartActivity
 import kr.co.yeeunlee.own.project1.mywriting.data.model.User
+import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
+import javax.inject.Inject
 
-class FirebaseDaoImpl { // Query를 통해 DB(Firebase)를 다루는 객체
+class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: FirebaseSettings) { // Query를 통해 DB(Firebase)를 다루는 객체
 
-    private val firebaseFireStore = FirebaseSettings.getFirestore()
+    private val firebaseFireStore by lazy { firebaseSettings.getFirestore() }
+    private val firebaseAuth by lazy { firebaseSettings.getAuthentication() }
 
     private val dbRefUser by lazy { firebaseFireStore.collection("user") }
     private val dbRefCheck by lazy { firebaseFireStore.collection("check") }
 
-    private val userLiveData = UserLiveData()
-//    private val userLiveData = Transformations.map(user) { userWithAuth -> // TODO: user 값 수정될 떄마다 진행할 처리
-//        // TODO: 다른 클래스에서 userLiveData 속성이 쓰일 떄 여기서 관련 속성 초기화해주기
-//    }
+    val user = UserLiveData()
+    private val userLiveData = Transformations.map(user) { userWithAuth -> // TODO: user 값 수정될 떄마다 진행할 처리
+//        // TODO: 다른 클래스에서 userLiveData 속성이 쓰일 때 여기서 관련 속성 초기화해주기
+        // TODO: 토큰처리
+    }
 
     companion object {
         const val BOTTLE_SIZE = 30
@@ -22,13 +32,13 @@ class FirebaseDaoImpl { // Query를 통해 DB(Firebase)를 다루는 객체
     }
 
     private fun setUserInformation(user: User, callback: (userStatus: NetworkState) -> Unit) {
-        val userEmail = userLiveData.value?.first?.email ?: run {
+        val userEmail = this.user.value?.first?.email ?: run {
             callback(NetworkState.Failed)
             return
         }
         dbRefUser.document(userEmail).set(user)
             .addOnSuccessListener {
-                userLiveData.createNewUser(user)
+                this.user.createNewUser(user)
                 callback(NetworkState.Success)
             }
             .addOnFailureListener {
@@ -53,5 +63,26 @@ class FirebaseDaoImpl { // Query를 통해 DB(Firebase)를 다루는 객체
             .addOnFailureListener { callback(NetworkState.Failed) }
     }
 
+    fun isLoginState(callback: (loginState: AuthenticationState) -> Unit) {
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser != null) {
+            val email = currentUser.email
+            if (email != null) {
+                callback(AuthenticationState.Authenticated(email))
+                user.value
+            } else {
+                callback(AuthenticationState.InvalidAuthentication)
+            }
+        } else {
+            callback(AuthenticationState.Unauthenticated)
+        }
+    }
+
+    fun logout(callback: (userStatus: NetworkState) -> Unit) {
+        callback(NetworkState.Loaded)
+        firebaseSettings.getSignInClient().signOut()
+            .addOnSuccessListener { callback(NetworkState.Success) }
+            .addOnFailureListener { callback(NetworkState.Failed) }
+    }
 
 }

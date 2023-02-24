@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kr.co.yeeunlee.own.project1.mywriting.data.repository.Repository
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.FragmentState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
 import javax.inject.Inject
@@ -14,20 +15,40 @@ class FirebaseViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
 
-    private val _userInfoStatus = MutableLiveData<NetworkState>()
-    val userInfoStatus: LiveData<NetworkState> = _userInfoStatus
+    private val _userStatus = MutableLiveData<NetworkState>()
+    val userStatus: LiveData<NetworkState> = _userStatus
 
-    private val _fragmentState = MutableLiveData<Pair<FragmentState, Boolean>>()
-    val fragmentState: LiveData<Pair<FragmentState, Boolean>> = _fragmentState
+    private val _logoutStatus = MutableLiveData<NetworkState>()
+    val logoutStatus: LiveData<NetworkState> = _logoutStatus
+
+    private val _fragmentStatus = MutableLiveData<Pair<FragmentState, Boolean>>()
+    val fragmentStatus: LiveData<Pair<FragmentState, Boolean>> = _fragmentStatus
+
+    val user = repository.getUserLiveData()
+
+    private val _authenticationStatus = MutableLiveData<AuthenticationState>()
+    val authenticationStatus: LiveData<AuthenticationState> = _authenticationStatus
 
     fun setFragmentState(fragmentState: FragmentState, valid: Boolean = true) {
-        _fragmentState.value = Pair(fragmentState, valid)
+        _fragmentStatus.value = Pair(fragmentState, valid)
+    }
+
+    fun isLoginState() {
+        repository.isLoginState {
+            _authenticationStatus.value = it
+        }
+    }
+
+    fun logout() {
+        repository.logout() {
+            _logoutStatus.value = it
+        }
     }
 
     fun setNewUser(username: String, userEmail: String) {
         repository.setNewUser(username, userEmail) {
-            _userInfoStatus.value = it
-            if (it == NetworkState.Loaded) setFragmentState(FragmentState.START)
+            _userStatus.value = it
+            if (it == NetworkState.Loaded) setFragmentState(FragmentState.Home)
         }
     }
 }

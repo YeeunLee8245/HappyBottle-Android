@@ -4,6 +4,7 @@ buildscript {
         kotlin_version = "1.5.31"
         hilt_version = "2.44.2"
         lifecycle_version = "2.5.1"
+        timber_version = "5.0.1"
     }
     repositories {
         google()

@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
@@ -20,13 +19,17 @@ import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
 import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity.Companion.db
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
+import javax.inject.Inject
 
 class UserLiveData : LiveData<Pair<User?, AuthenticationState>>() {
 
     private var uiScope: CoroutineScope? = null
 
-    private val firebaseAuth by lazy { FirebaseSettings.getAuthentication() }
-    private val firebaseFireStore = FirebaseSettings.getFirestore()
+    @Inject
+    lateinit var firebaseSettings: FirebaseSettings
+
+    private val firebaseAuth by lazy { firebaseSettings.getAuthentication() }
+    private val firebaseFireStore by lazy { firebaseSettings.getFirestore() }
     private val dbRefUser by lazy { firebaseFireStore.collection("user") }
 
     private val authStateListener = FirebaseAuth.AuthStateListener { firebasAuth ->

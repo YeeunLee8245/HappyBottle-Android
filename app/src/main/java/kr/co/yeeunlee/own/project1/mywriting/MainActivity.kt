@@ -49,60 +49,62 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val tran = supportFragmentManager.beginTransaction()
-        tran.add(R.id.fragment, homeFragment)
-        tran.commit()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        connection = NetworkConnection(applicationContext)
-        connection.observe(this){ isConnected ->
-            if (isConnected){
-            }else{
-                makeAlterDialog()
-            }
-        }
 
-        googleSignInClient = GoogleSignIn.getClient(this, SplashActivity.gso)
-        binding.btnHome.setOnClickListener { changeFragment(HOME_TAG, homeFragment)}
-        binding.btnStorage.setOnClickListener { changeFragment(STORAGE_TAG, storageFragment) }
-        binding.btnSend.setOnClickListener { changeFragment(SEND_TAG, sendFragment) }
-        binding.btnClose.setOnClickListener { changeDrawer("close") }
-        binding.btnLogout.setOnClickListener { // 로그아웃
-            btnLogout()
-        }
-        binding.btnBan.setOnClickListener { // 탈퇴
-            btnDelete()
-        }
-        binding.switchBell.setOnCheckedChangeListener { _, isChecked ->
-            val fireRepo = FirebaseRepository(this)
-            if (isChecked){
-                CoroutineScope(Dispatchers.Main).launch {
-                    fireRepo.setPushAlarm(true)
-                    fireRepo.setToken()
-                }
-            }else {
-                CoroutineScope(Dispatchers.Main).launch {
-                    fireRepo.setPushAlarm(false)
-                }
-            }
-        }
-        binding.btnOpinion.setOnClickListener { // 의견 보내기
-            btnOpinion()
-        }
-
-        binding.btnLogoutSub.setOnClickListener { btnLogout() }
-        binding.btnOpinionSub.setOnClickListener { btnOpinion() }
-        binding.btnBanSub.setOnClickListener { btnDelete() }
-
-        valueService = intent.getStringExtra("service")
-        if (valueService != null){
-            changeFragment(SEND_TAG, sendFragment)
-            valueService = null
-        }
-
-        if ((intent.getIntExtra("INFO_TAG", 0)) == LoginStartActivity.INFO_TAG)
-            openInfoActivity()
+//        val tran = supportFragmentManager.beginTransaction()
+//        tran.add(R.id.fragment, homeFragment)
+//        tran.commit()
+//        binding = ActivityMainBinding.inflate(layoutInflater)
+//        setContentView(binding.root)
+//        connection = NetworkConnection(applicationContext)
+//        connection.observe(this){ isConnected ->
+//            if (isConnected){
+//            }else{
+//                makeAlterDialog()
+//            }
+//        }
+//
+//        googleSignInClient = GoogleSignIn.getClient(this, SplashActivity.gso)
+//        binding.btnHome.setOnClickListener { changeFragment(HOME_TAG, homeFragment)}
+//        binding.btnStorage.setOnClickListener { changeFragment(STORAGE_TAG, storageFragment) }
+//        binding.btnSend.setOnClickListener { changeFragment(SEND_TAG, sendFragment) }
+//        binding.btnClose.setOnClickListener { changeDrawer("close") }
+//        binding.btnLogout.setOnClickListener { // 로그아웃
+//            btnLogout()
+//        }
+//        binding.btnBan.setOnClickListener { // 탈퇴
+//            btnDelete()
+//        }
+//        binding.switchBell.setOnCheckedChangeListener { _, isChecked ->
+//            val fireRepo = FirebaseRepository(this)
+//            if (isChecked){
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    fireRepo.setPushAlarm(true)
+//                    fireRepo.setToken()
+//                }
+//            }else {
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    fireRepo.setPushAlarm(false)
+//                }
+//            }
+//        }
+//        binding.btnOpinion.setOnClickListener { // 의견 보내기
+//            btnOpinion()
+//        }
+//
+//        binding.btnLogoutSub.setOnClickListener { btnLogout() }
+//        binding.btnOpinionSub.setOnClickListener { btnOpinion() }
+//        binding.btnBanSub.setOnClickListener { btnDelete() }
+//
+//        valueService = intent.getStringExtra("service")
+//        if (valueService != null){
+//            changeFragment(SEND_TAG, sendFragment)
+//            valueService = null
+//        }
+//
+//        if ((intent.getIntExtra("INFO_TAG", 0)) == LoginStartActivity.INFO_TAG)
+//            openInfoActivity()
     }
 
     override fun onDestroy() {

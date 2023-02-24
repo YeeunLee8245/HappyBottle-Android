@@ -7,33 +7,35 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kr.co.yeeunlee.own.project1.mywriting.LoginStartActivity
 import kr.co.yeeunlee.own.project1.mywriting.MainActivity
 import kr.co.yeeunlee.own.project1.mywriting.R
-import kr.co.yeeunlee.own.project1.mywriting.data.FirebaseRepository
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivitySplashBinding
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.ActivityState
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
+import timber.log.Timber
 
+@AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
     // pre(start)
     companion object{
         lateinit var gso: GoogleSignInOptions
-        val mAuth: FirebaseAuth = Firebase.auth
+        val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
         val db = Firebase.firestore
     }
     private val settings = firestoreSettings {
@@ -46,62 +48,104 @@ class SplashActivity : AppCompatActivity() {
     }
     // pre(end)
     private lateinit var splashScreen: SplashScreen
+    private val firebaseVm: FirebaseViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
+        observeAuthStatus()
+        observeLogoutStatus()
+
+        firebaseVm.isLoginState()
+        // TODO: 탈퇴 화면은 LoadingActivity 만들어서 동작하게 하기(or 바로 삭제할 수 있는 다른 동작 찾아보기)
         // pre(start~end)
-        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(resources.getString(
-            R.string.google_sign_request_token
-        ))
-            .requestEmail()
-            .build()
-        binding = ActivitySplashBinding.inflate(layoutInflater)
+//        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(resources.getString(
+//            R.string.google_sign_request_token
+//        ))
+//            .requestEmail()
+//            .build()
+//        binding = ActivitySplashBinding.inflate(layoutInflater)
+//
+//        val fireRepo = FirebaseRepository(this)
+//        val intentMain = Intent(this, MainActivity::class.java)
+//        intentMain.action = Intent.ACTION_MAIN
+//        intentMain.addCategory(Intent.CATEGORY_LAUNCHER)
+//        intentMain.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+//
+//        val intentStart = Intent(this, LoginStartActivity::class.java)
+//        intentStart.action = Intent.ACTION_MAIN
+//        intentStart.addCategory(Intent.CATEGORY_LAUNCHER)
+//        intentStart.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+//
+//        val account = mAuth.currentUser
+//
+//        if (intent.getStringExtra(MainActivity.DELETE_TAG) != null){
+//            CoroutineScope(Dispatchers.Main).launch {
+//                binding.text.text = "데이터 삭제 중입니다.\n잠시만 기다려주세요."
+//                userDelete()
+//            }
+//        }
+//        else if (account != null) {
+//            CoroutineScope(Dispatchers.Main).launch {
+//                val userData = fireRepo.getNameImgSnapshot()
+//                Log.d("로그인 정보", account.toString()+"  "+account.email.toString())
+//                fireRepo.setToken(10)
+//                if (intent.getStringExtra("service") != null){
+//                    intentMain.putExtra("service", "service")
+//                }
+//                intentMain.putExtra(LoginStartActivity.NAME_TAG, userData.get("name").toString())
+//                intentMain.putExtra(LoginStartActivity.PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
+//                Toast.makeText(
+//                    this@SplashActivity,
+//                    "로그인 성공: ${account.email}",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//                startActivity(intentMain)
+//                finish()    // 로그인 시작창은 스택에서 삭제
+//            }
+//        }else {
+//            startActivity(intentStart)
+//            finish()
+//            Toast.makeText(this@SplashActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()
+//        }
+    }
 
-        val fireRepo = FirebaseRepository(this)
-        val intentMain = Intent(this, MainActivity::class.java)
-        intentMain.action = Intent.ACTION_MAIN
-        intentMain.addCategory(Intent.CATEGORY_LAUNCHER)
-        intentMain.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-
-        val intentStart = Intent(this, LoginStartActivity::class.java)
-        intentStart.action = Intent.ACTION_MAIN
-        intentStart.addCategory(Intent.CATEGORY_LAUNCHER)
-        intentStart.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-
-        val account = mAuth.currentUser
-
-        if (intent.getStringExtra(MainActivity.DELETE_TAG) != null){
-            CoroutineScope(Dispatchers.Main).launch {
-                binding.text.text = "데이터 삭제 중입니다.\n잠시만 기다려주세요."
-                userDelete()
-            }
-        }
-        else if (account != null) {
-            CoroutineScope(Dispatchers.Main).launch {
-                val userData = fireRepo.getNameImgSnapshot()
-                Log.d("로그인 정보", account.toString()+"  "+account.email.toString())
-                fireRepo.setToken(10)
-                if (intent.getStringExtra("service") != null){
-                    intentMain.putExtra("service", "service")
+    private fun observeAuthStatus() {
+        firebaseVm.authenticationStatus.observe(this) {
+            when (it) {
+                is AuthenticationState.Authenticated -> startApp(ActivityState.Main)
+                is AuthenticationState.Unauthenticated -> startApp(ActivityState.Login)
+                is AuthenticationState.InvalidAuthentication -> {
+                    firebaseVm.logout()
                 }
-                intentMain.putExtra(LoginStartActivity.NAME_TAG, userData.get("name").toString())
-                intentMain.putExtra(LoginStartActivity.PROFILE_IMG_TAG, userData.get("profileImg").toString().toInt())
-                Toast.makeText(
-                    this@SplashActivity,
-                    "로그인 성공: ${account.email}",
-                    Toast.LENGTH_SHORT
-                ).show()
-                startActivity(intentMain)
-                finish()    // 로그인 시작창은 스택에서 삭제
             }
-        }else {
-            startActivity(intentStart)
-            finish()
-            Toast.makeText(this@SplashActivity, "계정 로그인 필요", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun observeLogoutStatus() {
+        firebaseVm.logoutStatus.observe(this) {
+            when (it) {
+                is NetworkState.Success -> {
+                    startApp(ActivityState.Login)
+                }
+                is NetworkState.Failed -> {
+                    Timber.i("로그아웃 실패")
+                } // TODO: BoseActivity에 ErrorDialog 생성 메서드 넣기
+                else -> {}
+            }
+        }
+    }
+
+    private fun startApp(screen: ActivityState) {
+        val intent: Intent
+        when (screen) {
+            ActivityState.Main -> intent = Intent(this, MainActivity::class.java)
+            ActivityState.Login -> intent = Intent(this, LoginStartActivity::class.java)
+        }
+        startActivity(intent)
+        finish()
     }
 
     private suspend fun userDelete() {
