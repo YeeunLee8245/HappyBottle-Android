@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import kr.co.yeeunlee.own.project1.mywriting.R
 
-object ErrorUtil {
+object ErrorAlertDialog {
 
     fun showErrorMessage(context: Context, message: String?, function: () -> Unit) {
         AlertDialog.Builder(context)

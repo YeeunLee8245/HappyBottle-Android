@@ -6,11 +6,10 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import kr.co.kumoh.d134.isl.base.BaseContractView
-import kr.co.yeeunlee.own.project1.mywriting.utils.ErrorUtil
+import kr.co.yeeunlee.own.project1.mywriting.utils.ErrorAlertDialog
 import kr.co.yeeunlee.own.project1.mywriting.utils.LoadingDialogUtil
 
-abstract class BaseActivity <VB : ViewDataBinding, VM : BaseViewModel> : AppCompatActivity(),
-    BaseContractView {
+abstract class BaseActivity <VB : ViewDataBinding, VM : BaseViewModel> : AppCompatActivity(), BaseContractView {
     protected lateinit var mViewBinding: VB
     abstract val mViewModel: VM
 
@@ -52,7 +51,7 @@ abstract class BaseActivity <VB : ViewDataBinding, VM : BaseViewModel> : AppComp
 //    }
 
     override fun loadErrorMessage(e: Throwable) {
-        ErrorUtil.showErrorMessage(this@BaseActivity, e.message) {}
+        ErrorAlertDialog.showErrorMessage(this@BaseActivity, e.message) {}
     }
 
     override fun onBackPressed() {

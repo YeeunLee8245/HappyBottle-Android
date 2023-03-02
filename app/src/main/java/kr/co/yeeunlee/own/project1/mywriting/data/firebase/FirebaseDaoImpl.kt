@@ -6,6 +6,7 @@ import androidx.lifecycle.Transformations
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.firestore.FieldValue
 import kr.co.yeeunlee.own.project1.mywriting.LoginStartActivity
+import kr.co.yeeunlee.own.project1.mywriting.R
 import kr.co.yeeunlee.own.project1.mywriting.data.model.User
 import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
@@ -33,7 +34,7 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
 
     private fun setUserInformation(user: User, callback: (userStatus: NetworkState) -> Unit) {
         val userEmail = this.user.value?.first?.email ?: run {
-            callback(NetworkState.Failed)
+            callback(NetworkState.Failed(R.string.service_error))
             return
         }
         dbRefUser.document(userEmail).set(user)
@@ -42,7 +43,7 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
                 callback(NetworkState.Success)
             }
             .addOnFailureListener {
-                callback(NetworkState.Failed)
+                callback(NetworkState.Failed(R.string.service_error))
             }
     }
 
@@ -60,7 +61,7 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
             .addOnSuccessListener {
                 setUserInformation(user) { callback(it) } // setUserInformation에서 상태를 받아서 해당 callback으로 전달
             }
-            .addOnFailureListener { callback(NetworkState.Failed) }
+            .addOnFailureListener { callback(NetworkState.Failed(R.string.service_error)) }
     }
 
     fun isLoginState(callback: (loginState: AuthenticationState) -> Unit) {
@@ -82,7 +83,7 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
         callback(NetworkState.Loaded)
         firebaseSettings.getSignInClient().signOut()
             .addOnSuccessListener { callback(NetworkState.Success) }
-            .addOnFailureListener { callback(NetworkState.Failed) }
+            .addOnFailureListener { callback(NetworkState.Failed(R.string.server_error)) }
     }
 
 }

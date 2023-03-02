@@ -14,6 +14,7 @@ import com.google.firebase.ktx.app
 import com.google.firebase.ktx.options
 import com.jakewharton.threetenabp.AndroidThreeTen.init
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kr.co.yeeunlee.own.project1.mywriting.R
 import javax.inject.Inject
 import javax.inject.Singleton

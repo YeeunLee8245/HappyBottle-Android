@@ -94,23 +94,23 @@ class UserLiveData : LiveData<Pair<User?, AuthenticationState>>() {
 
     }
 
-    suspend fun getNameImgSnapshot(
-        callback: ((networkState: NetworkState) -> Unit)
-    ): DocumentSnapshot {
-        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
-        var snapshot: DocumentSnapshot? = null
-        coroutineScope {
-            dbRefUser.document(userEmail)
-                .get().addOnSuccessListener {   // 왜 get이 자꾸 null로 반환될까?
-                    snapshot = it
-                }
-                .addOnFailureListener {
-                    //ToastUtil.showToast(it)
-                    callback.invoke(NetworkState.Failed)
-                }
-        }.await()
-        return snapshot!!
-    }
+//    suspend fun getNameImgSnapshot(
+//        callback: ((networkState: NetworkState) -> Unit)
+//    ): DocumentSnapshot {
+//        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
+//        var snapshot: DocumentSnapshot? = null
+//        coroutineScope {
+//            dbRefUser.document(userEmail)
+//                .get().addOnSuccessListener {   // 왜 get이 자꾸 null로 반환될까?
+//                    snapshot = it
+//                }
+//                .addOnFailureListener {
+//                    //ToastUtil.showToast(it)
+//                    callback.invoke(NetworkState.Failed)
+//                }
+//        }.await()
+//        return snapshot!!
+//    }
 
     fun getUserSnapshot(_userSnapshot: MutableLiveData<DocumentSnapshot>): ListenerRegistration {
         val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
@@ -127,17 +127,17 @@ class UserLiveData : LiveData<Pair<User?, AuthenticationState>>() {
         return listenerRgst
     }
 
-    fun setUserStatusMsg(
-        newStatus: String,
-        callback: ((networkState: NetworkState) -> Unit)
-    ) {
-        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
-        dbRefUser.document(userEmail)
-            .update("statusMsg", newStatus).addOnFailureListener {
-                //makeToast(it)
-                callback.invoke(NetworkState.Failed)
-            }
-    }
+//    fun setUserStatusMsg(
+//        newStatus: String,
+//        callback: ((networkState: NetworkState) -> Unit)
+//    ) {
+//        val userEmail = SplashActivity.mAuth.currentUser?.email ?: ""
+//        dbRefUser.document(userEmail)
+//            .update("statusMsg", newStatus).addOnFailureListener {
+//                //makeToast(it)
+//                callback.invoke(NetworkState.Failed)
+//            }
+//    }
 
     suspend fun setToken(i: Int = 100): String {
         val userEmail = SplashActivity.mAuth.currentUser?.email.toString()
@@ -179,25 +179,25 @@ class UserLiveData : LiveData<Pair<User?, AuthenticationState>>() {
         return token
     }
 
-    suspend fun getToken(
-        receiver: String,
-        callback: ((networkState: NetworkState) -> Unit)
-    ): String {
-        var token: String? = null
-        coroutineScope {
-            dbRefUser.whereEqualTo("name", receiver)
-                .get().addOnSuccessListener { dcms ->
-                    for (dcm in dcms) {
-                        token = dcm.get("token").toString()
-                    }
-                }
-                .addOnFailureListener {
-                    //makeToast(it)
-                    callback.invoke(NetworkState.Failed)
-                }
-        }.await()
-        return token.toString()
-    }
+//    suspend fun getToken(
+//        receiver: String,
+//        callback: ((networkState: NetworkState) -> Unit)
+//    ): String {
+//        var token: String? = null
+//        coroutineScope {
+//            dbRefUser.whereEqualTo("name", receiver)
+//                .get().addOnSuccessListener { dcms ->
+//                    for (dcm in dcms) {
+//                        token = dcm.get("token").toString()
+//                    }
+//                }
+//                .addOnFailureListener {
+//                    //makeToast(it)
+//                    callback.invoke(NetworkState.Failed)
+//                }
+//        }.await()
+//        return token.toString()
+//    }
 
     override fun onActive() {
         uiScope = CoroutineScope(Job() + Dispatchers.Main) // TODO: Job() 삭제해보기
