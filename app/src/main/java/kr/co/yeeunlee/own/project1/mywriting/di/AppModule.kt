@@ -35,7 +35,7 @@ class AppModule {
         return FirebaseDaoImpl(firebaseSettings)
     }
 
-    @Singleton // 인스턴스 범위를 application 컨테이너로 지(계층 구조의 상위 컨테이너에서 사용할 수 있는 결합은 계층구조의 하위 수준에서도 사용 가능)
+    @Singleton // 인스턴스 범위를 application 컨테이너로 지정(계층 구조의 상위 컨테이너에서 사용할 수 있는 결합은 계층구조의 하위 수준에서도 사용 가능)
     @Provides // 인스턴스 제공 메서드임을 알림
     fun provideRepository(
         firebaseDaoImpl: FirebaseDaoImpl

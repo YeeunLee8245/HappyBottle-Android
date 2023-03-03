@@ -19,13 +19,22 @@ import kr.co.yeeunlee.own.project1.mywriting.R
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
+
 class FirebaseSettings @Inject constructor(private val applicationContext: Context) {
 
     private val settings = firestoreSettings {
         isPersistenceEnabled = true
         setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED).build()
     }
+
+    val gso =
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(
+            applicationContext.resources.getString(
+                R.string.google_sign_request_token
+            )
+        )
+            .requestEmail() // TODO: 사용처 의문, 삭제 후 테스트 필요(참고: https://stackoverflow.com/questions/49017777/android-google-sign-in-difference-between-default-sign-in-and-default-game)
+            .build()
 
     fun getFirestore(): FirebaseFirestore {
         val firestore = FirebaseFirestore.getInstance()
@@ -35,15 +44,5 @@ class FirebaseSettings @Inject constructor(private val applicationContext: Conte
 
     fun getAuthentication() = FirebaseAuth.getInstance()
 
-    fun getSignInClient(): GoogleSignInClient {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(
-            applicationContext.resources.getString(
-                R.string.google_sign_request_token
-            )
-        )
-            .requestEmail() // TODO: 사용처 의문, 삭제 후 테스트 필요(참고: https://stackoverflow.com/questions/49017777/android-google-sign-in-difference-between-default-sign-in-and-default-game)
-            .build()
-        return GoogleSignIn.getClient(applicationContext, gso)
-    }
-
+    fun getSignInClient() = GoogleSignIn.getClient(applicationContext, gso)
 }

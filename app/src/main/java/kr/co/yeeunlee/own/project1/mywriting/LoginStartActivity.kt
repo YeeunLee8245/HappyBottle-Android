@@ -2,30 +2,53 @@ package kr.co.yeeunlee.own.project1.mywriting
 
 import android.content.Intent
 import android.os.Build
-import android.view.Menu
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
 import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
+import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity.Companion.gso
 import kr.co.yeeunlee.own.project1.mywriting.ui.base.BaseActivity
+import kr.co.yeeunlee.own.project1.mywriting.utils.GoogleSignInHelper
 import kr.co.yeeunlee.own.project1.mywriting.utils.LoginTextValidChecker
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.ActivityState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
-import timber.log.Timber
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에러 다이얼로그는 Base에서 호출출하기
-    { ActivityLoginStartBinding.inflate(it)}
+    { ActivityLoginStartBinding.inflate(it) }
 ) {
     companion object {
         const val INFO_TAG = 1004
         const val PROFILE_IMG_TAG = "profileImg"
         const val NAME_TAG = "username"
     }
+
+    private lateinit var binding: ActivityLoginStartBinding
+    private lateinit var intentMain: Intent
+    private lateinit var user: User
+    private lateinit var connection: NetworkConnection
+    private val db = SplashActivity.db
+    private val mAuth = SplashActivity.mAuth
+
+    @Inject lateinit var googleSignInHelper: GoogleSignInHelper
+
+    private val mActivityResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            try {
+                val account = googleSignInHelper.getAccountResult(it.data, ApiException::class.java)
+                //signInGoogleWithFirebase(account)
+            } catch (e: ApiException) {
+
+            }
+        }
 
     override fun subscribeUi() {
         setScreen()
@@ -35,18 +58,12 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
         mBinidng.apply {
             loginButton.setOnClickListener { login(editEmail.text.toString(), editPW.text.toString()) }
             loginProgressBar.isVisible = false
+            googleSigninButton.setOnClickListener { signInGoogle() }
             screenProgressBar.isVisible = false
-
 
         }
         observeLoginStatus()
     }
-    private lateinit var binding: ActivityLoginStartBinding
-    private lateinit var intentMain: Intent
-    private lateinit var user: User
-    private lateinit var connection: NetworkConnection
-    private val db = SplashActivity.db
-    private val mAuth = SplashActivity.mAuth
 
     private fun observeLoginStatus() {
         mViewModel.loginStatus.observe(this) {
@@ -56,19 +73,15 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
                     mBinidng.loginButton.isEnabled = true
                     moveToScreen(ActivityState.Main)
                 }
-                NetworkState.Loading -> {
+                NetworkState.Loading -> {  // TODO: 통합 테스트(Andorid Test) 통해 로딩 중 loginButton 눌리는지 확인
                     mBinidng.loginProgressBar.isVisible = true
                     mBinidng.loginButton.isEnabled = false
                 }
                 is NetworkState.Failed -> {
                     mBinidng.loginProgressBar.isVisible = false
                     mBinidng.loginButton.isEnabled = true
-                    Timber.i("로그인 네트워크 메시지 확인 ${it.message}")
                     when (it.message) {
-                        R.string.network_error_msg -> {
-                            loadErrorMessage(Throwable(getString(it.message)))
-                            Timber.i("로그인 네트워크 미연결")
-                        }
+                        R.string.network_error_msg -> loadErrorMessage(Throwable(getString(it.message)))
                         R.string.login_password_error -> mBinidng.editPW.error = getString(it.message)
                         R.string.login_both_error -> {
                             mBinidng.editEmail.error = getString(it.message)
@@ -90,8 +103,8 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
             mViewModel.login(email, password)
     }
 
-    private fun loginInGoogle() {
-
+    private fun signInGoogle() {
+        mActivityResult.launch(googleSignInHelper.getGoogleSignIntent())
     }
 
     // google용 Intent 결과
@@ -100,6 +113,7 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
 //            val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
 //            try {
 //                val account = task.getResult(ApiException::class.java)!!
+//                // TODO: 가입 유저인지 로그인 가능 여부로 확인 필요
 //                firebaseAuthWithGoogle(account.idToken!!)
 //            } catch (e: ApiException) {
 //            }
@@ -156,52 +170,8 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
 //        startActivity(i);
 //    }
 //
-//    private fun logIn(email: String, password: String) {
-//        if (email == "") {
-//            binding.editEmail.error = "이메일을 입력해주세요."
-//        } else {
-//            var userListener: ListenerRegistration? = null
-//            userListener =
-//                db.collection("user").document(email).addSnapshotListener { document, error ->
-//                    if (document!!.exists() == true) {
-//                        if (password == "") {
-//                            binding.editPW.error = "비밀번호를 입력해주세요."
-//                        } else {
-//                            mAuth.signInWithEmailAndPassword(email, password)
-//                                .addOnSuccessListener {
-//                                    userListener!!.remove()
-//                                    CoroutineScope(Dispatchers.Main).launch {
-//                                        val fireRepo = FirebaseRepository(this@LoginStartActivity)
-//                                        val userData = fireRepo.getNameImgSnapshot()
-//                                        fireRepo.setToken(3)
-//                                        intentMain.putExtra(
-//                                            NAME_TAG,
-//                                            userData.get("name").toString()
-//                                        )
-//                                        intentMain.putExtra(
-//                                            PROFILE_IMG_TAG,
-//                                            userData.get("profileImg").toString().toInt()
-//                                        )
-//                                        startActivity(intentMain)
-//                                        finish()
-//                                    }
-//                                }
-//                                .addOnFailureListener {
-//                                    binding.editEmail.error = "잘못된 이메일 또는 비밀번호입니다."
-//                                }
-//                        }
-//                    } else {
-//                        binding.editEmail.error = "잘못된 이메일 또는 비밀번호입니다."
-//                    }
-//                }
-//        }
-//        if (password == "") {
-//            binding.editPW.error = "비밀번호를 입력해주세요."
-//        }
-//    }
-//
 //    private fun signIn() {
-//        val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+//        val mGoogleSignInClient = GoogleSignIn.getClient(applicationContext, gso)
 //        val googleSignIntent: Intent = mGoogleSignInClient.signInIntent
 //        getgoogleResult.launch(googleSignIntent)
 //    }

@@ -87,7 +87,6 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
         firebaseSettings.getAuthentication().signInWithEmailAndPassword(email, password)
             .addOnSuccessListener { callback(NetworkState.Success) }
             .addOnFailureListener {
-                Timber.i("로그인 ${it.cause}\n ${it.message}")
                 if (it.message?.contains("network") == true) {
                     callback(NetworkState.Failed(R.string.network_error_msg))
                 } else if (it.message?.contains("password") == true) {
