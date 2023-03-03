@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-xxxhdpi/ic_app_splash.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/btn_pressed_lss.xml" value="0.125" />
         <entry key="app/src/main/res/drawable/ic_android_black_24dp.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_app_splash.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_app_splash_v31.xml" value="0.1" />

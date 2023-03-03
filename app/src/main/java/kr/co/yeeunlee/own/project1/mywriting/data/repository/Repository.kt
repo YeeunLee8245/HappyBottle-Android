@@ -19,4 +19,6 @@ interface Repository {
     fun logout(callback: (userStatus: NetworkState) -> Unit)
 
     fun login(email: String, password: String, callback: (networkStatus: NetworkState) -> Unit)
+
+    fun loginInGoogle(callback: (networkStatus: NetworkState) -> Unit)
 }

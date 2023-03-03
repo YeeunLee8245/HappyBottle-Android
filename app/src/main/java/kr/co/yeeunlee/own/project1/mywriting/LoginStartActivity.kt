@@ -14,6 +14,7 @@ import kr.co.yeeunlee.own.project1.mywriting.ui.base.BaseActivity
 import kr.co.yeeunlee.own.project1.mywriting.utils.LoginTextValidChecker
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.ActivityState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
+import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -34,6 +35,9 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
         mBinidng.apply {
             loginButton.setOnClickListener { login(editEmail.text.toString(), editPW.text.toString()) }
             loginProgressBar.isVisible = false
+            screenProgressBar.isVisible = false
+
+
         }
         observeLoginStatus()
     }
@@ -59,8 +63,12 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
                 is NetworkState.Failed -> {
                     mBinidng.loginProgressBar.isVisible = false
                     mBinidng.loginButton.isEnabled = true
+                    Timber.i("로그인 네트워크 메시지 확인 ${it.message}")
                     when (it.message) {
-                        R.string.network_error_msg -> loadErrorMessage(Throwable(getString(it.message)))
+                        R.string.network_error_msg -> {
+                            loadErrorMessage(Throwable(getString(it.message)))
+                            Timber.i("로그인 네트워크 미연결")
+                        }
                         R.string.login_password_error -> mBinidng.editPW.error = getString(it.message)
                         R.string.login_both_error -> {
                             mBinidng.editEmail.error = getString(it.message)
@@ -80,6 +88,10 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
             mBinidng.editPW.error = getString(R.string.login_password_empty)
         if (valid.first && valid.second)
             mViewModel.login(email, password)
+    }
+
+    private fun loginInGoogle() {
+
     }
 
     // google용 Intent 결과
