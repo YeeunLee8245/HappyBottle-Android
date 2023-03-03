@@ -17,4 +17,6 @@ interface Repository {
     fun getUserLiveData(): LiveData<Pair<User?, AuthenticationState>>
 
     fun logout(callback: (userStatus: NetworkState) -> Unit)
+
+    fun login(email: String, password: String, callback: (networkStatus: NetworkState) -> Unit)
 }

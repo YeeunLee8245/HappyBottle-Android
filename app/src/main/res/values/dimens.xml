@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--    공통    -->
+    <dimen name="padding_button_n_progress">5dp</dimen>
+
     <!--   1. 로그인 시작 화면   -->
     <dimen name="text_login">22dp</dimen>
     <dimen name="text_edit1">15dp</dimen>

@@ -134,13 +134,15 @@ class SplashActivity : AppCompatActivity() { // View와의 동작이 없기 때�
     }
 
     private fun startApp(screen: ActivityState) {
-        val intent: Intent
+        var intent: Intent? = null
         when (screen) {
             ActivityState.Main -> intent = Intent(this, MainActivity::class.java)
             ActivityState.Login -> intent = Intent(this, LoginStartActivity::class.java)
         }
-        startActivity(intent)
-        finish()
+        intent?.let {
+            startActivity(intent)
+            finish()
+        }
     }
     // pre(start~end)
 //    private suspend fun userDelete() {

@@ -26,4 +26,12 @@ class RepositoryImpl @Inject constructor(private val firebaseDaoImpl: FirebaseDa
     override fun logout(callback: (userStatus: NetworkState) -> Unit) {
         firebaseDaoImpl.logout(callback)
     }
+
+    override fun login(
+        email: String,
+        password: String,
+        callback: (networkStatus: NetworkState) -> Unit
+    ) {
+        firebaseDaoImpl.login(email, password, callback)
+    }
 }

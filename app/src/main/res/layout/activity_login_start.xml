@@ -156,20 +156,37 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.79" />
 
-    <Button
-        android:id="@+id/btnLogin"
+    <RelativeLayout
+        android:id="@+id/layout_btn_login"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/btn_pressed_lss"
-        android:paddingBottom="@dimen/padding_b_login"
-        android:fontFamily="@font/font_info"
-        android:text="로그인"
-        android:textSize="@dimen/text_btn_login"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/guideHTBL2"
         app:layout_constraintEnd_toStartOf="@+id/guideVRBL"
         app:layout_constraintStart_toStartOf="@+id/guideVLBL"
-        app:layout_constraintTop_toTopOf="@+id/guideHTBL" />
+        app:layout_constraintTop_toTopOf="@+id/guideHTBL">
+
+        <Button
+            android:id="@+id/login_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/btn_pressed_lss"
+            android:fontFamily="@font/font_info"
+            android:paddingBottom="@dimen/padding_b_login"
+            android:text="로그인"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_btn_login" />
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/login_progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/layout_btn_login"
+        app:layout_constraintRight_toRightOf="@+id/layout_btn_login"
+        app:layout_constraintTop_toTopOf="@+id/layout_btn_login"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_btn_login"
+        android:padding="@dimen/padding_button_n_progress"
+        android:theme="@style/ProgressbarStyle" />
 
     <Button
         android:id="@+id/btnSign"

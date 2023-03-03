@@ -21,6 +21,9 @@ class FirebaseViewModel @Inject constructor(
     private val _logoutStatus = MutableLiveData<NetworkState>()
     val logoutStatus: LiveData<NetworkState> = _logoutStatus
 
+    private val _loginStatus = MutableLiveData<NetworkState>()
+    val loginStatus: LiveData<NetworkState> = _loginStatus
+
     private val _fragmentStatus = MutableLiveData<Pair<FragmentState, Boolean>>()
     val fragmentStatus: LiveData<Pair<FragmentState, Boolean>> = _fragmentStatus
 
@@ -45,10 +48,16 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
+    fun login(email: String, password: String) {
+        repository.login(email, password) {
+            _loginStatus.value = it
+        }
+    }
+
     fun setNewUser(username: String, userEmail: String) {
         repository.setNewUser(username, userEmail) {
             _userStatus.value = it
-            if (it == NetworkState.Loaded) setFragmentState(FragmentState.Home)
+            if (it == NetworkState.Loading) setFragmentState(FragmentState.Home)
         }
     }
 }

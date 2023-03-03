@@ -22,4 +22,8 @@
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_app_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.MyWriting</item>
     </style>
+
+    <style name="ProgressbarStyle">
+        <item name="colorAccent">@color/white</item>
+    </style>
 </resources>

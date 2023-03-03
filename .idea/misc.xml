@@ -10,7 +10,7 @@
         <entry key="app/src/main/res/drawable/ic_app_splash_v31.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/splash.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/splash_inset.xml" value="0.11" />
-        <entry key="app/src/main/res/layout/activity_login_start.xml" value="0.18885869565217392" />
+        <entry key="app/src/main/res/layout/activity_login_start.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.13627152988855115" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.13829787234042554" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1" />

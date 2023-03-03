@@ -1,16 +1,12 @@
 package kr.co.yeeunlee.own.project1.mywriting.data.firebase
 
-import android.content.Intent
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Transformations
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.firestore.FieldValue
-import kr.co.yeeunlee.own.project1.mywriting.LoginStartActivity
 import kr.co.yeeunlee.own.project1.mywriting.R
 import kr.co.yeeunlee.own.project1.mywriting.data.model.User
-import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
+import timber.log.Timber
 import javax.inject.Inject
 
 class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: FirebaseSettings) { // Query를 통해 DB(Firebase)를 다루는 객체
@@ -53,7 +49,7 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
         callback: (userStatus: NetworkState) -> Unit
     ) {
         val user = User()
-        callback(NetworkState.Loaded)
+        callback(NetworkState.Loading)
         user.email = userEmail
         user.name = username
         dbRefCheck.document("name")
@@ -80,10 +76,26 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
     }
 
     fun logout(callback: (userStatus: NetworkState) -> Unit) {
-        callback(NetworkState.Loaded)
+        callback(NetworkState.Loading)
         firebaseSettings.getSignInClient().signOut()
             .addOnSuccessListener { callback(NetworkState.Success) }
             .addOnFailureListener { callback(NetworkState.Failed(R.string.server_error)) }
+    }
+
+    fun login(email: String, password: String, callback: (networkStatus: NetworkState) -> Unit) {
+        callback(NetworkState.Loading)
+        firebaseSettings.getAuthentication().signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener { callback(NetworkState.Success) }
+            .addOnFailureListener {
+                Timber.i("로그인 ${it.cause}\n ${it.message}")
+                if (it.message == null || it.message?.isEmpty() == true) {
+                    callback(NetworkState.Failed(R.string.network_error_msg))
+                } else if (it.message?.contains("password") == true) {
+                    callback(NetworkState.Failed(R.string.login_password_error))
+                } else { // 아이디 정보 없을 때, it.message = There is no user record corresponding to this identifier. The user may have been deleted.
+                    callback(NetworkState.Failed(R.string.login_both_error))
+                }
+            }
     }
 
 }
