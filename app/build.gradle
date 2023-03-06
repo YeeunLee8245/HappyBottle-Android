@@ -24,7 +24,7 @@ android {
         debug{
             aaptOptions.cruncherEnabled = false // png 크런칭 비활성화
             minifyEnabled true
-            shrinkResources false
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release { // release 할 때 시스템 접근 관련 코드도 줄이면 안되니기 때문에 shrinkResources는 false로 바꾸기

@@ -8,6 +8,7 @@ import android.view.WindowInsetsController
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
@@ -17,7 +18,10 @@ import kr.co.yeeunlee.own.project1.mywriting.ui.base.BaseActivity
 import kr.co.yeeunlee.own.project1.mywriting.utils.GoogleSignInHelper
 import kr.co.yeeunlee.own.project1.mywriting.utils.LoginTextValidChecker
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.ActivityState
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
+import timber.log.Timber
+import java.lang.NullPointerException
 import javax.inject.Inject
 
 
@@ -44,16 +48,16 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             try {
                 val account = googleSignInHelper.getAccountResult(it.data, ApiException::class.java)
-                //signInGoogleWithFirebase(account)
+                signInGoogleWithFirebase(account)
             } catch (e: ApiException) {
-
+                loadErrorMessage(Throwable(getString(R.string.login_error_with_google)))
             }
         }
 
     override fun subscribeUi() {
         setScreen()
         mViewModel.apply {
-
+            logout() // TODO: 구글 로그인 테스트 후 삭제
         }
         mBinidng.apply {
             loginButton.setOnClickListener { login(editEmail.text.toString(), editPW.text.toString()) }
@@ -63,6 +67,7 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
 
         }
         observeLoginStatus()
+        observeAvailableEmailStatus()
     }
 
     private fun observeLoginStatus() {
@@ -93,6 +98,17 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
         }
     }
 
+    private fun observeAvailableEmailStatus() {
+        mViewModel.availableEmailStatus.observe(this) {
+            when (it) {
+                is AuthenticationState.Authenticated -> moveToScreen(ActivityState.Main)
+                is AuthenticationState.Unauthenticated -> createNickName()
+                is AuthenticationState.InvalidAuthentication -> loadErrorMessage(Throwable(getString(it.message)))
+            }
+            Timber.i("구글 로그인 인증 상태${it}")
+        }
+    }
+
     private fun login(email: String, password: String) {
         val valid = LoginTextValidChecker(email, password).checkNotEmpty()
         if (!valid.first)
@@ -105,6 +121,22 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
 
     private fun signInGoogle() {
         mActivityResult.launch(googleSignInHelper.getGoogleSignIntent())
+    }
+
+    private fun signInGoogleWithFirebase(account: GoogleSignInAccount) {
+        Timber.i("구글 로그인 시도한 이메한: ${account.email}")
+        account.email?.let {
+            mViewModel.isAvailableEmail(it)
+            return
+        }
+        loadErrorMessage(Throwable(getString(R.string.server_error)))
+    }
+
+    private fun createNickName() {
+        val dialog = NameLayoutDialog()
+        this.supportFragmentManager.let { fragmentManager ->
+            dialog.show(fragmentManager, "nameCreate")
+        }
     }
 
     // google용 Intent 결과

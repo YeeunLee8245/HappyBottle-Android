@@ -18,10 +18,11 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
     private val dbRefCheck by lazy { firebaseFireStore.collection("check") }
 
     val user = UserLiveData()
-    private val userLiveData = Transformations.map(user) { userWithAuth -> // TODO: user 값 수정될 떄마다 진행할 처리
+    private val userLiveData =
+        Transformations.map(user) { userWithAuth -> // TODO: user 값 수정될 떄마다 진행할 처리
 //        // TODO: 다른 클래스에서 userLiveData 속성이 쓰일 때 여기서 관련 속성 초기화해주기
-        // TODO: 토큰처리
-    }
+            // TODO: 토큰처리
+        }
 
     companion object {
         const val BOTTLE_SIZE = 30
@@ -68,7 +69,7 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
                 callback(AuthenticationState.Authenticated(email))
                 user.value
             } else {
-                callback(AuthenticationState.InvalidAuthentication)
+                callback(AuthenticationState.InvalidAuthentication(R.string.server_error))
             }
         } else {
             callback(AuthenticationState.Unauthenticated)
@@ -94,6 +95,27 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
                 } else { // 아이디 정보 없을 때, it.message = There is no user record corresponding to this identifier. The user may have been deleted.
                     callback(NetworkState.Failed(R.string.login_both_error))
                 }
+            }
+    }
+
+    fun isAvailableEmail(
+        email: String,
+        authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
+        networkCallback: (networkStatus: NetworkState) -> Unit
+    ) {
+        networkCallback(NetworkState.Loading)
+        firebaseSettings.getAuthentication().signInWithEmailAndPassword(email, "1111")
+            .addOnSuccessListener {
+                authenticationCallback(AuthenticationState.InvalidAuthentication(R.string.login_error_with_google))
+                networkCallback(NetworkState.Success)
+            }
+            .addOnFailureListener {
+                if (it.message?.contains("password") == true) { // 기존 계정 존재
+                    authenticationCallback(AuthenticationState.Authenticated(email))
+                } else { // 기존 계정 존재하지 않음 => 새 계정
+                    authenticationCallback(AuthenticationState.Unauthenticated)
+                }
+                networkCallback(NetworkState.Success)
             }
     }
 

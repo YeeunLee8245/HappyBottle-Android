@@ -38,4 +38,12 @@ class RepositoryImpl @Inject constructor(private val firebaseDaoImpl: FirebaseDa
     override fun loginInGoogle(callback: (networkStatus: NetworkState) -> Unit) {
 
     }
+
+    override fun isAvailableEmail(
+        email: String,
+        authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
+        networkCallback: (networkStatus: NetworkState) -> Unit
+    ) {
+        firebaseDaoImpl.isAvailableEmail(email, authenticationCallback, networkCallback)
+    }
 }
