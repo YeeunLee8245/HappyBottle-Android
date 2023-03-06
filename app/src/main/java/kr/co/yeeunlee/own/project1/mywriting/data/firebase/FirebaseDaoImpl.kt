@@ -110,7 +110,10 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
                 networkCallback(NetworkState.Success)
             }
             .addOnFailureListener {
-                if (it.message?.contains("password") == true) { // 기존 계정 존재
+                if (it.message?.contains("network") == true) {
+                    networkCallback(NetworkState.Failed(R.string.network_error_msg))
+                    return@addOnFailureListener
+                } else if (it.message?.contains("password") == true) { // 기존 계정 존재
                     authenticationCallback(AuthenticationState.Authenticated(email))
                 } else { // 기존 계정 존재하지 않음 => 새 계정
                     authenticationCallback(AuthenticationState.Unauthenticated)

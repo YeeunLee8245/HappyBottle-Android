@@ -49,8 +49,8 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
             try {
                 val account = googleSignInHelper.getAccountResult(it.data, ApiException::class.java)
                 signInGoogleWithFirebase(account)
-            } catch (e: ApiException) {
-                loadErrorMessage(Throwable(getString(R.string.login_error_with_google)))
+            } catch (e: ApiException) { // 뒤로가기, 인증된 sha-1키가 아닌 경우 발생
+                Timber.i("구글 로그인 실패")
             }
         }
 
@@ -68,6 +68,7 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
         }
         observeLoginStatus()
         observeAvailableEmailStatus()
+        observeGoogleLoginStatus()
     }
 
     private fun observeLoginStatus() {
@@ -106,6 +107,26 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
                 is AuthenticationState.InvalidAuthentication -> loadErrorMessage(Throwable(getString(it.message)))
             }
             Timber.i("구글 로그인 인증 상태${it}")
+        }
+    }
+
+    private fun observeGoogleLoginStatus() {
+        mViewModel.loginInGoogleStatus.observe(this) {
+            when (it) {
+                NetworkState.Success -> {
+                    mBinidng.screenProgressBar.isVisible = false
+                    mBinidng.googleSigninButton.isEnabled = true
+                }
+                NetworkState.Loading -> {  // TODO: 통합 테스트(Andorid Test) 통해 로딩 중 googleButton 눌리는지 확인
+                    mBinidng.screenProgressBar.isVisible = true
+                    mBinidng.googleSigninButton.isEnabled = false
+                }
+                is NetworkState.Failed -> {
+                    mBinidng.screenProgressBar.isVisible = false
+                    mBinidng.googleSigninButton.isEnabled = true
+                    loadErrorMessage(Throwable(getString(it.message)))
+                }
+            }
         }
     }
 
