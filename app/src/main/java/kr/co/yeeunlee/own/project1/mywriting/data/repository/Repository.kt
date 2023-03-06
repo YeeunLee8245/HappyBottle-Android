@@ -27,4 +27,10 @@ interface Repository {
         authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
         networkCallback: (networkStatus: NetworkState) -> Unit
     )
+
+    fun isAvailableNickName(
+        nickname: String,
+        authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
+        networkCallback: (networkStatus: NetworkState) -> Unit
+    )
 }

@@ -8,12 +8,11 @@ import android.view.LayoutInflater
 import androidx.activity.viewModels
 import androidx.viewbinding.ViewBinding
 import kr.co.kumoh.d134.isl.base.BaseContractView
-import kr.co.yeeunlee.own.project1.mywriting.LoginStartActivity
+import kr.co.yeeunlee.own.project1.mywriting.ui.LoginStartActivity
 import kr.co.yeeunlee.own.project1.mywriting.MainActivity
 import kr.co.yeeunlee.own.project1.mywriting.SignInActivity
 import kr.co.yeeunlee.own.project1.mywriting.ui.FirebaseViewModel
 import kr.co.yeeunlee.own.project1.mywriting.utils.ErrorAlertDialog
-import kr.co.yeeunlee.own.project1.mywriting.utils.LoadingDialogUtil
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.ActivityState
 
 abstract class BaseActivity<VB : ViewBinding>(

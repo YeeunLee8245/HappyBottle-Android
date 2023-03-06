@@ -11,12 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import kr.co.yeeunlee.own.project1.mywriting.databinding.DialogNameLayoutBinding
+import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentNicknameDialogBinding
 import kr.co.yeeunlee.own.project1.mywriting.ui.HomeFragment
 
 
 class OpinionDialogFragment(val typeDialog:String) : DialogFragment() {
-    private var _binding: DialogNameLayoutBinding? = null
+    private var _binding: FragmentNicknameDialogBinding? = null
     private val binding get() = _binding!!
     private lateinit var opinionOnBtnClickListener:OpinionOnBtnClickListener
 
@@ -27,7 +27,7 @@ class OpinionDialogFragment(val typeDialog:String) : DialogFragment() {
     ): View? {
         val dpZero:Int = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP
             ,0F,resources.displayMetrics).toInt()
-        _binding = DialogNameLayoutBinding.inflate(inflater,container,false)
+        _binding = FragmentNicknameDialogBinding.inflate(inflater,container,false)
         binding.textName.setTextSize(TypedValue.COMPLEX_UNIT_DIP,40F)
 
         binding.editName.width = dpZero
@@ -46,7 +46,7 @@ class OpinionDialogFragment(val typeDialog:String) : DialogFragment() {
                 val intentGStore: Intent = Intent(Intent.ACTION_VIEW)
                 val packageName = "kr.co.yeeunlee.own.project1.mywriting"
                 intentGStore.setData(Uri.parse("market://details?id=" + packageName))
-                activity!!.startActivity(intentGStore)
+                requireActivity().startActivity(intentGStore)
             }
         }else if (typeDialog == HomeFragment.FILL_TAG){
             binding.textName.text = "저금통 하나가 꽉 찼어요!\n꽉 찬 저금통의 쪽지를 보관함에서 확인해보세요!"

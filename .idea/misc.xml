@@ -14,7 +14,9 @@
         <entry key="app/src/main/res/layout/activity_login_start.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.13627152988855115" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.13829787234042554" />
+        <entry key="app/src/main/res/layout/dialog_name_layout.xml" value="0.16847826086956522" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_nickname_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
       </map>
     </option>

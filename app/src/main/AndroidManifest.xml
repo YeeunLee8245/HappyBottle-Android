@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".InfoViewpagerActivity" />
-        <activity android:name=".LoginStartActivity"/>
+        <activity android:name=".ui.LoginStartActivity"/>
         <activity android:name=".SignInActivity" />
         <activity android:name=".MainActivity" />
 

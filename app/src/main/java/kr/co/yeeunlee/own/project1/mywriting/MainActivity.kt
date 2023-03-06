@@ -9,14 +9,10 @@ import android.view.Gravity
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kr.co.yeeunlee.own.project1.mywriting.data.FirebaseRepository
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityMainBinding
 import kr.co.yeeunlee.own.project1.mywriting.ui.HomeFragment
+import kr.co.yeeunlee.own.project1.mywriting.ui.LoginStartActivity
 import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
 
 class MainActivity : AppCompatActivity() {

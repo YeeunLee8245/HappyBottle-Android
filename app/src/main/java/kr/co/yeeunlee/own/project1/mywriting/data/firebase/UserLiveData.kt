@@ -30,7 +30,7 @@ class UserLiveData : LiveData<Pair<User?, AuthenticationState>>() {
 
     private val firebaseAuth by lazy { firebaseSettings.getAuthentication() }
     private val firebaseFireStore by lazy { firebaseSettings.getFirestore() }
-    private val dbRefUser by lazy { firebaseFireStore.collection("user") }
+    private val dbRefUser by lazy { firebaseFireStore.collection("test_user") }
 
     private val authStateListener = FirebaseAuth.AuthStateListener { firebasAuth ->
         firebasAuth.currentUser?.email?.let { email ->

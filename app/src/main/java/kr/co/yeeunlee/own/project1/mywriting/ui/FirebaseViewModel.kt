@@ -30,6 +30,12 @@ class FirebaseViewModel @Inject constructor(
     private val _availableEmailStatus = MutableLiveData<AuthenticationState>()
     val availableEmailStatus: LiveData<AuthenticationState> = _availableEmailStatus
 
+    private val _availableNickNameStatus = MutableLiveData<AuthenticationState>()
+    val availableNickNameStatus: LiveData<AuthenticationState> = _availableNickNameStatus
+
+    private val _duplicatedNickNameStatus = MutableLiveData<NetworkState>()
+    val duplicatedNickNameStatus: LiveData<NetworkState> = _duplicatedNickNameStatus
+
     private val _fragmentStatus = MutableLiveData<Pair<FragmentState, Boolean>>()
     val fragmentStatus: LiveData<Pair<FragmentState, Boolean>> = _fragmentStatus
 
@@ -53,6 +59,14 @@ class FirebaseViewModel @Inject constructor(
             email,
             { _availableEmailStatus.value = it },
             { _loginInGoogleStatus.value = it })
+    }
+
+    fun isAvailableNickName(nickname: String) {
+        repository.isAvailableNickName(
+            nickname,
+            { _availableNickNameStatus.value = it },
+            { _duplicatedNickNameStatus.value = it }
+        )
     }
 
     fun logout() {

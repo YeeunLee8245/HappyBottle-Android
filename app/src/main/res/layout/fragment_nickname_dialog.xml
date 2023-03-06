@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    tools:context=".NameLayoutDialog">
+    android:layout_gravity="center">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="322dp"
@@ -28,7 +26,7 @@
 
 
             <TextView
-                android:id="@+id/textName"
+                android:id="@+id/description_text"
                 android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/font_info"
@@ -41,33 +39,20 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/editName"
+                android:id="@+id/name_edit_text"
                 android:layout_width="200dp"
                 android:layout_height="45dp"
-                android:layout_marginRight="10dp"
                 android:background="@drawable/edit_dialog"
                 android:inputType="textPersonName"
                 android:maxLength="7"
                 android:maxLines="1"
-                app:layout_constraintBottom_toBottomOf="@+id/btnNameDuplicate"
-                app:layout_constraintEnd_toStartOf="@+id/btnNameDuplicate"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <Button
-                android:id="@+id/btnNameDuplicate"
-                android:layout_width="50dp"
-                android:layout_height="40dp"
-                android:background="@drawable/btn_chk_dialog"
-                android:fontFamily="@font/font_info"
-                android:text="중복확인"
-                android:textColor="@color/white"
-                android:textSize="22dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/complete_button"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/description_text" />
 
             <Button
-                android:id="@+id/btnNameComplete"
+                android:id="@+id/complete_button"
                 android:layout_width="140dp"
                 android:layout_height="45dp"
                 android:layout_marginBottom="25dp"

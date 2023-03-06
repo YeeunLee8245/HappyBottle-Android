@@ -13,7 +13,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
-import kr.co.yeeunlee.own.project1.mywriting.LoginStartActivity
 import kr.co.yeeunlee.own.project1.mywriting.MainActivity
 import kr.co.yeeunlee.own.project1.mywriting.R
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivitySplashBinding

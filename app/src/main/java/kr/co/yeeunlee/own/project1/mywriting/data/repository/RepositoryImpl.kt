@@ -46,4 +46,12 @@ class RepositoryImpl @Inject constructor(private val firebaseDaoImpl: FirebaseDa
     ) {
         firebaseDaoImpl.isAvailableEmail(email, authenticationCallback, networkCallback)
     }
+
+    override fun isAvailableNickName(
+        nickname: String,
+        authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
+        networkCallback: (networkStatus: NetworkState) -> Unit
+    ) {
+        firebaseDaoImpl.isAvailableNickName(nickname, authenticationCallback, networkCallback)
+    }
 }

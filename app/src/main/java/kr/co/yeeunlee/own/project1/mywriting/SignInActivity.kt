@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivitySignInBinding
+import kr.co.yeeunlee.own.project1.mywriting.ui.LoginStartActivity
 import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
 import kr.co.yeeunlee.own.project1.mywriting.utils.AlertUtil
 import java.util.regex.Pattern
@@ -61,7 +62,7 @@ class SignInActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        val intentLogin = Intent(this,LoginStartActivity::class.java)
+        val intentLogin = Intent(this, LoginStartActivity::class.java)
         intentLogin.action = android.content.Intent.ACTION_MAIN
         intentLogin.addCategory(android.content.Intent.CATEGORY_LAUNCHER)
         intentLogin.flags = android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP

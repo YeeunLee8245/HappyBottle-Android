@@ -1,4 +1,4 @@
-package kr.co.yeeunlee.own.project1.mywriting
+package kr.co.yeeunlee.own.project1.mywriting.ui
 
 import android.content.Intent
 import android.os.Build
@@ -7,21 +7,21 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
+import kr.co.yeeunlee.own.project1.mywriting.NetworkConnection
+import kr.co.yeeunlee.own.project1.mywriting.R
+import kr.co.yeeunlee.own.project1.mywriting.User
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
-import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity
-import kr.co.yeeunlee.own.project1.mywriting.ui.SplashActivity.Companion.gso
 import kr.co.yeeunlee.own.project1.mywriting.ui.base.BaseActivity
+import kr.co.yeeunlee.own.project1.mywriting.ui.dialog.NickNameDialogFragment
 import kr.co.yeeunlee.own.project1.mywriting.utils.GoogleSignInHelper
 import kr.co.yeeunlee.own.project1.mywriting.utils.LoginTextValidChecker
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.ActivityState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
 import timber.log.Timber
-import java.lang.NullPointerException
 import javax.inject.Inject
 
 
@@ -33,6 +33,8 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
         const val INFO_TAG = 1004
         const val PROFILE_IMG_TAG = "profileImg"
         const val NAME_TAG = "username"
+
+        const val NICKNAME_DIALOG = "nickname_dialog"
     }
 
     private lateinit var binding: ActivityLoginStartBinding
@@ -154,9 +156,10 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
     }
 
     private fun createNickName() {
-        val dialog = NameLayoutDialog()
+        val dialog = NickNameDialogFragment()
         this.supportFragmentManager.let { fragmentManager ->
-            dialog.show(fragmentManager, "nameCreate")
+            if (fragmentManager.findFragmentByTag(NICKNAME_DIALOG) == null)
+                dialog.show(fragmentManager, NICKNAME_DIALOG)
         }
     }
 

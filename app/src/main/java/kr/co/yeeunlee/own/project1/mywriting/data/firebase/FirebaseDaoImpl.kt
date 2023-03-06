@@ -14,8 +14,8 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
     private val firebaseFireStore by lazy { firebaseSettings.getFirestore() }
     private val firebaseAuth by lazy { firebaseSettings.getAuthentication() }
 
-    private val dbRefUser by lazy { firebaseFireStore.collection("user") }
-    private val dbRefCheck by lazy { firebaseFireStore.collection("check") }
+    private val dbRefUser by lazy { firebaseFireStore.collection("test_user") }
+    private val dbRefCheck by lazy { firebaseFireStore.collection("test_check") }
 
     val user = UserLiveData()
     private val userLiveData =
@@ -120,6 +120,16 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
                 }
                 networkCallback(NetworkState.Success)
             }
+    }
+
+    fun isAvailableNickName(
+        nickname: String,
+        authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
+        networkCallback: (networkStatus: NetworkState) -> Unit
+    ) {
+        val nickname = dbRefCheck.document("test_name").addSnapshotListener { query, error ->
+            error?.let { networkCallback }
+        }
     }
 
 //    fun loginInGoogle(callback: (networkStatus: NetworkState) -> Unit) {
