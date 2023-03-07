@@ -1,12 +1,9 @@
 package kr.co.yeeunlee.own.project1.mywriting.data.firebase
 
-import android.app.Application
 import android.content.Context
 import androidx.lifecycle.Transformations
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestoreException
 import kr.co.yeeunlee.own.project1.mywriting.R
-import kr.co.yeeunlee.own.project1.mywriting.data.firebase.FirebaseDaoImpl.Companion.DOCUMENT_NAME
 import kr.co.yeeunlee.own.project1.mywriting.data.model.User
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
@@ -151,14 +148,16 @@ class FirebaseDaoImpl @Inject constructor(
             .addOnSuccessListener {
                 Timber.i("닉네임 성공 $it")
                 if (it == ERROR_MSG_ALREADY_EXISTS)
-                    resultCallback(ResultState.Failed(R.string.duplicate_nickname))
+                    resultCallback(ResultState.Failed(R.string.nickname_duplicate))
                 else
                     addNickName(nickname, resultCallback)
             }
             .addOnFailureListener {
                 Timber.d("닉네임 오류 ${it.message} // ${it.cause}")
-                Timber.d("닉네임 오류1 ${it.message} // ${it.message.equals(ERROR_MSG_ALREADY_EXISTS)}")
-                resultCallback(ResultState.Error(Exception(application.getString(R.string.network_error))))
+                if (it.message?.contains("Unable to resolve host") == true)
+                    resultCallback(ResultState.Error(Exception(application.getString(R.string.network_error))))
+                else
+                    resultCallback(ResultState.Error(Exception(application.getString(R.string.service_error)+"\n:${it}")))
             }
     }
 
