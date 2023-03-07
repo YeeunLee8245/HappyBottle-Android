@@ -5,10 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kr.co.yeeunlee.own.project1.mywriting.data.repository.Repository
-import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
-import kr.co.yeeunlee.own.project1.mywriting.utils.states.FragmentState
-import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
-import kr.co.yeeunlee.own.project1.mywriting.utils.states.ResultState
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.*
 import javax.inject.Inject
 
 @HiltViewModel // Hilt에서 ViewModel을 등록하는 것으로 화면(EntryPoint)를 찾고 의존 객체를 정의할 수 있음
@@ -28,22 +25,25 @@ class FirebaseViewModel @Inject constructor(
     private val _loginInGoogleStatus = MutableLiveData<NetworkState>()
     val loginInGoogleStatus: LiveData<NetworkState> = _loginInGoogleStatus
 
-    private val _availableEmailStatus = MutableLiveData<AuthenticationState>()
-    val availableEmailStatus: LiveData<AuthenticationState> = _availableEmailStatus
+    private val _availableEmailStatus = MutableLiveData<ResultState<Pair<String, Boolean>>>()
+    val availableEmailStatus: LiveData<ResultState<Pair<String, Boolean>>> = _availableEmailStatus
 
     private val _availableNickNameStatus = MutableLiveData<ResultState<String>>()
     val availableNickNameStatus: LiveData<ResultState<String>> = _availableNickNameStatus
 
-    private val _fragmentStatus = MutableLiveData<Pair<FragmentState, Boolean>>()
-    val fragmentStatus: LiveData<Pair<FragmentState, Boolean>> = _fragmentStatus
+    private val _activityStatus = MutableLiveData<ActivityState>()
+    val activityStatus: LiveData<ActivityState> = _activityStatus
+
+    private val _fragmentStatus = MutableLiveData<FragmentState>()
+    val fragmentStatus: LiveData<FragmentState> = _fragmentStatus
 
     val user = repository.getUserLiveData()
 
     private val _authenticationStatus = MutableLiveData<AuthenticationState>()
     val authenticationStatus: LiveData<AuthenticationState> = _authenticationStatus
 
-    fun setFragmentState(fragmentState: FragmentState, valid: Boolean = true) {
-        _fragmentStatus.value = Pair(fragmentState, valid)
+    fun setFragmentState(fragmentState: FragmentState) {
+        _fragmentStatus.value = fragmentState
     }
 
     fun isLoginState() {
@@ -53,17 +53,15 @@ class FirebaseViewModel @Inject constructor(
     }
 
     fun isAvailableEmail(email: String) {
-        repository.isAvailableEmail(
-            email,
-            { _availableEmailStatus.value = it },
-            { _loginInGoogleStatus.value = it })
+        repository.isAvailableEmail(email) {
+            _availableEmailStatus.value = it
+        }
     }
 
     fun isAvailableNickName(nickname: String) {
         repository.isAvailableNickName(nickname) {
             _availableNickNameStatus.value = it
         }
-
     }
 
     fun logout() {
@@ -84,7 +82,7 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun setNewUser(username: String, userEmail: String) {
+    fun addNewUser(username: String, userEmail: String) {
         repository.setNewUser(username, userEmail) {
             _userStatus.value = it
             if (it == NetworkState.Loading) setFragmentState(FragmentState.Home)

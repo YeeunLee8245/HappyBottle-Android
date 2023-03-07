@@ -25,12 +25,13 @@ interface Repository {
 
     fun isAvailableEmail(
         email: String,
-        authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
-        networkCallback: (networkStatus: NetworkState) -> Unit
+        resultCallback: (resultStatus: ResultState<Pair<String, Boolean>>) -> Unit
     )
 
     fun isAvailableNickName(
         nickname: String,
         resultCallback: (resultStatus: ResultState<String>) -> Unit
     )
+
+    fun addNewUser()
 }

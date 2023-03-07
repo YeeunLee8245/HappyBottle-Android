@@ -42,10 +42,9 @@ class RepositoryImpl @Inject constructor(private val firebaseDaoImpl: FirebaseDa
 
     override fun isAvailableEmail(
         email: String,
-        authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
-        networkCallback: (networkStatus: NetworkState) -> Unit
+        resultCallback: (resultStatus: ResultState<Pair<String, Boolean>>) -> Unit
     ) {
-        firebaseDaoImpl.isAvailableEmail(email, authenticationCallback, networkCallback)
+        firebaseDaoImpl.isAvailableEmail(email, resultCallback)
     }
 
     override fun isAvailableNickName(
@@ -53,6 +52,10 @@ class RepositoryImpl @Inject constructor(private val firebaseDaoImpl: FirebaseDa
         resultCallback: (resultStatus: ResultState<String>) -> Unit
     ) {
         firebaseDaoImpl.isAvailableNickName(nickname, resultCallback)
+    }
+
+    override fun addNewUser() {
+        TODO("Not yet implemented")
     }
 
 }

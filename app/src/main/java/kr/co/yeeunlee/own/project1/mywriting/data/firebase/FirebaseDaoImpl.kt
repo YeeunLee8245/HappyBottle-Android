@@ -108,25 +108,26 @@ class FirebaseDaoImpl @Inject constructor(
 
     fun isAvailableEmail(
         email: String,
-        authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
-        networkCallback: (networkStatus: NetworkState) -> Unit
+        resultCallback: (resultStatus: ResultState<Pair<String, Boolean>>) -> Unit
     ) {
-        networkCallback(NetworkState.Loading)
+        resultCallback(ResultState.Loading)
         firebaseSettings.getAuthentication().signInWithEmailAndPassword(email, "1111")
             .addOnSuccessListener {
-                authenticationCallback(AuthenticationState.InvalidAuthentication(R.string.login_error_with_google))
-                networkCallback(NetworkState.Success)
+                //resultCallback(ResultState.InvalidAuthentication(R.string.login_error_with_google))
+                resultCallback(ResultState.Failed(R.string.login_error_with_google))
+//                networkCallback(NetworkState.Success)
             }
             .addOnFailureListener {
                 if (it.message?.contains("network") == true) {
-                    networkCallback(NetworkState.Failed(R.string.network_error_msg))
-                    return@addOnFailureListener
+                    resultCallback(ResultState.Failed(R.string.network_error_msg))
                 } else if (it.message?.contains("password") == true) { // 기존 계정 존재
-                    authenticationCallback(AuthenticationState.Authenticated(email))
-                } else { // 기존 계정 존재하지 않음 => 새 계정
-                    authenticationCallback(AuthenticationState.Unauthenticated)
-                }
-                networkCallback(NetworkState.Success)
+                    //authenticationCallback(AuthenticationState.Authenticated(email))
+                    resultCallback(ResultState.Success(Pair(email, true)))
+                } else if (it.message?.contains("no user") == true) { // 기존 계정 존재하지 않음 => 새 계정
+                    //authenticationCallback(AuthenticationState.Unauthenticated)
+                    resultCallback(ResultState.Success(Pair(email, false)))
+                } else
+                    resultCallback(ResultState.Error(Exception(application.getString(R.string.server_error) + "\n:$it")))
             }
     }
 
@@ -157,7 +158,7 @@ class FirebaseDaoImpl @Inject constructor(
                 if (it.message?.contains("Unable to resolve host") == true)
                     resultCallback(ResultState.Error(Exception(application.getString(R.string.network_error))))
                 else
-                    resultCallback(ResultState.Error(Exception(application.getString(R.string.service_error)+"\n:${it}")))
+                    resultCallback(ResultState.Error(Exception(application.getString(R.string.service_error) + "\n:${it}")))
             }
     }
 

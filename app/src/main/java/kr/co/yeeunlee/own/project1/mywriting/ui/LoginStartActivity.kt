@@ -6,6 +6,7 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -16,11 +17,13 @@ import kr.co.yeeunlee.own.project1.mywriting.User
 import kr.co.yeeunlee.own.project1.mywriting.databinding.ActivityLoginStartBinding
 import kr.co.yeeunlee.own.project1.mywriting.ui.base.BaseActivity
 import kr.co.yeeunlee.own.project1.mywriting.ui.dialog.NickNameDialogFragment
+import kr.co.yeeunlee.own.project1.mywriting.ui.dialog.NickNameDialogFragment.Companion.EMAIL_ARGUMENT
 import kr.co.yeeunlee.own.project1.mywriting.utils.GoogleSignInHelper
 import kr.co.yeeunlee.own.project1.mywriting.utils.LoginTextValidChecker
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.ActivityState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.ResultState
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -44,7 +47,8 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
     private val db = SplashActivity.db
     private val mAuth = SplashActivity.mAuth
 
-    @Inject lateinit var googleSignInHelper: GoogleSignInHelper
+    @Inject
+    lateinit var googleSignInHelper: GoogleSignInHelper
 
     private val mActivityResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -62,7 +66,12 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
             logout() // TODO: 구글 로그인 테스트 후 삭제
         }
         mBinidng.apply {
-            loginButton.setOnClickListener { login(editEmail.text.toString(), editPW.text.toString()) }
+            loginButton.setOnClickListener {
+                login(
+                    editEmail.text.toString(),
+                    editPW.text.toString()
+                )
+            }
             loginProgressBar.isVisible = false
             googleSigninButton.setOnClickListener { signInGoogle() }
             screenProgressBar.isVisible = false
@@ -70,7 +79,6 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
         }
         observeLoginStatus()
         observeAvailableEmailStatus()
-        observeGoogleLoginStatus()
     }
 
     private fun observeLoginStatus() {
@@ -90,7 +98,8 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
                     mBinidng.loginButton.isEnabled = true
                     when (it.message) {
                         R.string.network_error_msg -> loadErrorMessage(Throwable(getString(it.message)))
-                        R.string.login_password_error -> mBinidng.editPW.error = getString(it.message)
+                        R.string.login_password_error -> mBinidng.editPW.error =
+                            getString(it.message)
                         R.string.login_both_error -> {
                             mBinidng.editEmail.error = getString(it.message)
                             mBinidng.editPW.error = getString(it.message)
@@ -104,31 +113,32 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
     private fun observeAvailableEmailStatus() {
         mViewModel.availableEmailStatus.observe(this) {
             when (it) {
-                is AuthenticationState.Authenticated -> moveToScreen(ActivityState.Main)
-                is AuthenticationState.Unauthenticated -> createNickName()
-                is AuthenticationState.InvalidAuthentication -> loadErrorMessage(Throwable(getString(it.message)))
-            }
-            Timber.i("구글 로그인 인증 상태${it}")
-        }
-    }
-
-    private fun observeGoogleLoginStatus() {
-        mViewModel.loginInGoogleStatus.observe(this) {
-            when (it) {
-                NetworkState.Success -> {
+                is ResultState.Error -> {
+                    loadErrorMessage(it.exception)
                     mBinidng.screenProgressBar.isVisible = false
                     mBinidng.googleSigninButton.isEnabled = true
                 }
-                NetworkState.Loading -> {  // TODO: 통합 테스트(Andorid Test) 통해 로딩 중 googleButton 눌리는지 확인
+                is ResultState.Failed -> {
+                    loadErrorMessage(Throwable(getString(it.message)))
+                    mBinidng.screenProgressBar.isVisible = false
+                    mBinidng.googleSigninButton.isEnabled = true
+                }
+                ResultState.Loading -> { // TODO: 통합 테스트(Andorid Test) 통해 로딩 중 googleButton 눌리는지 확인
                     mBinidng.screenProgressBar.isVisible = true
                     mBinidng.googleSigninButton.isEnabled = false
                 }
-                is NetworkState.Failed -> {
+                is ResultState.Success -> {
                     mBinidng.screenProgressBar.isVisible = false
                     mBinidng.googleSigninButton.isEnabled = true
-                    loadErrorMessage(Throwable(getString(it.message)))
+                    if (it.data.second) { // 기존 계정 존재 TODO: 기존 유저 데이터 불러오기 추가
+                        // TODO: viewmodel.setUser()
+                        moveToScreen(ActivityState.Main)
+                    } else {
+                        createNickName(it.data.first)
+                    }
                 }
             }
+            Timber.i("구글 로그인 인증 상태${it}")
         }
     }
 
@@ -155,11 +165,13 @@ class LoginStartActivity : BaseActivity<ActivityLoginStartBinding>( // TODO: 에
         loadErrorMessage(Throwable(getString(R.string.server_error)))
     }
 
-    private fun createNickName() {
+    private fun createNickName(email: String) {
         val dialog = NickNameDialogFragment()
         this.supportFragmentManager.let { fragmentManager ->
-            if (fragmentManager.findFragmentByTag(NICKNAME_DIALOG) == null)
+            if (fragmentManager.findFragmentByTag(NICKNAME_DIALOG) == null) {
+                dialog.arguments = bundleOf(EMAIL_ARGUMENT to email)
                 dialog.show(fragmentManager, NICKNAME_DIALOG)
+            }
         }
     }
 

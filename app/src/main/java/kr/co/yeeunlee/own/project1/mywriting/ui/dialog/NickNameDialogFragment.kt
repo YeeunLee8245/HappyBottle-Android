@@ -27,6 +27,11 @@ class NickNameDialogFragment() : DialogFragment() {
     private val viewmodel: FirebaseViewModel by viewModels({requireActivity()})
     private val activity: LoginStartActivity by lazy { requireActivity() as LoginStartActivity }
     private val nicknameValidChecker = NickNameValidChecker()
+    private var email: String? = null
+
+    companion object {
+        const val EMAIL_ARGUMENT = "email_argument"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +39,8 @@ class NickNameDialogFragment() : DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNicknameDialogBinding.inflate(inflater, container, false)
+        email = arguments?.getString(EMAIL_ARGUMENT)
+        Timber.i("닉네임 이메일 ${email}")
         setScreen()
         return binding.root
     }
@@ -54,21 +61,24 @@ class NickNameDialogFragment() : DialogFragment() {
     }
 
     private fun observeAvailableNickName() {
-        viewmodel.availableNickNameStatus.observe(this) {
-            when (it) {
+        viewmodel.availableNickNameStatus.observe(this) { result ->
+            when (result) {
                 is ResultState.Error -> {
-                    activity.loadErrorMessage(it.exception)
+                    activity.loadErrorMessage(result.exception)
                     isProgressButton(false)
                 }
                 is ResultState.Failed -> {
-                    binding.nameEditText.error = getString(it.message)
+                    binding.nameEditText.error = getString(result.message)
                     isProgressButton(false)
                 }
                 ResultState.Loading -> {
                     isProgressButton(true)
                 }
                 is ResultState.Success -> {
-                    activity.moveToScreen(ActivityState.Main) // TODO: 계정 생성
+                    email?.let { email ->
+                        viewmodel.addNewUser(result.data, email)
+                        activity.moveToScreen(ActivityState.Main) // TODO: 계정 생성
+                    }
                     isProgressButton(false)
                 }
             }
