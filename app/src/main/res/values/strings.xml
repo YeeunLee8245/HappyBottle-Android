@@ -32,6 +32,7 @@
     <string name="login_email_empty">이메일을 입력해주세요.</string>
     <string name="login_password_empty">비밀번호를 입력해주세요.</string>
     <string name="login_error_with_google">구글 로그인에 실패했습니다.\n해당 구글 아이디를 이메일 leeyeah8245@gmail.com로 보내주세요.\n빠른 시간 내 문제 상황을 확인해드리겠습니다.</string>
+    <string name="duplicate_nickname">이미 존재하는 별명입니다.</string>
 
     <string name="error_code">\n오류코드:</string>
 </resources>

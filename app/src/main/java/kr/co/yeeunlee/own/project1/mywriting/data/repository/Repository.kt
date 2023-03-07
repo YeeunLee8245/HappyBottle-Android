@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import kr.co.yeeunlee.own.project1.mywriting.data.model.User
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.ResultState
 
 interface Repository {
     fun setNewUser(
@@ -30,7 +31,6 @@ interface Repository {
 
     fun isAvailableNickName(
         nickname: String,
-        authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
-        networkCallback: (networkStatus: NetworkState) -> Unit
+        resultCallback: (resultStatus: ResultState<String>) -> Unit
     )
 }

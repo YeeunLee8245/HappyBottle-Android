@@ -1,15 +1,31 @@
 package kr.co.yeeunlee.own.project1.mywriting.data.firebase
 
+import android.app.Application
+import android.content.Context
 import androidx.lifecycle.Transformations
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestoreException
 import kr.co.yeeunlee.own.project1.mywriting.R
+import kr.co.yeeunlee.own.project1.mywriting.data.firebase.FirebaseDaoImpl.Companion.DOCUMENT_NAME
 import kr.co.yeeunlee.own.project1.mywriting.data.model.User
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.ResultState
 import timber.log.Timber
+import java.lang.Exception
 import javax.inject.Inject
 
-class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: FirebaseSettings) { // Query를 통해 DB(Firebase)를 다루는 객체
+class FirebaseDaoImpl @Inject constructor(
+    private val application: Context,
+    private val firebaseSettings: FirebaseSettings
+) { // Query를 통해 DB(Firebase)를 다루는 객체
+
+    companion object {
+        const val DOCUMENT_NAME = "test_name"
+        const val BOTTLE_SIZE = 30
+        const val SHELF_SIZE = 3
+        const val ERROR_MSG_ALREADY_EXISTS = "duplicate_nickname"
+    }
 
     private val firebaseFireStore by lazy { firebaseSettings.getFirestore() }
     private val firebaseAuth by lazy { firebaseSettings.getAuthentication() }
@@ -23,11 +39,6 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
 //        // TODO: 다른 클래스에서 userLiveData 속성이 쓰일 때 여기서 관련 속성 초기화해주기
             // TODO: 토큰처리
         }
-
-    companion object {
-        const val BOTTLE_SIZE = 30
-        const val SHELF_SIZE = 3
-    }
 
     private fun setUserInformation(user: User, callback: (userStatus: NetworkState) -> Unit) {
         val userEmail = this.user.value?.first?.email ?: run {
@@ -53,8 +64,8 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
         callback(NetworkState.Loading)
         user.email = userEmail
         user.name = username
-        dbRefCheck.document("name")
-            .update("name", FieldValue.arrayUnion(username))    // 닉네임 등록
+        dbRefCheck.document(DOCUMENT_NAME)
+            .update(DOCUMENT_NAME, FieldValue.arrayUnion(username))    // 닉네임 등록
             .addOnSuccessListener {
                 setUserInformation(user) { callback(it) } // setUserInformation에서 상태를 받아서 해당 callback으로 전달
             }
@@ -122,14 +133,42 @@ class FirebaseDaoImpl @Inject constructor(private val firebaseSettings: Firebase
             }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun isAvailableNickName(
         nickname: String,
-        authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
-        networkCallback: (networkStatus: NetworkState) -> Unit
+        resultCallback: (resultStatus: ResultState<String>) -> Unit
     ) {
-        val nickname = dbRefCheck.document("test_name").addSnapshotListener { query, error ->
-            error?.let { networkCallback }
+        resultCallback(ResultState.Loading)
+        firebaseFireStore.runTransaction { transaction ->
+            val snapshot = transaction.get(dbRefCheck.document(DOCUMENT_NAME))
+            val nameList = snapshot.get(DOCUMENT_NAME) as List<String>
+            if (!nameList.contains(nickname)) { // 닉네임 등록 가능
+                nickname
+            } else {    // 닉네임 등록 불가능
+                ERROR_MSG_ALREADY_EXISTS
+            }
         }
+            .addOnSuccessListener {
+                Timber.i("닉네임 성공 $it")
+                if (it == ERROR_MSG_ALREADY_EXISTS)
+                    resultCallback(ResultState.Failed(R.string.duplicate_nickname))
+                else
+                    addNickName(nickname, resultCallback)
+            }
+            .addOnFailureListener {
+                Timber.d("닉네임 오류 ${it.message} // ${it.cause}")
+                Timber.d("닉네임 오류1 ${it.message} // ${it.message.equals(ERROR_MSG_ALREADY_EXISTS)}")
+                resultCallback(ResultState.Error(Exception(application.getString(R.string.network_error))))
+            }
+    }
+
+    private fun addNickName(
+        nickname: String,
+        resultCallback: (resultStatus: ResultState<String>) -> Unit
+    ) {
+        dbRefCheck.document(DOCUMENT_NAME).update(DOCUMENT_NAME, FieldValue.arrayUnion(nickname))
+            .addOnSuccessListener { resultCallback(ResultState.Success(nickname)) }
+            .addOnFailureListener { resultCallback(ResultState.Error(it)) }
     }
 
 //    fun loginInGoogle(callback: (networkStatus: NetworkState) -> Unit) {

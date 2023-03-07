@@ -8,6 +8,7 @@ import kr.co.yeeunlee.own.project1.mywriting.data.repository.Repository
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.FragmentState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.ResultState
 import javax.inject.Inject
 
 @HiltViewModel // Hilt에서 ViewModel을 등록하는 것으로 화면(EntryPoint)를 찾고 의존 객체를 정의할 수 있음
@@ -30,11 +31,8 @@ class FirebaseViewModel @Inject constructor(
     private val _availableEmailStatus = MutableLiveData<AuthenticationState>()
     val availableEmailStatus: LiveData<AuthenticationState> = _availableEmailStatus
 
-    private val _availableNickNameStatus = MutableLiveData<AuthenticationState>()
-    val availableNickNameStatus: LiveData<AuthenticationState> = _availableNickNameStatus
-
-    private val _duplicatedNickNameStatus = MutableLiveData<NetworkState>()
-    val duplicatedNickNameStatus: LiveData<NetworkState> = _duplicatedNickNameStatus
+    private val _availableNickNameStatus = MutableLiveData<ResultState<String>>()
+    val availableNickNameStatus: LiveData<ResultState<String>> = _availableNickNameStatus
 
     private val _fragmentStatus = MutableLiveData<Pair<FragmentState, Boolean>>()
     val fragmentStatus: LiveData<Pair<FragmentState, Boolean>> = _fragmentStatus
@@ -62,11 +60,10 @@ class FirebaseViewModel @Inject constructor(
     }
 
     fun isAvailableNickName(nickname: String) {
-        repository.isAvailableNickName(
-            nickname,
-            { _availableNickNameStatus.value = it },
-            { _duplicatedNickNameStatus.value = it }
-        )
+        repository.isAvailableNickName(nickname) {
+            _availableNickNameStatus.value = it
+        }
+
     }
 
     fun logout() {

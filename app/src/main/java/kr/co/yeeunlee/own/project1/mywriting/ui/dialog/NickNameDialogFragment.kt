@@ -7,11 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import kr.co.yeeunlee.own.project1.mywriting.databinding.FragmentNicknameDialogBinding
 import kr.co.yeeunlee.own.project1.mywriting.ui.FirebaseViewModel
 import kr.co.yeeunlee.own.project1.mywriting.ui.LoginStartActivity
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.ActivityState
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.ResultState
 
 class NickNameDialogFragment() : DialogFragment() {
     private var _binding: FragmentNicknameDialogBinding? = null
@@ -32,7 +35,31 @@ class NickNameDialogFragment() : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            completeButton.setOnClickListener { checkAvailable() }
+            completeButton.setOnClickListener { checkAvailable(nameEditText.text.toString()) }
+            screenProgressBar.isVisible = false
+        }
+        observeAvailableNickName()
+    }
+
+    private fun observeAvailableNickName() {
+        viewmodel.availableNickNameStatus.observe(this) {
+            when (it) {
+                is ResultState.Error -> {
+                    activity.loadErrorMessage(it.exception)
+                    isProgressButton(false)
+                }
+                is ResultState.Failed -> {
+                    activity.loadErrorMessage(Throwable(getString(it.message)))
+                    isProgressButton(false)
+                }
+                ResultState.Loading -> {
+                    isProgressButton(true)
+                }
+                is ResultState.Success -> {
+                    activity.moveToScreen(ActivityState.Main)
+                    isProgressButton(false)
+                }
+            }
         }
     }
 
@@ -50,12 +77,22 @@ class NickNameDialogFragment() : DialogFragment() {
         }?.show()
     }
 
-    private fun checkAvailable() {
-        viewmodel.isAvailableNickName("")
+    private fun checkAvailable(nickname: String) {
+        viewmodel.isAvailableNickName(nickname)
     }
 
     private fun closeKeyboard() {
 
+    }
+
+    private fun isProgressButton(valid: Boolean) {
+        if (valid) {
+            binding.screenProgressBar.isVisible = true
+            binding.completeButton.isEnabled = false
+        } else {
+            binding.screenProgressBar.isVisible = false
+            binding.completeButton.isEnabled = true
+        }
     }
 
 

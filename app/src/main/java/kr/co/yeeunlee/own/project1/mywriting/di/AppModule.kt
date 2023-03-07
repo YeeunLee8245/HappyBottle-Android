@@ -31,8 +31,8 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideFirebaseDaoImpl(firebaseSettings: FirebaseSettings): FirebaseDaoImpl {
-        return FirebaseDaoImpl(firebaseSettings)
+    fun provideFirebaseDaoImpl(applicationContext: Context, firebaseSettings: FirebaseSettings): FirebaseDaoImpl {
+        return FirebaseDaoImpl(applicationContext, firebaseSettings)
     }
 
     @Singleton // 인스턴스 범위를 application 컨테이너로 지정(계층 구조의 상위 컨테이너에서 사용할 수 있는 결합은 계층구조의 하위 수준에서도 사용 가능)

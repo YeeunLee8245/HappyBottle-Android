@@ -3,6 +3,7 @@ package kr.co.yeeunlee.own.project1.mywriting.data.repository
 import kr.co.yeeunlee.own.project1.mywriting.data.firebase.FirebaseDaoImpl
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.AuthenticationState
 import kr.co.yeeunlee.own.project1.mywriting.utils.states.NetworkState
+import kr.co.yeeunlee.own.project1.mywriting.utils.states.ResultState
 import javax.inject.Inject
 
 // 생성자에서 주석 달려면 constructor 키워드 필요
@@ -49,9 +50,9 @@ class RepositoryImpl @Inject constructor(private val firebaseDaoImpl: FirebaseDa
 
     override fun isAvailableNickName(
         nickname: String,
-        authenticationCallback: (authenticationStatus: AuthenticationState) -> Unit,
-        networkCallback: (networkStatus: NetworkState) -> Unit
+        resultCallback: (resultStatus: ResultState<String>) -> Unit
     ) {
-        firebaseDaoImpl.isAvailableNickName(nickname, authenticationCallback, networkCallback)
+        firebaseDaoImpl.isAvailableNickName(nickname, resultCallback)
     }
+
 }
